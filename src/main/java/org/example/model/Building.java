@@ -8,8 +8,8 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 @ToString
-@NoArgsConstructor
 public class Building {
 
     private long id;
@@ -17,6 +17,11 @@ public class Building {
     private String address;
     private List<Room> rooms;
     private List<Department> departments;
+
+    public Building() {
+        this.rooms = new ArrayList<>();
+        this.departments = new ArrayList<>();
+    }
 
     public Building(String name, String address) {
         this.name = name;
@@ -32,19 +37,4 @@ public class Building {
         this.departments = departments;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Building)) return false;
-        Building building = (Building) o;
-        return Objects.equals(name, building.name)
-                && Objects.equals(address, building.address)
-                && Objects.equals(rooms, building.rooms)
-                && Objects.equals(departments, building.departments);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, address, rooms, departments);
-    }
 }

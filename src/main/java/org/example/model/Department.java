@@ -9,12 +9,16 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
+@EqualsAndHashCode
 public class Department {
 
     private long id;
     private String name;
     private List<Teacher> teachers;
+
+    public Department() {
+        this.teachers = new ArrayList<>();
+    }
 
     public Department(String name) {
         this.name = name;
@@ -24,20 +28,6 @@ public class Department {
     public Department(String name, List<Teacher> teachers) {
         this.name = name;
         this.teachers = teachers;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Department)) return false;
-        Department that = (Department) o;
-        return Objects.equals(name, that.name)
-                && Objects.equals(teachers, that.teachers);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, teachers);
     }
 
 }

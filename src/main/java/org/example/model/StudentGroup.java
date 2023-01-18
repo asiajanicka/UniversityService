@@ -9,29 +9,21 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
+@EqualsAndHashCode
 public class StudentGroup {
 
     private long id;
     private String name;
     private List<Student> students;
+//    private List<TimeTableEntry> timetable;
+
+    public StudentGroup() {
+        students = new ArrayList<>();
+    }
 
     public StudentGroup(String name) {
         this.name = name;
         students = new ArrayList<>();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof StudentGroup)) return false;
-        StudentGroup group = (StudentGroup) o;
-        return Objects.equals(name, group.name) && Objects.equals(students, group.students);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, students);
     }
 
 }

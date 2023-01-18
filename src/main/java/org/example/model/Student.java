@@ -1,8 +1,6 @@
 package org.example.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -11,12 +9,16 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class Student extends Person {
 
     private LocalDate dateOfBirth;
     private PortalAccount portalAccount;
     private List<Grade> grades;
+
+    public Student() {
+        super();
+        this.grades = new ArrayList<>();
+    }
 
     public Student(String firstName, String lastName, LocalDate dateOfBirth) {
         super(firstName, lastName);
@@ -48,8 +50,8 @@ public class Student extends Person {
 
     @Override
     public String toString() {
-        return String.format("Student{id=%d, firstName=%s, lastName=%s, dateOfBirth=%s, portalAccount=%s, grades=%s}",
+        return String.format("Student{id=%d firstName=%s lastName=%s dateOfBirth=%s portalAccount=%s grades=%s}", +
                 getId(), getFirstName(), getLastName(), dateOfBirth, portalAccount, grades);
-
     }
+
 }

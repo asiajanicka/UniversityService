@@ -1,15 +1,13 @@
 package org.example.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Objects;
 
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 @NoArgsConstructor
 public abstract class Person {
 
@@ -20,19 +18,6 @@ public abstract class Person {
     public Person(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Person)) return false;
-        Person person = (Person) o;
-        return Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(firstName, lastName);
     }
 
 }

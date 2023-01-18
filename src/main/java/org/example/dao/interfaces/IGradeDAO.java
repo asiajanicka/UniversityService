@@ -7,7 +7,9 @@ import java.util.List;
 public interface IGradeDAO extends IBaseDAO<Grade> {
 
     List<Grade> getAllGradesByStudentId(long id);
+
     List<Grade> getAllGradesBySubjectId(long id);
+
     int bindGradeToStudentId(long gradeId, long studentId);
 
 }

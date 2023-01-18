@@ -16,7 +16,7 @@ public class NoEntityCreatedException extends Exception {
     }
 
     public NoEntityCreatedException(EntityType entityType, Object entity) {
-        super(String.format("No %s (%s) was added to the service", entityType.getDisplayName(), entity.toString()));
+        super(String.format("No %s (%s) was added to the service", entityType.getDisplayName(), entity));
         logger.error(this);
     }
 

@@ -22,35 +22,24 @@ public class StudentDAO implements IStudentDAO {
     private static final String CREATE_STUDENT = "INSERT INTO students(first_name, last_name, date_of_birth)" +
             " VALUES (?, ?, ?)";
     private static final String REMOVE_STUDENT = "DELETE FROM students WHERE id = ?";
-    private static final String GET_ALL_STUDENTS = "SELECT * FROM students";
     private static final String GET_ALL_STUDENTS_BY_GROUP_ID = "SELECT * FROM students WHERE student_group_id = ?";
     private static final String BIND_STUDENT_TO_GROUP = "UPDATE students SET student_group_id = ? WHERE id = ?";
     private static final String REMOVE_STUDENT_FROM_GROUP = "UPDATE students SET student_group_id = null WHERE id = ?";
     private static final Logger logger = LogManager.getLogger(StudentDAO.class);
-    private Connection con;
 
     @Override
     public Optional<Student> getEntityById(long id) {
         String desc = "get student by id (id: %d)";
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(String.format(CONNECTED_DB + desc, id));
-            try (PreparedStatement prepStmt = con.prepareStatement(GET_STUDENT)) {
-                prepStmt.setLong(1, id);
-                List<Student> students = RowMapper.mapToStudentEntityList(prepStmt.executeQuery());
-                logger.debug(String.format(EXECUTED_QUERY + desc, id));
-                return students
-                        .stream()
-                        .findFirst();
-            } catch (SQLException e) {
-                logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(String.format(CLOSED_CON_DB + desc, id));
-            }
+        try (Connection con = ConnectionPool.getInstance().getConnection();
+             PreparedStatement prepStmt = con.prepareStatement(GET_STUDENT)) {
+            prepStmt.setLong(1, id);
+            List<Student> students = RowMapper.mapToStudentEntityList(prepStmt.executeQuery());
+            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            return students
+                    .stream()
+                    .findFirst();
         } catch (SQLException e) {
-            logger.error(String.format(NOT_CONNECT_DB + desc, id), e);
+            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -59,26 +48,17 @@ public class StudentDAO implements IStudentDAO {
     @Override
     public int updateEntity(Student entity) {
         String desc = "update student (%s)";
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(String.format(CONNECTED_DB + desc, entity));
-            try (PreparedStatement prepStmt = con.prepareStatement(UPDATE_STUDENT)) {
-                prepStmt.setString(1, entity.getFirstName());
-                prepStmt.setString(2, entity.getLastName());
-                prepStmt.setDate(3, Date.valueOf(entity.getDateOfBirth()));
-                prepStmt.setLong(4, entity.getId());
-                int result = prepStmt.executeUpdate();
-                logger.debug(String.format(EXECUTED_QUERY + desc, entity));
-                return result;
-            } catch (SQLException e) {
-                logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(String.format(CLOSED_CON_DB + desc, entity));
-            }
+        try (Connection con = ConnectionPool.getInstance().getConnection();
+             PreparedStatement prepStmt = con.prepareStatement(UPDATE_STUDENT)) {
+            prepStmt.setString(1, entity.getFirstName());
+            prepStmt.setString(2, entity.getLastName());
+            prepStmt.setDate(3, Date.valueOf(entity.getDateOfBirth()));
+            prepStmt.setLong(4, entity.getId());
+            int result = prepStmt.executeUpdate();
+            logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+            return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_CONNECT_DB + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
             e.printStackTrace();
         }
         return 0;
@@ -87,29 +67,20 @@ public class StudentDAO implements IStudentDAO {
     @Override
     public Optional<Student> createEntity(Student entity) {
         String desc = "create student (%s)";
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(String.format(CONNECTED_DB + desc, entity));
-            try (PreparedStatement prepStmt = con.prepareStatement(CREATE_STUDENT, Statement.RETURN_GENERATED_KEYS)) {
-                prepStmt.setString(1, entity.getFirstName());
-                prepStmt.setString(2, entity.getLastName());
-                prepStmt.setDate(3, Date.valueOf(entity.getDateOfBirth()));
-                if (prepStmt.executeUpdate() == 1) {
-                    logger.debug(String.format(EXECUTED_QUERY + desc, entity));
-                    ResultSet generatedKeys = prepStmt.getGeneratedKeys();
-                    if (generatedKeys.next()) {
-                        return getEntityById(generatedKeys.getLong(1));
-                    }
+        try (Connection con = ConnectionPool.getInstance().getConnection();
+             PreparedStatement prepStmt = con.prepareStatement(CREATE_STUDENT, Statement.RETURN_GENERATED_KEYS)) {
+            prepStmt.setString(1, entity.getFirstName());
+            prepStmt.setString(2, entity.getLastName());
+            prepStmt.setDate(3, Date.valueOf(entity.getDateOfBirth()));
+            if (prepStmt.executeUpdate() == 1) {
+                logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+                ResultSet generatedKeys = prepStmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    return getEntityById(generatedKeys.getLong(1));
                 }
-            } catch (SQLException e) {
-                logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(String.format(CLOSED_CON_DB + desc, entity));
             }
         } catch (SQLException e) {
-            logger.error(String.format(NOT_CONNECT_DB + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -118,72 +89,30 @@ public class StudentDAO implements IStudentDAO {
     @Override
     public int removeEntity(long id) {
         String desc = "remove student by id (id: %d)";
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(String.format(CONNECTED_DB + desc, id));
-            try (PreparedStatement prepStmt = con.prepareStatement(REMOVE_STUDENT)) {
-                prepStmt.setLong(1, id);
-                int result = prepStmt.executeUpdate();
-                logger.debug(String.format(EXECUTED_QUERY + desc, id));
-                return result;
-            } catch (SQLException e) {
-                logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(String.format(CLOSED_CON_DB + desc, id));
-            }
+        try (Connection con = ConnectionPool.getInstance().getConnection();
+             PreparedStatement prepStmt = con.prepareStatement(REMOVE_STUDENT)) {
+            prepStmt.setLong(1, id);
+            int result = prepStmt.executeUpdate();
+            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_CONNECT_DB + desc, id), e);
+            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
             e.printStackTrace();
         }
         return 0;
     }
 
     @Override
-    public List<Student> getAllStudents() {
-        String desc = "get all students";
-        List<Student> students = new ArrayList<>();
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(CONNECTED_DB + desc);
-            try (PreparedStatement prepStmt = con.prepareStatement(GET_ALL_STUDENTS)) {
-                students.addAll(RowMapper.mapToStudentEntityList(prepStmt.executeQuery()));
-                logger.debug(EXECUTED_QUERY + desc);
-            } catch (SQLException e) {
-                logger.error(NOT_EXECUTE_QUERY + desc, e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(CLOSED_CON_DB + desc);
-            }
-        } catch (SQLException e) {
-            logger.error(NOT_CONNECT_DB + desc, e);
-            e.printStackTrace();
-        }
-        return students;
-    }
-
-    @Override
     public List<Student> getAllStudentsByGroupId(long groupId) {
         String desc = "get all students by group id (id: %d)";
         List<Student> students = new ArrayList<>();
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(String.format(CONNECTED_DB + desc, groupId));
-            try (PreparedStatement prepStmt = con.prepareStatement(GET_ALL_STUDENTS_BY_GROUP_ID)) {
-                prepStmt.setLong(1, groupId);
-                students.addAll(RowMapper.mapToStudentEntityList(prepStmt.executeQuery()));
-                logger.debug(String.format(EXECUTED_QUERY + desc, groupId));
-            } catch (SQLException e) {
-                logger.error(String.format(NOT_EXECUTE_QUERY + desc, groupId), e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(String.format(CLOSED_CON_DB + desc, groupId));
-            }
+        try (Connection con = ConnectionPool.getInstance().getConnection();
+             PreparedStatement prepStmt = con.prepareStatement(GET_ALL_STUDENTS_BY_GROUP_ID)) {
+            prepStmt.setLong(1, groupId);
+            students.addAll(RowMapper.mapToStudentEntityList(prepStmt.executeQuery()));
+            logger.debug(String.format(EXECUTED_QUERY + desc, groupId));
         } catch (SQLException e) {
-            logger.error(String.format(NOT_CONNECT_DB + desc, groupId), e);
+            logger.error(String.format(NOT_EXECUTE_QUERY + desc, groupId), e);
             e.printStackTrace();
         }
         return students;
@@ -192,24 +121,15 @@ public class StudentDAO implements IStudentDAO {
     @Override
     public int bindStudentToGroupById(long studentId, long groupId) {
         String desc = "bind student (id: %d) to group (id: %d)";
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(String.format(CONNECTED_DB + desc, studentId, groupId));
-            try (PreparedStatement prepStmt = con.prepareStatement(BIND_STUDENT_TO_GROUP)) {
-                prepStmt.setLong(1, groupId);
-                prepStmt.setLong(2, studentId);
-                int result = prepStmt.executeUpdate();
-                logger.debug(String.format(EXECUTED_QUERY + desc, studentId, groupId));
-                return result;
-            } catch (SQLException e) {
-                logger.error(String.format(NOT_EXECUTE_QUERY + desc, studentId, groupId), e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(String.format(CLOSED_CON_DB + desc, studentId, groupId));
-            }
+        try (Connection con = ConnectionPool.getInstance().getConnection();
+             PreparedStatement prepStmt = con.prepareStatement(BIND_STUDENT_TO_GROUP)) {
+            prepStmt.setLong(1, groupId);
+            prepStmt.setLong(2, studentId);
+            int result = prepStmt.executeUpdate();
+            logger.debug(String.format(EXECUTED_QUERY + desc, studentId, groupId));
+            return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_CONNECT_DB + desc, studentId, groupId), e);
+            logger.error(String.format(NOT_EXECUTE_QUERY + desc, studentId, groupId), e);
             e.printStackTrace();
         }
         return 0;
@@ -218,23 +138,14 @@ public class StudentDAO implements IStudentDAO {
     @Override
     public int removeStudentFromGroupById(long studentId, long groupId) {
         String desc = "remove student (id: %d) from group (id: %d)";
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(String.format(CONNECTED_DB + desc, studentId, groupId));
-            try (PreparedStatement prepStmt = con.prepareStatement(REMOVE_STUDENT_FROM_GROUP)) {
-                prepStmt.setLong(1, studentId);
-                int result = prepStmt.executeUpdate();
-                logger.debug(String.format(EXECUTED_QUERY + desc, studentId, groupId));
-                return result;
-            } catch (SQLException e) {
-                logger.error(String.format(NOT_EXECUTE_QUERY + desc, studentId, groupId), e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(String.format(CLOSED_CON_DB + desc, studentId, groupId));
-            }
+        try (Connection con = ConnectionPool.getInstance().getConnection();
+             PreparedStatement prepStmt = con.prepareStatement(REMOVE_STUDENT_FROM_GROUP)) {
+            prepStmt.setLong(1, studentId);
+            int result = prepStmt.executeUpdate();
+            logger.debug(String.format(EXECUTED_QUERY + desc, studentId, groupId));
+            return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_CONNECT_DB + desc, studentId, groupId), e);
+            logger.error(String.format(NOT_EXECUTE_QUERY + desc, studentId, groupId), e);
             e.printStackTrace();
         }
         return 0;

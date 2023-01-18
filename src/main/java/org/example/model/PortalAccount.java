@@ -8,6 +8,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 @NoArgsConstructor
 public class PortalAccount {
 
@@ -22,22 +23,6 @@ public class PortalAccount {
         this.password = password;
         this.issueDate = issueDate;
         this.expiryDate = expiryDate;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PortalAccount)) return false;
-        PortalAccount account = (PortalAccount) o;
-        return Objects.equals(login, account.login)
-                && Objects.equals(password, account.password)
-                && Objects.equals(issueDate, account.issueDate)
-                && Objects.equals(expiryDate, account.expiryDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(login, password, issueDate, expiryDate);
     }
 
 }

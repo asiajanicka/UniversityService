@@ -21,7 +21,7 @@ public class PortalAccountServiceTests {
     private static final Logger logger = LogManager.getLogger(PortalAccountServiceTests.class);
 
     @Test
-    public void test1() throws NoEntityCreatedException, EntityNotFoundException {
+    public void usecase1Test() throws NoEntityCreatedException, EntityNotFoundException {
 
 //    Add a new student
 //    Add a new portal account
@@ -32,33 +32,32 @@ public class PortalAccountServiceTests {
 //    Remove portal account
 //	    - check is portal account is removed
 //	    - check is student doesn't have any portal account
-//    Remove student from uni
+//    Remove student from uni (clean up)
 
         logger.info("Start of Portal Account Service Tests - test case 1");
         StudentService studentService = new StudentService();
         PortalAccount expectedAccount = TestData.getPortalAccount();
         PortalAccountService accountService = new PortalAccountService();
 
-        Student student = studentService.addNewStudent(TestData.getBasicStudent());
-        PortalAccount account = accountService.addNewAccount(expectedAccount);
-        assertThat(accountService.bindAccountToStudent(account, student)).isTrue();
+        Student actualStudent = studentService.addNewStudent(TestData.getBasicStudent());
+        PortalAccount actualAccount = accountService.addNewAccount(expectedAccount);
+        assertThat(accountService.bindAccountToStudent(actualAccount, actualStudent)).isTrue();
 
         String newPassword = "new_password";
         LocalDate newExpDate = LocalDate.now().plusYears(4);
-        assertThat(accountService.changePasswordForStudent(student, newPassword)).isTrue();
-        assertThat(accountService.changeExpDateForStudent(student, newExpDate)).isTrue();
+        assertThat(accountService.changePasswordForStudent(actualStudent, newPassword)).isTrue();
+        assertThat(accountService.changeExpDateForStudent(actualStudent, newExpDate)).isTrue();
 
-        Student studentWithAccount = studentService.getStudentById(student.getId());
+        Student studentWithAccount = studentService.getStudentById(actualStudent.getId());
         assertThat(studentWithAccount.getPortalAccount().getPassword()).isEqualTo(newPassword);
         assertThat(studentWithAccount.getPortalAccount().getExpiryDate()).isEqualTo(newExpDate);
 
-        assertThat(accountService.removeAccount(account)).isTrue();
-        assertThatThrownBy(() -> accountService.getAccountById(account.getId())).isInstanceOf(EntityNotFoundException.class);
-        assertThat(studentService.getStudentById(student.getId()).getPortalAccount()).isNull();
+        assertThat(accountService.removeAccount(actualAccount)).isTrue();
+        assertThatThrownBy(() -> accountService.getAccountById(actualAccount.getId())).isInstanceOf(EntityNotFoundException.class);
+        assertThat(studentService.getStudentById(actualStudent.getId()).getPortalAccount()).isNull();
 
-        studentService.removeStudent(student);
+        studentService.removeStudent(actualStudent);
         logger.info("End of Portal Account Service Tests - test case 1");
-
     }
 
 }

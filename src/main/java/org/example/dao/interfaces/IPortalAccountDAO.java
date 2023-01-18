@@ -10,6 +10,4 @@ public interface IPortalAccountDAO extends IBaseDAO<PortalAccount> {
 
     int bindAccountToStudentId(long account_id, long student_id);
 
-    int removeAccountByStudentId(long id);
-
 }

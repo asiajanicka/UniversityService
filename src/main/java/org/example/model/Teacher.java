@@ -1,8 +1,6 @@
 package org.example.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,11 +8,15 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@ToString
 public class Teacher extends Person {
 
     private ParkingSpot parkingSpot;
     private List<Subject> subjects;
+
+    public Teacher() {
+        this.subjects = new ArrayList<>();
+    }
 
     public Teacher(String firstName, String lastName) {
         super(firstName, lastName);
@@ -48,7 +50,7 @@ public class Teacher extends Person {
 
     @Override
     public String toString() {
-        return String.format("Teacher{id=%d, firstName=%s, lastName=%s, parkingSpot=%s, subjects=%s}",
+        return String.format("Teacher{id=%d firstName=%s lastName=%s parkingSpot=%s subjects=%s}", +
                 getId(), getFirstName(), getLastName(), parkingSpot, subjects);
     }
 

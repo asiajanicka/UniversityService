@@ -51,8 +51,7 @@ public class PortalAccountService {
     }
 
     public PortalAccount getAccountById(long id) throws EntityNotFoundException {
-        PortalAccount tempAccount = accountDAO
-                .getAccountByStudentId(id)
+        PortalAccount tempAccount = accountDAO.getEntityById(id)
                 .orElseThrow(() -> new EntityNotFoundException(EntityType.PORTAL_ACCOUNT, id));
         logger.debug(String.format("Portal account with %d retrieved from service", id));
         return tempAccount;
@@ -122,7 +121,6 @@ public class PortalAccountService {
             logger.error("Expiry date of student's portal account couldn't be be changed in the service as student or new date is NULL");
             return false;
         }
-
     }
 
 }

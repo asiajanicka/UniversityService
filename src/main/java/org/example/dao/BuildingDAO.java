@@ -3,8 +3,8 @@ package org.example.dao;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.dao.interfaces.IStudentGroupDAO;
-import org.example.model.StudentGroup;
+import org.example.dao.interfaces.IBuildingDAO;
+import org.example.model.Building;
 import org.example.utils.ConnectionPool;
 import org.example.utils.RowMapper;
 
@@ -13,38 +13,40 @@ import java.util.List;
 import java.util.Optional;
 
 @NoArgsConstructor
-public class StudentGroupDAO implements IStudentGroupDAO {
+public class BuildingDAO implements IBuildingDAO {
 
-    private static final String GET_STUDENT_GROUP = "SELECT * FROM student_groups WHERE id = ?";
-    private static final String UPDATE_STUDENT_GROUP = "UPDATE student_groups SET name = ? WHERE id = ?";
-    private static final String CREATE_STUDENT_GROUP = "INSERT INTO student_groups(name) VALUES (?)";
-    private static final String REMOVE_STUDENT_GROUP = "DELETE FROM student_groups WHERE id = ?";
-    private static final Logger logger = LogManager.getLogger(StudentGroupDAO.class);
+    private static final String GET_BUILDING = "SELECT * FROM buildings WHERE id = ?";
+    private static final String UPDATE_BUILDING = "UPDATE buildings SET name = ?, address = ? WHERE id = ?";
+    private static final String CREATE_BUILDING = "INSERT INTO buildings (name, address) VALUES (?, ?)";
+    private static final String REMOVE_BUILDING = "DELETE FROM buildings WHERE id = ?";
+    private static final Logger logger = LogManager.getLogger(BuildingDAO.class);
 
     @Override
-    public Optional<StudentGroup> getEntityById(long id) {
-        String desc = "get student group by id (id: %d)";
+    public Optional<Building> getEntityById(long id) {
+        String desc = "get building by id (id: %d)";
         try (Connection con = ConnectionPool.getInstance().getConnection();
-             PreparedStatement prepStmt = con.prepareStatement(GET_STUDENT_GROUP)) {
+             PreparedStatement prepStmt = con.prepareStatement(GET_BUILDING)) {
             prepStmt.setLong(1, id);
-            List<StudentGroup> studentGroups = RowMapper.mapToStudentGroupEntityList(prepStmt.executeQuery());
+            List<Building> teachers = RowMapper.mapToBuildingEntityList(prepStmt.executeQuery());
             logger.debug(String.format(EXECUTED_QUERY + desc, id));
-            return studentGroups
+            return teachers
                     .stream()
                     .findFirst();
         } catch (SQLException e) {
             logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
             e.printStackTrace();
         }
+
         return Optional.empty();
     }
 
     @Override
-    public int updateEntity(StudentGroup entity) {
-        String desc = "update student group (%s)";
+    public int updateEntity(Building entity) {
+        String desc = "update building (%s)";
         try (Connection con = ConnectionPool.getInstance().getConnection();
-             PreparedStatement prepStmt = con.prepareStatement(UPDATE_STUDENT_GROUP)) {
+             PreparedStatement prepStmt = con.prepareStatement(UPDATE_BUILDING)) {
             prepStmt.setString(1, entity.getName());
+            prepStmt.setString(2, entity.getAddress());
             int result = prepStmt.executeUpdate();
             logger.debug(String.format(EXECUTED_QUERY + desc, entity));
             return result;
@@ -56,11 +58,12 @@ public class StudentGroupDAO implements IStudentGroupDAO {
     }
 
     @Override
-    public Optional<StudentGroup> createEntity(StudentGroup entity) {
-        String desc = "create student group (%s)";
+    public Optional<Building> createEntity(Building entity) {
+        String desc = "create building (%s)";
         try (Connection con = ConnectionPool.getInstance().getConnection();
-             PreparedStatement prepStmt = con.prepareStatement(CREATE_STUDENT_GROUP, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement prepStmt = con.prepareStatement(CREATE_BUILDING, Statement.RETURN_GENERATED_KEYS)) {
             prepStmt.setString(1, entity.getName());
+            prepStmt.setString(2, entity.getAddress());
             if (prepStmt.executeUpdate() == 1) {
                 logger.debug(String.format(EXECUTED_QUERY + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
@@ -77,9 +80,9 @@ public class StudentGroupDAO implements IStudentGroupDAO {
 
     @Override
     public int removeEntity(long id) {
-        String desc = "remove student group by id (%d)";
+        String desc = "remove building by id (id: %d)";
         try (Connection con = ConnectionPool.getInstance().getConnection();
-             PreparedStatement prepStmt = con.prepareStatement(REMOVE_STUDENT_GROUP)) {
+             PreparedStatement prepStmt = con.prepareStatement(REMOVE_BUILDING)) {
             prepStmt.setLong(1, id);
             int result = prepStmt.executeUpdate();
             logger.debug(String.format(EXECUTED_QUERY + desc, id));

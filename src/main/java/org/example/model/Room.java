@@ -8,6 +8,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @NoArgsConstructor
+@EqualsAndHashCode
 public class Room {
 
     private long id;
@@ -15,19 +16,6 @@ public class Room {
 
     public Room(String number) {
         this.number = number;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Room)) return false;
-        Room room = (Room) o;
-        return Objects.equals(number, room.number);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(number);
     }
 
 }

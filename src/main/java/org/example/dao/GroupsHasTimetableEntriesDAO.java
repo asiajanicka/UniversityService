@@ -3,8 +3,8 @@ package org.example.dao;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.dao.interfaces.IStudentGroupDAO;
-import org.example.model.StudentGroup;
+import org.example.dao.interfaces.IGroupsHasTimetableEntriesDAO;
+import org.example.model.GroupsHasTimetableEntry;
 import org.example.utils.ConnectionPool;
 import org.example.utils.RowMapper;
 
@@ -13,23 +13,25 @@ import java.util.List;
 import java.util.Optional;
 
 @NoArgsConstructor
-public class StudentGroupDAO implements IStudentGroupDAO {
+public class GroupsHasTimetableEntriesDAO implements IGroupsHasTimetableEntriesDAO {
 
-    private static final String GET_STUDENT_GROUP = "SELECT * FROM student_groups WHERE id = ?";
-    private static final String UPDATE_STUDENT_GROUP = "UPDATE student_groups SET name = ? WHERE id = ?";
-    private static final String CREATE_STUDENT_GROUP = "INSERT INTO student_groups(name) VALUES (?)";
-    private static final String REMOVE_STUDENT_GROUP = "DELETE FROM student_groups WHERE id = ?";
-    private static final Logger logger = LogManager.getLogger(StudentGroupDAO.class);
+    private static final String GET_ENTRY = "SELECT * FROM groups_has_time_table_entries WHERE id = ?";
+    private static final String UPDATE_ENTRY = "UPDATE groups_has_time_table_entries SET student_group_id = ?, " +
+            "time_table_entry_id = ? WHERE id = ?";
+    private static final String CREATE_ENTRY = "INSERT INTO groups_has_time_table_entries (student_group_id," +
+            " time_table_entry_id) VALUES (?, ?)";
+    private static final String REMOVE_ENTRY = "DELETE FROM groups_has_time_table_entries WHERE id = ?";
+    private static final Logger logger = LogManager.getLogger(GroupsHasTimetableEntriesDAO.class);
 
     @Override
-    public Optional<StudentGroup> getEntityById(long id) {
-        String desc = "get student group by id (id: %d)";
+    public Optional<GroupsHasTimetableEntry> getEntityById(long id) {
+        String desc = "get 'group has timetable entity' by id (id: %d)";
         try (Connection con = ConnectionPool.getInstance().getConnection();
-             PreparedStatement prepStmt = con.prepareStatement(GET_STUDENT_GROUP)) {
+             PreparedStatement prepStmt = con.prepareStatement(GET_ENTRY)) {
             prepStmt.setLong(1, id);
-            List<StudentGroup> studentGroups = RowMapper.mapToStudentGroupEntityList(prepStmt.executeQuery());
+            List<GroupsHasTimetableEntry> entries = RowMapper.mapToGroupHasTimetableEntityList(prepStmt.executeQuery());
             logger.debug(String.format(EXECUTED_QUERY + desc, id));
-            return studentGroups
+            return entries
                     .stream()
                     .findFirst();
         } catch (SQLException e) {
@@ -40,11 +42,13 @@ public class StudentGroupDAO implements IStudentGroupDAO {
     }
 
     @Override
-    public int updateEntity(StudentGroup entity) {
-        String desc = "update student group (%s)";
+    public int updateEntity(GroupsHasTimetableEntry entity) {
+        String desc = "update 'group has timetable entity' (%s)";
         try (Connection con = ConnectionPool.getInstance().getConnection();
-             PreparedStatement prepStmt = con.prepareStatement(UPDATE_STUDENT_GROUP)) {
-            prepStmt.setString(1, entity.getName());
+             PreparedStatement prepStmt = con.prepareStatement(UPDATE_ENTRY)) {
+            prepStmt.setLong(1, entity.getGroupId());
+            prepStmt.setLong(2, entity.getTimetableEntryId());
+            prepStmt.setLong(3, entity.getGroupHasTimetableEntryId());
             int result = prepStmt.executeUpdate();
             logger.debug(String.format(EXECUTED_QUERY + desc, entity));
             return result;
@@ -56,11 +60,12 @@ public class StudentGroupDAO implements IStudentGroupDAO {
     }
 
     @Override
-    public Optional<StudentGroup> createEntity(StudentGroup entity) {
-        String desc = "create student group (%s)";
+    public Optional<GroupsHasTimetableEntry> createEntity(GroupsHasTimetableEntry entity) {
+        String desc = "create 'group has timetable entity' (%s)";
         try (Connection con = ConnectionPool.getInstance().getConnection();
-             PreparedStatement prepStmt = con.prepareStatement(CREATE_STUDENT_GROUP, Statement.RETURN_GENERATED_KEYS)) {
-            prepStmt.setString(1, entity.getName());
+             PreparedStatement prepStmt = con.prepareStatement(CREATE_ENTRY, Statement.RETURN_GENERATED_KEYS)) {
+            prepStmt.setLong(1, entity.getGroupId());
+            prepStmt.setLong(2, entity.getTimetableEntryId());
             if (prepStmt.executeUpdate() == 1) {
                 logger.debug(String.format(EXECUTED_QUERY + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
@@ -77,9 +82,9 @@ public class StudentGroupDAO implements IStudentGroupDAO {
 
     @Override
     public int removeEntity(long id) {
-        String desc = "remove student group by id (%d)";
+        String desc = "remove 'group has timetable entity' by id (id: %d)";
         try (Connection con = ConnectionPool.getInstance().getConnection();
-             PreparedStatement prepStmt = con.prepareStatement(REMOVE_STUDENT_GROUP)) {
+             PreparedStatement prepStmt = con.prepareStatement(REMOVE_ENTRY)) {
             prepStmt.setLong(1, id);
             int result = prepStmt.executeUpdate();
             logger.debug(String.format(EXECUTED_QUERY + desc, id));

@@ -4,7 +4,7 @@ import java.util.ResourceBundle;
 
 public class DataSourcePropertiesReader {
 
-    String path;
+    private String path;
 
     public DataSourcePropertiesReader(){
         if(ResourceBundle.getBundle("config").getString("db").equalsIgnoreCase("mysql")){

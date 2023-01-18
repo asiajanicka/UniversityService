@@ -3,8 +3,14 @@ package org.example.service;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.dao.*;
-import org.example.dao.interfaces.*;
+import org.example.dao.GradeDAO;
+import org.example.dao.PortalAccountDAO;
+import org.example.dao.StudentDAO;
+import org.example.dao.StudentGroupDAO;
+import org.example.dao.interfaces.IGradeDAO;
+import org.example.dao.interfaces.IPortalAccountDAO;
+import org.example.dao.interfaces.IStudentDAO;
+import org.example.dao.interfaces.IStudentGroupDAO;
 import org.example.enums.EntityType;
 import org.example.model.*;
 import org.example.service.exception.EntityNotFoundException;
@@ -21,12 +27,12 @@ public class StudentService {
     private final IStudentDAO studentDAO = new StudentDAO();
     private final IPortalAccountDAO accountDAO = new PortalAccountDAO();
     private final IGradeDAO gradeDAO = new GradeDAO();
-    private final ISubjectDAO subjectDAO = new SubjectDAO();
+    private final SubjectService subjectService = new SubjectService();
     private static final Logger logger = LogManager.getLogger(StudentService.class);
 
     public Student getStudentById(long id) throws EntityNotFoundException {
         Student tempStudent = getBasicStudentById(id);
-        tempStudent.setPortalAccount(getAccountByStudentId(id));
+        tempStudent.setPortalAccount(getAccountByStudent(tempStudent));
         tempStudent.setGrades(getGradesByStudent(tempStudent));
         return tempStudent;
     }
@@ -109,33 +115,46 @@ public class StudentService {
     }
 
     public List<Grade> addGradesToStudent(Student student, List<Grade> grades) throws NoEntityCreatedException, GradeNotAssignedException {
+        List<Grade> tempGrades = new ArrayList<>();
         if (student != null && grades != null) {
-            List<Grade> tempGrades = new ArrayList<>();
             for (Grade grade : grades) {
                 tempGrades.add(addGradeToStudent(student, grade));
             }
-            return tempGrades;
         } else {
             logger.error("Grades couldn't be assigned to student in the service as student or list of grades is NULL");
-            throw new NullPointerException("Student or list of grades is NULL - can't add grades to student in the service");
         }
+        return tempGrades;
     }
 
     public List<Grade> getGradesByStudent(Student student) throws EntityNotFoundException {
+        List<Grade> allGradesByStudentId = new ArrayList<>();
         if (student != null) {
-            List<Grade> allGradesByStudentId = gradeDAO.getAllGradesByStudentId(student.getId());
+            allGradesByStudentId = gradeDAO.getAllGradesByStudentId(student.getId());
             for (Grade grade : allGradesByStudentId) {
                 long subjectId = grade.getSubject().getId();
-                Subject subject = subjectDAO
-                        .getEntityById(subjectId)
-                        .orElseThrow(() -> new EntityNotFoundException(EntityType.SUBJECT, subjectId));
-                grade.setSubject(subject);
+                subjectService.getSubjectById(subjectId);
+                grade.setSubject(subjectService.getSubjectById(subjectId));
             }
-            logger.debug(String.format("Grades of student (%s) retrieved from service", student.getId()));
-            return allGradesByStudentId;
+            logger.debug(String.format("Grades of student (%s) retrieved from service", student));
         } else {
             logger.error("Grades of student couldn't be retrieved from the service as student is NULL");
-            throw new NullPointerException("Student is NULL - can't retrieve grades in the service");
+        }
+        return allGradesByStudentId;
+    }
+
+    public boolean removeGrade(Grade grade) {
+        if (grade != null) {
+            int result = gradeDAO.removeEntity(grade.getId());
+            if (result == 1) {
+                logger.debug(String.format("Grade (%s) removed from the service", grade));
+                return true;
+            } else {
+                logger.error(String.format("Grade (%s) couldn't be removed from the service", grade));
+                return false;
+            }
+        } else {
+            logger.error("Grade couldn't be removed from the service as it is NULL");
+            return false;
         }
     }
 
@@ -174,12 +193,12 @@ public class StudentService {
     public StudentGroup getStudentGroupById(long id) throws EntityNotFoundException {
         StudentGroup tempGroup = getBasicStudentGroupById(id);
         List<Student> allStudentByGroupId = studentDAO.getAllStudentsByGroupId(tempGroup.getId());
+        ArrayList<Student> tmpSts = new ArrayList<>();
         for (Student student : allStudentByGroupId) {
             Student tempStudent = getStudentById(student.getId());
-            student.setPortalAccount(tempStudent.getPortalAccount());
-            student.setGrades(tempStudent.getGrades());
+            tmpSts.add(tempStudent);
         }
-        tempGroup.setStudents(allStudentByGroupId);
+        tempGroup.setStudents(tmpSts);
         logger.debug(String.format("All students from group (id: %d) retrieved from service", id));
         return tempGroup;
     }
@@ -208,7 +227,7 @@ public class StudentService {
         }
     }
 
-    public List<TimeTableEntry> getTimeTableByStudentGroup(StudentGroup group) {
+    public List<TimetableEntry> getTimeTableByStudentGroup(StudentGroup group) {
         // to be implemented when TimeTableEntryDAO available
         return null;
     }
@@ -261,15 +280,15 @@ public class StudentService {
         }
     }
 
-    private PortalAccount getAccountByStudentId(long studentId) {
+    public PortalAccount getAccountByStudent(Student student) {
         PortalAccount tempAccount = accountDAO
-                .getAccountByStudentId(studentId)
+                .getAccountByStudentId(student.getId())
                 .orElseGet(() -> {
-                    logger.error(String.format("Portal account of student (id: %d) couldn't be retrieved from service",
-                            studentId));
+                    logger.error(String.format("Portal account of student (%s) couldn't be retrieved from service",
+                            student));
                     return null;
                 });
-        logger.debug(String.format("Portal account of student (id: %d) retrieved from service", studentId));
+        logger.debug(String.format("Portal account of student (%s) retrieved from service", student));
         return tempAccount;
     }
 

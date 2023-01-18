@@ -23,32 +23,21 @@ public class PortalAccountDAO implements IPortalAccountDAO {
     private static final String REMOVE_ACCOUNT = "DELETE FROM portal_accounts WHERE id = ?";
     private static final String GET_ACCOUNT_BY_STUDENT_ID = "SELECT * FROM portal_accounts WHERE student_id = ?";
     private static final String BIND_ACCOUNT_TO_STUDENT = "UPDATE portal_accounts SET student_id = ? WHERE id = ?";
-    private static final String REMOVE_ACCOUNT_BY_STUDENT_ID = "DELETE FROM portal_accounts WHERE student_id = ?";
     private static final Logger logger = LogManager.getLogger(PortalAccountDAO.class);
-    private Connection con;
 
     @Override
     public Optional<PortalAccount> getEntityById(long id) {
         String desc = "get portal account by id (id: %d)";
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(String.format(CONNECTED_DB + desc, id));
-            try (PreparedStatement prepStmt = con.prepareStatement(GET_ACCOUNT)) {
-                prepStmt.setLong(1, id);
-                List<PortalAccount> accounts = RowMapper.mapToPortalAccountEntityList(prepStmt.executeQuery());
-                logger.debug(String.format(EXECUTED_QUERY + desc, id));
-                return accounts
-                        .stream()
-                        .findFirst();
-            } catch (SQLException e) {
-                logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(String.format(CLOSED_CON_DB + desc, id));
-            }
+        try (Connection con = ConnectionPool.getInstance().getConnection();
+             PreparedStatement prepStmt = con.prepareStatement(GET_ACCOUNT)) {
+            prepStmt.setLong(1, id);
+            List<PortalAccount> accounts = RowMapper.mapToPortalAccountEntityList(prepStmt.executeQuery());
+            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            return accounts
+                    .stream()
+                    .findFirst();
         } catch (SQLException e) {
-            logger.error(String.format(NOT_CONNECT_DB + desc, id), e);
+            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -57,27 +46,18 @@ public class PortalAccountDAO implements IPortalAccountDAO {
     @Override
     public int updateEntity(PortalAccount entity) {
         String desc = "update portal account (%s)";
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(String.format(CONNECTED_DB + desc, entity));
-            try (PreparedStatement prepStmt = con.prepareStatement(UPDATE_ACCOUNT)) {
-                prepStmt.setString(1, entity.getLogin());
-                prepStmt.setString(2, entity.getPassword());
-                prepStmt.setDate(3, Date.valueOf(entity.getIssueDate()));
-                prepStmt.setDate(4, Date.valueOf(entity.getExpiryDate()));
-                prepStmt.setLong(5, entity.getId());
-                int result = prepStmt.executeUpdate();
-                logger.debug(String.format(EXECUTED_QUERY + desc, entity));
-                return result;
-            } catch (SQLException e) {
-                logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(String.format(CLOSED_CON_DB + desc, entity));
-            }
+        try (Connection con = ConnectionPool.getInstance().getConnection();
+             PreparedStatement prepStmt = con.prepareStatement(UPDATE_ACCOUNT)) {
+            prepStmt.setString(1, entity.getLogin());
+            prepStmt.setString(2, entity.getPassword());
+            prepStmt.setDate(3, Date.valueOf(entity.getIssueDate()));
+            prepStmt.setDate(4, Date.valueOf(entity.getExpiryDate()));
+            prepStmt.setLong(5, entity.getId());
+            int result = prepStmt.executeUpdate();
+            logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+            return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_CONNECT_DB + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
             e.printStackTrace();
         }
         return 0;
@@ -86,30 +66,21 @@ public class PortalAccountDAO implements IPortalAccountDAO {
     @Override
     public Optional<PortalAccount> createEntity(PortalAccount entity) {
         String desc = "create portal account (%s)";
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(String.format(CONNECTED_DB + desc, entity));
-            try (PreparedStatement prepStmt = con.prepareStatement(CREATE_ACCOUNT, Statement.RETURN_GENERATED_KEYS)) {
-                prepStmt.setString(1, entity.getLogin());
-                prepStmt.setString(2, entity.getPassword());
-                prepStmt.setDate(3, Date.valueOf(entity.getIssueDate()));
-                prepStmt.setDate(4, Date.valueOf(entity.getExpiryDate()));
-                if (prepStmt.executeUpdate() == 1) {
-                    logger.debug(String.format(EXECUTED_QUERY + desc, entity));
-                    ResultSet generatedKeys = prepStmt.getGeneratedKeys();
-                    if (generatedKeys.next()) {
-                        return getEntityById(generatedKeys.getLong(1));
-                    }
+        try (Connection con = ConnectionPool.getInstance().getConnection();
+             PreparedStatement prepStmt = con.prepareStatement(CREATE_ACCOUNT, Statement.RETURN_GENERATED_KEYS)) {
+            prepStmt.setString(1, entity.getLogin());
+            prepStmt.setString(2, entity.getPassword());
+            prepStmt.setDate(3, Date.valueOf(entity.getIssueDate()));
+            prepStmt.setDate(4, Date.valueOf(entity.getExpiryDate()));
+            if (prepStmt.executeUpdate() == 1) {
+                logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+                ResultSet generatedKeys = prepStmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    return getEntityById(generatedKeys.getLong(1));
                 }
-            } catch (SQLException e) {
-                logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(String.format(CLOSED_CON_DB + desc, entity));
             }
         } catch (SQLException e) {
-            logger.error(String.format(NOT_CONNECT_DB + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -118,23 +89,14 @@ public class PortalAccountDAO implements IPortalAccountDAO {
     @Override
     public int removeEntity(long id) {
         String desc = "remove portal account by id (id: %d)";
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(String.format(CONNECTED_DB + desc, id));
-            try (PreparedStatement prepStmt = con.prepareStatement(REMOVE_ACCOUNT)) {
-                prepStmt.setLong(1, id);
-                int result = prepStmt.executeUpdate();
-                logger.debug(String.format(EXECUTED_QUERY + desc, id));
-                return result;
-            } catch (SQLException e) {
-                logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(String.format(CLOSED_CON_DB + desc, id));
-            }
+        try (Connection con = ConnectionPool.getInstance().getConnection();
+             PreparedStatement prepStmt = con.prepareStatement(REMOVE_ACCOUNT)) {
+            prepStmt.setLong(1, id);
+            int result = prepStmt.executeUpdate();
+            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_CONNECT_DB + desc, id), e);
+            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
             e.printStackTrace();
         }
         return 0;
@@ -143,25 +105,16 @@ public class PortalAccountDAO implements IPortalAccountDAO {
     @Override
     public Optional<PortalAccount> getAccountByStudentId(long studentId) {
         String desc = "get portal account by student id (id: %d)";
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(String.format(CONNECTED_DB + desc, studentId));
-            try (PreparedStatement prepStmt = con.prepareStatement(GET_ACCOUNT_BY_STUDENT_ID)) {
-                prepStmt.setLong(1, studentId);
-                List<PortalAccount> accounts = RowMapper.mapToPortalAccountEntityList(prepStmt.executeQuery());
-                logger.debug(String.format(EXECUTED_QUERY + desc, studentId));
-                return accounts
-                        .stream()
-                        .findFirst();
-            } catch (SQLException e) {
-                logger.error(String.format(NOT_EXECUTE_QUERY + desc, studentId), e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(String.format(NOT_CONNECT_DB + desc, studentId));
-            }
+        try (Connection con = ConnectionPool.getInstance().getConnection();
+             PreparedStatement prepStmt = con.prepareStatement(GET_ACCOUNT_BY_STUDENT_ID)) {
+            prepStmt.setLong(1, studentId);
+            List<PortalAccount> accounts = RowMapper.mapToPortalAccountEntityList(prepStmt.executeQuery());
+            logger.debug(String.format(EXECUTED_QUERY + desc, studentId));
+            return accounts
+                    .stream()
+                    .findFirst();
         } catch (SQLException e) {
-            logger.error(String.format(CLOSED_CON_DB + desc, studentId), e);
+            logger.error(String.format(NOT_EXECUTE_QUERY + desc, studentId), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -170,49 +123,15 @@ public class PortalAccountDAO implements IPortalAccountDAO {
     @Override
     public int bindAccountToStudentId(long accountId, long studentId) {
         String desc = "bind portal account (id: %d) to student (id: %d)";
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(String.format(CONNECTED_DB + desc, accountId, studentId));
-            try (PreparedStatement prepStmt = con.prepareStatement(BIND_ACCOUNT_TO_STUDENT)) {
-                prepStmt.setLong(1, studentId);
-                prepStmt.setLong(2, accountId);
-                int result = prepStmt.executeUpdate();
-                logger.debug(String.format(EXECUTED_QUERY + desc, accountId, studentId));
-                return result;
-            } catch (SQLException e) {
-                logger.error(String.format(NOT_EXECUTE_QUERY + desc, accountId, studentId), e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(String.format(CLOSED_CON_DB + desc, accountId, studentId));
-            }
+        try (Connection con = ConnectionPool.getInstance().getConnection();
+             PreparedStatement prepStmt = con.prepareStatement(BIND_ACCOUNT_TO_STUDENT)) {
+            prepStmt.setLong(1, studentId);
+            prepStmt.setLong(2, accountId);
+            int result = prepStmt.executeUpdate();
+            logger.debug(String.format(EXECUTED_QUERY + desc, accountId, studentId));
+            return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_CONNECT_DB + desc, accountId, studentId), e);
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    @Override
-    public int removeAccountByStudentId(long studentId) {
-        String desc = "delete portal account of student (id: %d)";
-        try {
-            con = ConnectionPool.getInstance().getConnection();
-            logger.debug(String.format(CONNECTED_DB + desc, studentId));
-            try (PreparedStatement prepStmt = con.prepareStatement(REMOVE_ACCOUNT_BY_STUDENT_ID)) {
-                prepStmt.setLong(1, studentId);
-                int result = prepStmt.executeUpdate();
-                logger.debug(String.format(EXECUTED_QUERY + desc, studentId));
-                return result;
-            } catch (SQLException e) {
-                logger.error(String.format(NOT_EXECUTE_QUERY + desc, studentId), e);
-                e.printStackTrace();
-            } finally {
-                con.close();
-                logger.debug(String.format(CLOSED_CON_DB + desc, studentId));
-            }
-        } catch (SQLException e) {
-            logger.error(String.format(NOT_CONNECT_DB + desc, studentId), e);
+            logger.error(String.format(NOT_EXECUTE_QUERY + desc, accountId, studentId), e);
             e.printStackTrace();
         }
         return 0;
