@@ -12,4 +12,6 @@ public interface IDeptDAO extends IBaseDAO<Department> {
 
     int removeDepartmentFromBuildingById(long deptId, long buildingId);
 
+    List<Department> getDepartmentsWithoutBuilding();
+
 }

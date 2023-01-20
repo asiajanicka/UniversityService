@@ -36,7 +36,6 @@ public class BuildingDAO implements IBuildingDAO {
             logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
             e.printStackTrace();
         }
-
         return Optional.empty();
     }
 
@@ -47,6 +46,7 @@ public class BuildingDAO implements IBuildingDAO {
              PreparedStatement prepStmt = con.prepareStatement(UPDATE_BUILDING)) {
             prepStmt.setString(1, entity.getName());
             prepStmt.setString(2, entity.getAddress());
+            prepStmt.setLong(3, entity.getId());
             int result = prepStmt.executeUpdate();
             logger.debug(String.format(EXECUTED_QUERY + desc, entity));
             return result;

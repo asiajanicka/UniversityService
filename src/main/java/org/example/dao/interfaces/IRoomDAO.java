@@ -10,4 +10,6 @@ public interface IRoomDAO extends IBaseDAO<Room> {
 
     List<Room> getRoomsByBuildingId(long teacherId);
 
+    int removeRoomsByBuildingId(long buildingId);
+
 }

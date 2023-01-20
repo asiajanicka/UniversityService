@@ -176,4 +176,13 @@ public class DepartmentService {
         return allTeachersByDeptId;
     }
 
+    public List<Department> getDepartmentsWithoutBuilding(){
+        List<Department> departmentsWithoutBuilding = deptDAO.getDepartmentsWithoutBuilding();
+        for (Department dept : departmentsWithoutBuilding) {
+           dept.setTeachers(getTeachersByDeptId(dept.getId()));
+        }
+        logger.debug("Departments without building assigned retrieved from service");
+        return departmentsWithoutBuilding;
+    }
+
 }

@@ -23,6 +23,7 @@ public class DeptDAO implements IDeptDAO {
     private static final String GET_DEPTS_BY_BUILDING_ID = "SELECT * FROM departments WHERE building_id = ?";
     private static final String BIND_DEPT_TO_BUILDING = "UPDATE departments SET building_id = ? WHERE id = ?";
     private static final String REMOVE_DEPT_FROM_BUILDING = "UPDATE departments SET building_id = null WHERE id = ?";
+    private static final String GET_DEPTS_WITHOUT_BUILDING = "SELECT * FROM departments WHERE building_id is NULL";
     private static final Logger logger = LogManager.getLogger(DeptDAO.class);
 
     @Override
@@ -143,6 +144,21 @@ public class DeptDAO implements IDeptDAO {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    @Override
+    public List<Department> getDepartmentsWithoutBuilding() {
+        String desc = "get departments without building";
+        List<Department> depts = new ArrayList<>();
+        try (Connection con = ConnectionPool.getInstance().getConnection();
+             PreparedStatement prepStmt = con.prepareStatement(GET_DEPTS_WITHOUT_BUILDING)) {
+            depts = RowMapper.mapToDepartmentEntityList(prepStmt.executeQuery());
+            logger.debug(String.format(EXECUTED_QUERY + desc));
+        } catch (SQLException e) {
+            logger.error(String.format(NOT_EXECUTE_QUERY + desc), e);
+            e.printStackTrace();
+        }
+        return depts;
     }
 
 }

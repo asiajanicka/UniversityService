@@ -119,6 +119,7 @@ public class RowMapper {
             Building building = new Building();
             building.setId(rs.getLong("id"));
             building.setName(rs.getString("name"));
+            building.setAddress(rs.getString("address"));
             buildings.add(building);
         }
         return buildings;
@@ -129,7 +130,7 @@ public class RowMapper {
         while (rs.next()) {
             Room room = new Room();
             room.setId(rs.getLong("id"));
-            room.setNumber(rs.getString("room_name"));
+            room.setNumber(rs.getString("room_number"));
             rooms.add(room);
         }
         return rooms;

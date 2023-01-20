@@ -2,8 +2,6 @@ package org.example.model;
 
 import lombok.*;
 
-import java.util.Objects;
-
 @Getter
 @Setter
 @ToString
@@ -13,9 +11,11 @@ public class Room {
 
     private long id;
     private String number;
+    private Building building;
 
-    public Room(String number) {
+    public Room(String number, Building building) {
         this.number = number;
+        this.building = building;
     }
 
 }
