@@ -4,9 +4,11 @@ import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.dao.DeptDAO;
+import org.example.dao.ParkingSpotDAO;
 import org.example.dao.SubjectDAO;
 import org.example.dao.TeacherDAO;
 import org.example.dao.interfaces.IDeptDAO;
+import org.example.dao.interfaces.IParkingSpotDAO;
 import org.example.dao.interfaces.ISubjectDAO;
 import org.example.dao.interfaces.ITeacherDAO;
 import org.example.enums.EntityType;
@@ -25,11 +27,13 @@ public class DepartmentService {
     private final ITeacherDAO teacherDAO = new TeacherDAO();
     private final ISubjectDAO subjectDAO = new SubjectDAO();
     private final IDeptDAO deptDAO = new DeptDAO();
+    private final IParkingSpotDAO spotDAO = new ParkingSpotDAO();
     private static final Logger logger = LogManager.getLogger(DepartmentService.class);
 
     public Teacher getTeacherById(long id) throws EntityNotFoundException {
         Teacher tempTeacher = getBasicTeacherById(id);
         tempTeacher.setSubjects(subjectDAO.getSubjectsByTeacherId(id));
+        tempTeacher.setParkingSpot(spotDAO.getSpotByTeacherId(id).orElse(null));
         return tempTeacher;
     }
 
@@ -176,10 +180,10 @@ public class DepartmentService {
         return allTeachersByDeptId;
     }
 
-    public List<Department> getDepartmentsWithoutBuilding(){
+    public List<Department> getDepartmentsWithoutBuilding() {
         List<Department> departmentsWithoutBuilding = deptDAO.getDepartmentsWithoutBuilding();
         for (Department dept : departmentsWithoutBuilding) {
-           dept.setTeachers(getTeachersByDeptId(dept.getId()));
+            dept.setTeachers(getTeachersByDeptId(dept.getId()));
         }
         logger.debug("Departments without building assigned retrieved from service");
         return departmentsWithoutBuilding;
