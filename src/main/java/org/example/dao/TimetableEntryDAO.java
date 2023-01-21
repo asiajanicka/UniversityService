@@ -17,8 +17,10 @@ import java.util.Optional;
 public class TimetableEntryDAO implements ITimetableEntryDAO {
 
     private static final String GET_ENTRY = "SELECT * FROM time_table_entries WHERE id = ?";
-    private static final String UPDATE_ENTRY = "UPDATE time_table_entries SET time = ?, week_day = ? WHERE id = ?";
-    private static final String CREATE_ENTRY = "INSERT INTO time_table_entries (time, week_day) VALUES (?, ?)";
+    private static final String UPDATE_ENTRY = "UPDATE time_table_entries SET time = ?, week_day = ?, subject_id =?, " +
+            "room_id = ? WHERE id = ?";
+    private static final String CREATE_ENTRY = "INSERT INTO time_table_entries (time, week_day, subject_id, room_id) " +
+            "VALUES (?, ?, ?, ?)";
     private static final String REMOVE_ENTRY = "DELETE FROM time_table_entries WHERE id = ?";
     private static final String GET_ENTRIES_BY_SUBJECT_ID = "SELECT * FROM time_table_entries WHERE subject_id = ?";
     private static final String GET_ENTRIES_BY_ROOM_ID = "SELECT * FROM time_table_entries WHERE room_id = ?";
@@ -51,7 +53,9 @@ public class TimetableEntryDAO implements ITimetableEntryDAO {
              PreparedStatement prepStmt = con.prepareStatement(UPDATE_ENTRY)) {
             prepStmt.setString(1, entity.getTime().toString());
             prepStmt.setString(2, entity.getWeekDay().name());
-            prepStmt.setLong(3, entity.getId());
+            prepStmt.setLong(3, entity.getSubject().getId());
+            prepStmt.setLong(4, entity.getRoom().getId());
+            prepStmt.setLong(5, entity.getId());
             int result = prepStmt.executeUpdate();
             logger.debug(String.format(EXECUTED_QUERY + desc, entity));
             return result;
@@ -69,6 +73,8 @@ public class TimetableEntryDAO implements ITimetableEntryDAO {
              PreparedStatement prepStmt = con.prepareStatement(CREATE_ENTRY, Statement.RETURN_GENERATED_KEYS)) {
             prepStmt.setTime(1, Time.valueOf(entity.getTime()));
             prepStmt.setString(2, entity.getWeekDay().name());
+            prepStmt.setLong(3, entity.getSubject().getId());
+            prepStmt.setLong(4, entity.getRoom().getId());
             if (prepStmt.executeUpdate() == 1) {
                 logger.debug(String.format(EXECUTED_QUERY + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();

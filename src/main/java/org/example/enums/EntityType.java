@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor(access=AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum EntityType {
 
     STUDENT_GROUP("student group"),
@@ -18,7 +18,8 @@ public enum EntityType {
     DEPARTMENT("department"),
     TEACHER("teacher"),
     PARKING_SPOT("parking spot"),
-    SUBJECT("subject");
+    SUBJECT("subject"),
+    GROUP_HAS_TIMETABLE_ENTRY("group has timetable entity");
 
     private final String displayName;
 

@@ -131,6 +131,9 @@ public class RowMapper {
             Room room = new Room();
             room.setId(rs.getLong("id"));
             room.setNumber(rs.getString("room_number"));
+            Building building = new Building();
+            building.setId(rs.getLong("building_id"));
+            room.setBuilding(building);
             rooms.add(room);
         }
         return rooms;
@@ -141,8 +144,14 @@ public class RowMapper {
         while (rs.next()) {
             TimetableEntry timetableEntry = new TimetableEntry();
             timetableEntry.setId(rs.getLong("id"));
-            timetableEntry.setTime(rs.getObject("week_day", LocalTime.class));
+            timetableEntry.setTime(rs.getObject("time", LocalTime.class));
             timetableEntry.setWeekDay(WeekDay.valueOf(rs.getString("week_day").toUpperCase()));
+            Room room = new Room();
+            room.setId(rs.getLong("room_id"));
+            timetableEntry.setRoom(room);
+            Subject subject = new Subject();
+            subject.setId(rs.getLong("subject_id"));
+            timetableEntry.setSubject(subject);
             timetableEntries.add(timetableEntry);
         }
         return timetableEntries;

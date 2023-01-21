@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TestData {
 
-    public static Student getFullStudent(){
+    public static Student getFullStudent() {
         PortalAccount account = new PortalAccount("abby_muse", "admin",
                 LocalDate.now(), LocalDate.now().plusYears(4));
 
@@ -20,17 +20,17 @@ public class TestData {
         return student;
     }
 
-    public static Student getBasicStudent(){
+    public static Student getBasicStudent() {
         return new Student("Abby", "Muse",
                 LocalDate.of(1985, 1, 1));
     }
 
-    public static PortalAccount getPortalAccount(){
+    public static PortalAccount getPortalAccount() {
         return new PortalAccount("test_account", "admin",
                 LocalDate.now(), LocalDate.now().plusYears(4));
     }
 
-    public static Teacher getBasicTeacher(){
+    public static Teacher getBasicTeacher() {
         return new Teacher("Paul", "Simon");
     }
 

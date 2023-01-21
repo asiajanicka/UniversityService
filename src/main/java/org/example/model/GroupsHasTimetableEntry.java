@@ -15,4 +15,8 @@ public class GroupsHasTimetableEntry {
     private long groupId;
     private long timetableEntryId;
 
+    public GroupsHasTimetableEntry(long groupId, long timetableEntryId) {
+        this.groupId = groupId;
+        this.timetableEntryId = timetableEntryId;
+    }
 }

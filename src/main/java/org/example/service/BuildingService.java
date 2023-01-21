@@ -87,7 +87,7 @@ public class BuildingService {
         Room tempRoom = roomDAO
                 .getEntityById(id)
                 .orElseThrow(() -> new EntityNotFoundException(EntityType.STUDENT, id));
-        tempRoom.setBuilding(getBuildingById(tempRoom.getId()));
+        tempRoom.setBuilding(getBuildingById(tempRoom.getBuilding().getId()));
         logger.debug(String.format("Room (id: %d) retrieved from service", id));
         return tempRoom;
     }
@@ -119,6 +119,22 @@ public class BuildingService {
             }
         } else {
             logger.error("Room couldn't be updated in the service as it is NULL");
+            return false;
+        }
+    }
+
+    public boolean removeRoom(Room room) {
+        if (room != null) {
+            int result = roomDAO.removeEntity(room.getId());
+            if (result == 1) {
+                logger.debug(String.format("Room (%s) removed from the service", room));
+                return true;
+            } else {
+                logger.error(String.format("Room (%s) couldn't be removed from the service", room));
+                return false;
+            }
+        } else {
+            logger.error("Room couldn't be removed from the service as it is NULL");
             return false;
         }
     }
