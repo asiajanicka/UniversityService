@@ -152,7 +152,7 @@ public class GroupsHasTimetableEntriesDAO implements IGroupsHasTimetableEntriesD
             logger.debug(String.format(EXECUTED_QUERY + desc, groupId));
             return groupsHasTimetableEntries
                     .stream()
-                    .map(p -> p.getGroupId())
+                    .map(p -> p.getTimetableEntryId())
                     .collect(Collectors.toList());
         } catch (SQLException e) {
             logger.error(String.format(NOT_EXECUTE_QUERY + desc, groupId), e);

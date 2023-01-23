@@ -24,7 +24,6 @@ public class TimetableService {
     private final IGroupsHasTimetableEntriesDAO groupsHasTTEntriesDAO = new GroupsHasTimetableEntriesDAO();
     private final SubjectService subjectService = new SubjectService();
     private final BuildingService buildingService = new BuildingService();
-    private final StudentService studentService = new StudentService();
     private static final Logger logger = LogManager.getLogger(TimetableService.class);
 
     public TimetableEntry getTimetableEntryById(long id) throws EntityNotFoundException {
@@ -140,19 +139,6 @@ public class TimetableService {
             logger.error("Timetable entry couldn't be assigned to group in the service as one of them is NULL");
             return false;
         }
-    }
-
-    public List<StudentGroup> getGroupsAssignedToTimetableEntry(TimetableEntry ttEntry) throws EntityNotFoundException {
-        List<StudentGroup> groupsByTimetableEntryId = new ArrayList<>();
-        if (ttEntry != null) {
-            List<Long> ids = groupsHasTTEntriesDAO.getStudentGroupIdsByTimetableEntryId(ttEntry.getId());
-            for (long id : ids) {
-                groupsByTimetableEntryId.add(studentService.getStudentGroupById(id));
-            }
-        } else {
-            logger.error("Groups assigned to timetable entry couldn't be retrieved from the service as timetable entry is NULL");
-        }
-        return groupsByTimetableEntryId;
     }
 
     public List<TimetableEntry> getTimetableForStudentGroup(StudentGroup group) throws EntityNotFoundException {

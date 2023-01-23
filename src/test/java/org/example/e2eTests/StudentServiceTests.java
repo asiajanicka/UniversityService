@@ -2,12 +2,9 @@ package org.example.e2eTests;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.model.Grade;
-import org.example.model.Student;
-import org.example.model.StudentGroup;
-import org.example.service.PortalAccountService;
-import org.example.service.StudentService;
-import org.example.service.SubjectService;
+import org.example.enums.WeekDay;
+import org.example.model.*;
+import org.example.service.*;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.GradeNotAssignedException;
 import org.example.service.exception.NoEntityCreatedException;
@@ -15,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import utils.TestData;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -27,6 +25,8 @@ public class StudentServiceTests {
     public void usecase1Test() throws NoEntityCreatedException, EntityNotFoundException, GradeNotAssignedException {
 
 //    Add an empty group
+//    Add a new timetable entry for the group, existing subject and existing room
+//        - check if group has tt entry assigned
 //    Add a new student
 //	    - check if student and portal account are added
 //    Assign student to group
@@ -39,17 +39,31 @@ public class StudentServiceTests {
 //	    - check is student, portal account and grade is removed too
 //    Remove group
 //	    - check if group is removed from uni
-//	    - check if group is removed from timetable (TBD when TimeTableService implemented) !!!!!
+//	    - check if group is removed from timetable
+//      - check if timetable entry is still available
+//     Remove timetable entry (clean up)
 
         logger.info("Start of Student Service Tests - test case 1");
         StudentService studentService = new StudentService();
         PortalAccountService accountService = new PortalAccountService();
         SubjectService subjectService = new SubjectService();
+        BuildingService buildingService = new BuildingService();
+        Subject existingSubject = subjectService.getSubjectById(1);
+        Room existingRoom = buildingService.getRoomById(1);
+        TimetableService ttService = new TimetableService();
         Student testStudent = TestData.getFullStudent();
         String expectedGroupName = "group89";
 
         StudentGroup actualGroup = studentService.addEmptyStudentGroup(expectedGroupName);
         assertThat(actualGroup.getName()).isEqualTo(expectedGroupName);
+
+        TimetableEntry ttEntry = new TimetableEntry(LocalTime.of(8, 0, 0), WeekDay.THURSDAY,
+                existingSubject, existingRoom);
+        TimetableEntry actualTTEntry = ttService.addNewTimetableEntry(ttEntry);
+        ttService.assignTimetableEntryToGroup(actualTTEntry, actualGroup);
+
+        actualGroup = studentService.getStudentGroupById(actualGroup.getId());
+        assertThat(actualGroup.getTimetable()).contains(actualTTEntry);
 
         Student actualStudent = studentService.addNewStudent(testStudent);
         assertThat(actualStudent.getFirstName()).isEqualTo(testStudent.getFirstName());
@@ -81,7 +95,14 @@ public class StudentServiceTests {
         assertThat(studentService.getGradesByStudent(actualStudent)).isEmpty();
 
         assertThat(studentService.removeStudentGroup(actualGroup)).isTrue();
-        assertThatThrownBy(() -> studentService.getStudentGroupById(actualGroup.getId())).isInstanceOf(EntityNotFoundException.class);
+        StudentGroup finalActualGroup = actualGroup;
+        assertThatThrownBy(() -> studentService.getStudentGroupById(finalActualGroup.getId())).isInstanceOf(EntityNotFoundException.class);
+
+        assertThat(ttService.getTimetableForStudentGroup(actualGroup)).isEmpty();
+        assertThat(studentService.getGroupsAssignedToTimetableEntry(actualTTEntry)).doesNotContain(actualGroup);
+        assertThat(ttService.getTimetableEntryById(actualTTEntry.getId())).isEqualTo(actualTTEntry);
+
+        ttService.removeTimetableEntry(actualTTEntry);
         logger.info("End of Student Service Tests - test case 1");
     }
 

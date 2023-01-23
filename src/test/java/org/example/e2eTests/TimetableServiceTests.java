@@ -3,7 +3,10 @@ package org.example.e2eTests;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.enums.WeekDay;
-import org.example.model.*;
+import org.example.model.Room;
+import org.example.model.StudentGroup;
+import org.example.model.Subject;
+import org.example.model.TimetableEntry;
 import org.example.service.BuildingService;
 import org.example.service.StudentService;
 import org.example.service.SubjectService;
@@ -13,7 +16,6 @@ import org.example.service.exception.NoEntityCreatedException;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalTime;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -66,13 +68,15 @@ public class TimetableServiceTests {
 
         timetableService.assignTimetableEntryToGroup(actualTTEntry, existingGroupOne);
         timetableService.assignTimetableEntryToGroup(actualTTEntry, existingGroupTwo);
-        assertThat(timetableService.getGroupsAssignedToTimetableEntry(actualTTEntry))
+        existingGroupOne = studentService.getStudentGroupById(existingGroupOne.getId());
+        existingGroupTwo = studentService.getStudentGroupById(existingGroupTwo.getId());
+        assertThat(studentService.getGroupsAssignedToTimetableEntry(actualTTEntry))
                 .contains(existingGroupOne)
                 .contains(existingGroupTwo);
 
         Subject newSubject = subjectService.addNewSubject("Biology");
         Room newRoom = buildingService.addRoom(new Room("123", buildingService.getBuildingById(2)));
-        assertThat(timetableService.updateSubjectForTimetableEntry(newSubject, actualTTEntry));
+        assertThat(timetableService.updateSubjectForTimetableEntry(newSubject, actualTTEntry)).isTrue();
         assertThat(timetableService.updateRoomForTimetableEntry(newRoom, actualTTEntry)).isTrue();
 
         LocalTime updatedTime = LocalTime.of(8, 15);
@@ -86,7 +90,7 @@ public class TimetableServiceTests {
         assertThat(actualTTEntry.getRoom()).isEqualTo(newRoom);
 
         assertThat(timetableService.removeTimetableEntryFromGroup(actualTTEntry, existingGroupOne)).isTrue();
-        assertThat(timetableService.getGroupsAssignedToTimetableEntry(actualTTEntry))
+        assertThat(studentService.getGroupsAssignedToTimetableEntry(actualTTEntry))
                 .doesNotContain(existingGroupOne);
 
         assertThat(subjectService.removeSubject(newSubject)).isFalse();

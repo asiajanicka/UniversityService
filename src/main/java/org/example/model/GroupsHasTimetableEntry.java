@@ -19,4 +19,5 @@ public class GroupsHasTimetableEntry {
         this.groupId = groupId;
         this.timetableEntryId = timetableEntryId;
     }
+
 }

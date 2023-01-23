@@ -3,14 +3,8 @@ package org.example.service;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.dao.GradeDAO;
-import org.example.dao.PortalAccountDAO;
-import org.example.dao.StudentDAO;
-import org.example.dao.StudentGroupDAO;
-import org.example.dao.interfaces.IGradeDAO;
-import org.example.dao.interfaces.IPortalAccountDAO;
-import org.example.dao.interfaces.IStudentDAO;
-import org.example.dao.interfaces.IStudentGroupDAO;
+import org.example.dao.*;
+import org.example.dao.interfaces.*;
 import org.example.enums.EntityType;
 import org.example.model.*;
 import org.example.service.exception.EntityNotFoundException;
@@ -27,7 +21,9 @@ public class StudentService {
     private final IStudentDAO studentDAO = new StudentDAO();
     private final IPortalAccountDAO accountDAO = new PortalAccountDAO();
     private final IGradeDAO gradeDAO = new GradeDAO();
+    private final IGroupsHasTimetableEntriesDAO groupsHasTTEntriesDAO = new GroupsHasTimetableEntriesDAO();
     private final SubjectService subjectService = new SubjectService();
+    private final TimetableService timetableService = new TimetableService();
     private static final Logger logger = LogManager.getLogger(StudentService.class);
 
     public Student getStudentById(long id) throws EntityNotFoundException {
@@ -199,6 +195,7 @@ public class StudentService {
             tmpSts.add(tempStudent);
         }
         tempGroup.setStudents(tmpSts);
+        tempGroup.setTimetable(timetableService.getTimetableForStudentGroup(tempGroup));
         logger.debug(String.format("All students from group (id: %d) retrieved from service", id));
         return tempGroup;
     }
@@ -227,9 +224,17 @@ public class StudentService {
         }
     }
 
-    public List<TimetableEntry> getTimeTableByStudentGroup(StudentGroup group) {
-        // to be implemented when TimeTableEntryDAO available
-        return null;
+    public List<StudentGroup> getGroupsAssignedToTimetableEntry(TimetableEntry ttEntry) throws EntityNotFoundException {
+        List<StudentGroup> groupsByTimetableEntryId = new ArrayList<>();
+        if (ttEntry != null) {
+            List<Long> ids = groupsHasTTEntriesDAO.getStudentGroupIdsByTimetableEntryId(ttEntry.getId());
+            for (long id : ids) {
+                groupsByTimetableEntryId.add(getStudentGroupById(id));
+            }
+        } else {
+            logger.error("Groups assigned to timetable entry couldn't be retrieved from the service as timetable entry is NULL");
+        }
+        return groupsByTimetableEntryId;
     }
 
     private Student getBasicStudentById(long id) throws EntityNotFoundException {
