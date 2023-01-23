@@ -26,27 +26,6 @@ public class TimetableServiceTests {
     @Test
     public void usecase1Test() throws EntityNotFoundException, NoEntityCreatedException {
 
-//        Add one entry to timetable connecting existing subject & existing room but with different timeslots
-//        Add entry to two existing group (group One, group Two)
-//          - check if timetable entry is assigned to groups
-//        Add a new subject +
-//        Add a new room to existing building +
-//        Assign new subject & new room +
-//        Update entry: change time and day of week +
-//			- check newly updated time/day/subject/room
-//        Remove entry from timetable for group Two
-//        Get groups assigned to timetable entry
-//            - check if group one is included
-//        Try to remove subject
-//           - should be impossible as first all timetable entries must be removed
-//        Try to remove room
-//          - should be impossible as first all timetable entries must be removed
-//        Remove entry from timetable - check if group One doesn't have any
-//        Remove subject (clean up)
-//          - check if possible
-//        Remove room
-//          - check if possible
-
         logger.info("Start of Timetable Service Tests - test case 1");
         SubjectService subjectService = new SubjectService();
         BuildingService buildingService = new BuildingService();

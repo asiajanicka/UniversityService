@@ -26,20 +26,6 @@ public class DepartmentServiceTests {
     @Test
     public void usecase1Test() throws NoEntityCreatedException, EntityNotFoundException {
 
-//        Add a new teacher
-//        Assign teacher to existing dept
-//          - check if teacher is assigned to dept
-//        Add a subject
-//        Assign subject to teacher
-//        Update teacher info
-//          - check if info is updated and teacher has subject assigned
-//        Remove teacher from dept
-//          - check if teacher is removed from dept staff
-//        Remove teacher from uni
-//          - check if teacher is removed
-//          - check if subject doesn't have teacher assigned
-//        Remove subject (clean up)
-
         logger.info("Start of Department Service Tests - test case 1");
         DepartmentService deptService = new DepartmentService();
         SubjectService subjectService = new SubjectService();

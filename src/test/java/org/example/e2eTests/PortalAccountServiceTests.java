@@ -23,17 +23,6 @@ public class PortalAccountServiceTests {
     @Test
     public void usecase1Test() throws NoEntityCreatedException, EntityNotFoundException {
 
-//    Add a new student
-//    Add a new portal account
-//    Assign portal account to student
-//    Change password for account
-//    Change exp date for account
-//	    - check changes (read account)
-//    Remove portal account
-//	    - check is portal account is removed
-//	    - check is student doesn't have any portal account
-//    Remove student from uni (clean up)
-
         logger.info("Start of Portal Account Service Tests - test case 1");
         StudentService studentService = new StudentService();
         PortalAccount expectedAccount = TestData.getPortalAccount();

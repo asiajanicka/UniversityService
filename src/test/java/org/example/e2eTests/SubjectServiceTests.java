@@ -26,21 +26,6 @@ public class SubjectServiceTests {
     @Test()
     public void usecase1Test() throws EntityNotFoundException, NoEntityCreatedException, GradeNotAssignedException {
 
-//        Add new subject
-//        Assign subject to existing teacher - teacherOne
-//        Read teacher's subjects
-//          - check if subject is added to teacher's subject list
-//        Remove subject from teacherOne
-//        Read teacher's subjects again
-//          - check if subject is removed from teacher's subject list
-//        Assign subject to another existing teacher - teacherTwo
-//        Add grade to existing student from the subject
-//        Remove subject from uni
-//          - check if subject is removed from list
-//          - check if grades are removed
-//          - check if subject is removed from teacherTwo's subject list
-//          - check if timetable entries for subject are removed
-
         logger.info("Start of Subject Service Tests - test case 1");
         SubjectService subjectService = new SubjectService();
         DepartmentService teacherService = new DepartmentService();
@@ -75,7 +60,6 @@ public class SubjectServiceTests {
                 .collect(Collectors.toList())).isEmpty();
 
         assertThat(teacherService.getAllSubjectsByTeacher(teacherTwo)).doesNotContain(actualSubject);
-        // check timetable entries
         logger.info("End of Subject Service Tests - test case 1");
     }
 

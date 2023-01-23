@@ -24,25 +24,6 @@ public class StudentServiceTests {
     @Test
     public void usecase1Test() throws NoEntityCreatedException, EntityNotFoundException, GradeNotAssignedException {
 
-//    Add an empty group
-//    Add a new timetable entry for the group, existing subject and existing room
-//        - check if group has tt entry assigned
-//    Add a new student
-//	    - check if student and portal account are added
-//    Assign student to group
-//	    - check if student is added to group (read group)
-//    Give student a grade
-//	    - check if grade is assigned to student(read student)
-//    Remove student from group
-//	    - check if student is removed from group (read group)
-//    Remove student from uni
-//	    - check is student, portal account and grade is removed too
-//    Remove group
-//	    - check if group is removed from uni
-//	    - check if group is removed from timetable
-//      - check if timetable entry is still available
-//     Remove timetable entry (clean up)
-
         logger.info("Start of Student Service Tests - test case 1");
         StudentService studentService = new StudentService();
         PortalAccountService accountService = new PortalAccountService();
@@ -108,13 +89,6 @@ public class StudentServiceTests {
 
     @Test
     public void usecase2Test() throws NoEntityCreatedException, EntityNotFoundException {
-
-//    Add a new student
-//    Assign student to existing group
-//    UpdateStudentInfo : change fname, lname, dateOfBirth
-//	    - check if student is updated
-//    Remove student from uni
-//	    - check if student is removed from group too
 
         logger.info("Start of Student Service Tests - test case 2");
         StudentService studentService = new StudentService();

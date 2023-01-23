@@ -21,20 +21,6 @@ public class ParkingSpotServiceTests {
     @Test
     public void usecase1Test() throws NoEntityCreatedException, EntityNotFoundException {
 
-//        Add a new parking spot
-//        Add a new teacher
-//        Assign spot to teacher
-//          - check if spot is assigned to teacher
-//        Set spot free
-//          - check if spot is free
-//          - check if teacher doesn't have a spot
-//        Assign spot to teacher again
-//        Remove teacher from uni
-//          - check if spot is free again
-//        Remove spot
-//          - check if spot is removed
-//        Remove teacher (clean up)
-
         logger.info("Start of Parking Spot Service Tests - test case 1");
         ParkingSpotService spotService = new ParkingSpotService();
         DepartmentService deptService = new DepartmentService();

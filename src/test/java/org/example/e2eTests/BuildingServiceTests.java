@@ -21,15 +21,6 @@ public class BuildingServiceTests {
     @Test
     public void usecase1Test() throws NoEntityCreatedException {
 
-//        Add a new building
-//        Update building name and address
-//        Add two rooms (room One, room Two) to building
-//        Update room One name
-//          - check if rooms are assigned to the building
-//        Try to remove building -> shouldn't be possible
-//        Remove rooms
-//        Remove building
-
         logger.info("Start of Building Service Tests - test case 1");
         BuildingService buildingService = new BuildingService();
         String expectedBuildingName = "Big Data Institute";
@@ -76,16 +67,6 @@ public class BuildingServiceTests {
 
     @Test
     public void usecase2Test() throws NoEntityCreatedException {
-
-//        Add a new building
-//        Add two departments (dept One, dept Two)
-//        Assign departments to building
-//          - check if depts are assigned to the building
-//        Remove dept One from building
-//        Remove building
-//          - check if building is removed
-//          - check if dept Two has no building assigned
-//        Remove dept Two (clean up)
 
         logger.info("Start of Building Service Tests - test case 2");
         BuildingService buildingService = new BuildingService();
