@@ -43,3 +43,4 @@ build/
 .DS_Store
 
 src/test/resources/logs
+src/test/resources/studentGroupsJAXB.xml

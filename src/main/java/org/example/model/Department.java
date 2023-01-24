@@ -1,19 +1,28 @@
 package org.example.model;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
+@XmlRootElement(name = "department")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Department {
 
+    @XmlAttribute
     private long id;
+    @XmlElement
     private String name;
+    @XmlElementWrapper(name = "teachers")
+    @XmlElement(name = "teacher")
     private List<Teacher> teachers;
 
     public Department() {

@@ -1,7 +1,11 @@
 package org.example.model;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.example.utils.LocalDateAdapter;
 
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +13,16 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@XmlRootElement(name = "student")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Student extends Person {
 
+    @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate dateOfBirth;
+    @XmlElement
     private PortalAccount portalAccount;
+    @XmlElementWrapper(name = "grades")
+    @XmlElement(name = "grade")
     private List<Grade> grades;
 
     public Student() {
