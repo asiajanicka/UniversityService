@@ -1,10 +1,13 @@
 package org.example.model;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -12,8 +15,11 @@ import java.util.Objects;
 @EqualsAndHashCode
 public class Department {
 
+    @JsonProperty
     private long id;
+    @JsonProperty
     private String name;
+    @JsonProperty
     private List<Teacher> teachers;
 
     public Department() {

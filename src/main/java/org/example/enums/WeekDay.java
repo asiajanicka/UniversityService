@@ -1,11 +1,25 @@
 package org.example.enums;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor(access= AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum WeekDay {
 
-    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY;
+    @JsonProperty
+    MONDAY,
+    @JsonProperty
+    TUESDAY,
+    @JsonProperty
+    WEDNESDAY,
+    @JsonProperty
+    THURSDAY,
+    @JsonProperty
+    FRIDAY,
+    @JsonProperty
+    SATURDAY,
+    @JsonProperty
+    SUNDAY
 
 }

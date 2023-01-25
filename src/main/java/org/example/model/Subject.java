@@ -1,8 +1,7 @@
 package org.example.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -11,7 +10,9 @@ import java.util.Objects;
 @NoArgsConstructor
 public class Subject {
 
+    @JsonProperty
     private long id;
+    @JsonProperty
     private String name;
 
     public Subject(String name) {

@@ -1,5 +1,6 @@
 package org.example.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Getter
@@ -9,8 +10,11 @@ import lombok.*;
 @EqualsAndHashCode
 public class Room {
 
+    @JsonProperty
     private long id;
+    @JsonProperty
     private String number;
+    @JsonProperty
     private Building building;
 
     public Room(String number, Building building) {

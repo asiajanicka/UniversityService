@@ -1,5 +1,6 @@
 package org.example.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -8,10 +9,11 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
 public class Teacher extends Person {
 
+    @JsonProperty
     private ParkingSpot parkingSpot;
+    @JsonProperty
     private List<Subject> subjects;
 
     public Teacher() {
