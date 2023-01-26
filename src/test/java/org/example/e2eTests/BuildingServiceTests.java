@@ -89,6 +89,7 @@ public class BuildingServiceTests {
                 .isInstanceOf(EntityNotFoundException.class);
         assertThat(deptService.getDepartmentsWithoutBuilding()).contains(actualDeptTwo);
 
+        deptService.removeDept(actualDeptOne);
         deptService.removeDept(actualDeptTwo);
         logger.info("End of Building Service Tests - test case 2");
     }
