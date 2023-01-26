@@ -1,5 +1,7 @@
 package org.example.parserTest;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.example.model.StudentGroup;
 import org.example.utils.XmlUtils;
 import org.junit.jupiter.api.Test;
@@ -15,9 +17,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DOMTests {
 
+    private static final Logger logger = LogManager.getLogger(DOMTests.class);
+
     @Test
     public void validateXMLAgainstSchema() throws ParserConfigurationException, IOException, SAXException {
 
+        logger.info("Start of DOM Parser Tests - test case 1");
         Schema schema = XmlUtils.getSchema("src/test/resources/studentGroups.xsd");
         Document document = XmlUtils.parseXml("src/test/resources/studentGroups.xml");
         assertThat(XmlUtils.validateXml(schema, document)).isTrue();
@@ -41,6 +46,7 @@ public class DOMTests {
                 .count())
                 .isEqualTo(2);
         assertThat(studentGroupsFromXML.get(1).getStudents().get(2).getGrades()).isEmpty();
+        logger.info("End of DOM Parser Tests - test case 1");
     }
 
 }
