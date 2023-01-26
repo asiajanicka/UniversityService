@@ -12,7 +12,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
-import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor
 public class LocalDateAdapter extends XmlAdapter<String, LocalDate> {
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Override
     public LocalDate unmarshal(String date) {
