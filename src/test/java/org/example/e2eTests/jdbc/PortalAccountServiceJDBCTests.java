@@ -32,22 +32,22 @@ public class PortalAccountServiceJDBCTests {
 
         Student actualStudent = studentService.addNewStudent(TestData.getBasicStudent());
         PortalAccount actualAccount = accountService.addNewAccount(expectedAccount);
-        assertThat(accountService.bindAccountToStudent(actualAccount, actualStudent)).isTrue();
+        assertThat(accountService.bindAccountToStudent(actualAccount.getId(), actualStudent.getId())).isTrue();
 
         String newPassword = "new_password";
         LocalDate newExpDate = LocalDate.now().plusYears(4);
-        assertThat(accountService.changePasswordForStudent(actualStudent, newPassword)).isTrue();
-        assertThat(accountService.changeExpDateForStudent(actualStudent, newExpDate)).isTrue();
+        assertThat(accountService.changePasswordForStudent(actualStudent.getId(), newPassword)).isTrue();
+        assertThat(accountService.changeExpDateForStudent(actualStudent.getId(), newExpDate)).isTrue();
 
         Student studentWithAccount = studentService.getStudentById(actualStudent.getId());
         assertThat(studentWithAccount.getPortalAccount().getPassword()).isEqualTo(newPassword);
         assertThat(studentWithAccount.getPortalAccount().getExpiryDate()).isEqualTo(newExpDate);
 
-        assertThat(accountService.removeAccount(actualAccount)).isTrue();
+        assertThat(accountService.removeAccount(actualAccount.getId())).isTrue();
         assertThatThrownBy(() -> accountService.getAccountById(actualAccount.getId())).isInstanceOf(EntityNotFoundException.class);
         assertThat(studentService.getStudentById(actualStudent.getId()).getPortalAccount()).isNull();
 
-        studentService.removeStudent(actualStudent);
+        studentService.removeStudent(actualStudent.getId());
         logger.info("End of Portal Account Service JDBC Tests - test case 1");
     }
 

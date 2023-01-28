@@ -6,7 +6,10 @@ import org.apache.logging.log4j.Logger;
 import org.example.dao.interfaces.*;
 import org.example.dao.jdbc.*;
 import org.example.enums.EntityType;
-import org.example.model.*;
+import org.example.model.Grade;
+import org.example.model.PortalAccount;
+import org.example.model.Student;
+import org.example.model.StudentGroup;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.GradeNotAssignedException;
 import org.example.service.exception.NoEntityCreatedException;
@@ -30,8 +33,8 @@ public class StudentService implements IStudentService {
     @Override
     public Student getStudentById(long id) throws EntityNotFoundException {
         Student tempStudent = getBasicStudentById(id);
-        tempStudent.setPortalAccount(getAccountByStudent(tempStudent));
-        tempStudent.setGrades(getGradesByStudent(tempStudent));
+        tempStudent.setPortalAccount(getAccountByStudent(id));
+        tempStudent.setGrades(getGradesByStudent(id));
         return tempStudent;
     }
 
@@ -64,18 +67,18 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public boolean removeStudent(Student student) {
-        if (student != null) {
-            int result = studentDAO.removeEntity(student.getId());
+    public boolean removeStudent(long id) {
+        if (id > 0) {
+            int result = studentDAO.removeEntity(id);
             if (result == 1) {
-                logger.debug(String.format("Student (%s) removed from the service", student));
+                logger.debug(String.format("Student (%d) removed from the service", id));
                 return true;
             } else {
-                logger.error(String.format("Student (%s) couldn't be removed from the service", student));
+                logger.error(String.format("Student (%d) couldn't be removed from the service", id));
                 return false;
             }
         } else {
-            logger.error("Student couldn't be removed from the service as it is NULL");
+            logger.error("Student couldn't be removed from the service as its id is invalid");
             return false;
         }
     }
@@ -98,101 +101,87 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public Grade addGradeToStudent(Student student, Grade grade) throws NoEntityCreatedException, GradeNotAssignedException {
-        if (student != null && grade != null) {
+    public Grade addGradeToStudent(long studentId, Grade grade) throws NoEntityCreatedException, GradeNotAssignedException {
+        if (studentId > 0 && grade != null) {
             Grade tempGrade = addGrade(grade);
-            int result = gradeDAO.bindGradeToStudentId(tempGrade.getId(), student.getId());
+            int result = gradeDAO.bindGradeToStudentId(tempGrade.getId(), studentId);
             if (result == 1) {
-                tempGrade.setSubject(grade.getSubject());
-                logger.debug(String.format("Grade (%s) assigned to student (%s) in the service", grade, student));
+                logger.debug(String.format("Grade (%s) assigned to student (%d) in the service", tempGrade, studentId));
                 return tempGrade;
             } else {
-                logger.error(String.format("Grade (%s) couldn't be assigned to student (%s) in the service", grade, student));
-                throw new GradeNotAssignedException(tempGrade, student);
+                logger.error(String.format("Grade (%s) couldn't be assigned to student (%d) in the service", tempGrade, studentId));
+                throw new GradeNotAssignedException(tempGrade, studentId);
             }
         } else {
-            logger.error("Grade couldn't be assigned to student in the service as one of them is NULL");
-            throw new NullPointerException("Student or grade is NULL - can't add grade to student in the service");
+            logger.error("Grade couldn't be assigned to student in the service as either student id is invalid or grade is NULL");
+            throw new NoEntityCreatedException(EntityType.GRADE, grade);
         }
     }
 
     @Override
-    public List<Grade> addGradesToStudent(Student student, List<Grade> grades) throws NoEntityCreatedException, GradeNotAssignedException {
-        List<Grade> tempGrades = new ArrayList<>();
-        if (student != null && grades != null) {
-            for (Grade grade : grades) {
-                tempGrades.add(addGradeToStudent(student, grade));
-            }
-        } else {
-            logger.error("Grades couldn't be assigned to student in the service as student or list of grades is NULL");
-        }
-        return tempGrades;
-    }
-
-    @Override
-    public List<Grade> getGradesByStudent(Student student) throws EntityNotFoundException {
+    public List<Grade> getGradesByStudent(long id) throws EntityNotFoundException {
         List<Grade> allGradesByStudentId = new ArrayList<>();
-        if (student != null) {
-            allGradesByStudentId = gradeDAO.getAllGradesByStudentId(student.getId());
+        if (id > 0) {
+            allGradesByStudentId = gradeDAO.getAllGradesByStudentId(id);
             for (Grade grade : allGradesByStudentId) {
                 long subjectId = grade.getSubject().getId();
                 subjectService.getSubjectById(subjectId);
                 grade.setSubject(subjectService.getSubjectById(subjectId));
             }
-            logger.debug(String.format("Grades of student (%s) retrieved from service", student));
+            logger.debug(String.format("Grades of student (%d) retrieved from service", id));
         } else {
-            logger.error("Grades of student couldn't be retrieved from the service as student is NULL");
+            logger.error("Grades of student couldn't be retrieved from the service as student id is invalid");
         }
         return allGradesByStudentId;
     }
 
     @Override
-    public boolean removeGrade(Grade grade) {
-        if (grade != null) {
-            int result = gradeDAO.removeEntity(grade.getId());
+    public boolean removeGrade(long id) {
+        if (id > 0) {
+            int result = gradeDAO.removeEntity(id);
             if (result == 1) {
-                logger.debug(String.format("Grade (%s) removed from the service", grade));
+                logger.debug(String.format("Grade (%d) removed from the service", id));
                 return true;
             } else {
-                logger.error(String.format("Grade (%s) couldn't be removed from the service", grade));
+                logger.error(String.format("Grade (%d) couldn't be removed from the service", id));
                 return false;
             }
         } else {
-            logger.error("Grade couldn't be removed from the service as it is NULL");
+            logger.error("Grade couldn't be removed from the service as its id is invalid");
             return false;
         }
     }
 
     @Override
-    public boolean assignStudentToGroup(Student student, StudentGroup group) {
-        if (student != null && group != null) {
-            int result = studentDAO.bindStudentToGroupById(student.getId(), group.getId());
+    public boolean assignStudentToGroup(long studentId, long groupId) {
+        if (studentId > 0 && groupId > 0) {
+            int result = studentDAO.bindStudentToGroupById(studentId, groupId);
             if (result == 1) {
-                logger.debug(String.format("Student (%s) assigned to group (%s) in the service", student, group));
+                logger.debug(String.format("Student (%d) assigned to group (%d) in the service", studentId, groupId));
                 return true;
             } else {
-                logger.error(String.format("Student (%s) couldn't be assigned to group (%s) in the service", student, group));
+                logger.error(String.format("Student (%d) couldn't be assigned to group (%d) in the service", studentId, groupId));
                 return false;
             }
         } else {
-            logger.error("Student couldn't be assigned to group in the service as one of them is NULL");
+            logger.error("Student couldn't be assigned to group in the service as one of its id is invalid");
             return false;
         }
     }
 
     @Override
-    public boolean removeStudentFromGroup(Student student, StudentGroup group) {
-        if (student != null && group != null) {
-            int result = studentDAO.removeStudentFromGroupById(student.getId(), student.getId());
+    public boolean removeStudentFromGroup(long studentId, long groupId) {
+        if (studentId > 0 && groupId > 0) {
+            int result = studentDAO.removeStudentFromGroupById(studentId, groupId);
             if (result == 1) {
-                logger.debug(String.format("Student (%s) removed from group (%s) in the service", student, group));
+                logger.debug(String.format("Student (%d) removed from group (%d) in the service", studentId, groupId));
                 return true;
             } else {
-                logger.error(String.format("Student (%s) couldn't be removed from group (%s) in the service", student, group));
+                logger.error(String.format("Student (%d) couldn't be removed from group (%d) in the service", studentId, groupId));
                 return false;
             }
         } else {
-            logger.error("Student couldn't be removed from group in the service as one of them is NULL");
+            logger.error("Student couldn't be removed from group in the service as one of its ids is invalid");
             return false;
         }
     }
@@ -207,7 +196,7 @@ public class StudentService implements IStudentService {
             tmpSts.add(tempStudent);
         }
         tempGroup.setStudents(tmpSts);
-        tempGroup.setTimetable(timetableService.getTimetableForStudentGroup(tempGroup));
+        tempGroup.setTimetable(timetableService.getTimetableForStudentGroup(id));
         logger.debug(String.format("All students from group (id: %d) retrieved from service", id));
         return tempGroup;
     }
@@ -222,32 +211,33 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public boolean removeStudentGroup(StudentGroup group) {
-        if (group != null) {
-            int result = groupDAO.removeEntity(group.getId());
+    public boolean removeStudentGroup(long id) {
+        if (id > 0) {
+            int result = groupDAO.removeEntity(id);
             if (result == 1) {
-                logger.debug(String.format("Student group (%s) was removed from the service", group));
+                logger.debug(String.format("Student group (%d) was removed from the service", id));
                 return true;
             } else {
-                logger.error(String.format("Student group (%s) couldn't be removed from the service", group));
+                logger.error(String.format("Student group (%d) couldn't be removed from the service", id));
                 return false;
             }
         } else {
-            logger.error("Student group couldn't be removed from the service as it is NULL");
+            logger.error("Student group couldn't be removed from the service as its is is invalid");
             return false;
         }
     }
 
     @Override
-    public List<StudentGroup> getGroupsAssignedToTimetableEntry(TimetableEntry ttEntry) throws EntityNotFoundException {
+    public List<StudentGroup> getGroupsAssignedToTimetableEntry(long ttEntryId) throws EntityNotFoundException {
         List<StudentGroup> groupsByTimetableEntryId = new ArrayList<>();
-        if (ttEntry != null) {
-            List<Long> ids = groupsHasTTEntriesDAO.getStudentGroupIdsByTimetableEntryId(ttEntry.getId());
+        if (ttEntryId > 0) {
+            List<Long> ids = groupsHasTTEntriesDAO.getStudentGroupIdsByTimetableEntryId(ttEntryId);
             for (long id : ids) {
                 groupsByTimetableEntryId.add(getStudentGroupById(id));
             }
         } else {
-            logger.error("Groups assigned to timetable entry couldn't be retrieved from the service as timetable entry is NULL");
+            logger.error("Groups assigned to timetable entry couldn't be retrieved from the service as timetable entry " +
+                    "id is invalid");
         }
         return groupsByTimetableEntryId;
     }
@@ -300,16 +290,14 @@ public class StudentService implements IStudentService {
         }
     }
 
-    @Override
-    public PortalAccount getAccountByStudent(Student student) {
+    private PortalAccount getAccountByStudent(long id) {
         PortalAccount tempAccount = accountDAO
-                .getAccountByStudentId(student.getId())
+                .getAccountByStudentId(id)
                 .orElseGet(() -> {
-                    logger.error(String.format("Portal account of student (%s) couldn't be retrieved from service",
-                            student));
+                    logger.error(String.format("Portal account of student (%d) couldn't be retrieved from service", id));
                     return null;
                 });
-        logger.debug(String.format("Portal account of student (%s) retrieved from service", student));
+        logger.debug(String.format("Portal account of student (%d) retrieved from service", id));
         return tempAccount;
     }
 

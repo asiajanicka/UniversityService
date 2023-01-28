@@ -3,14 +3,13 @@ package org.example.service.jdbc;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.dao.jdbc.GradeDAO;
-import org.example.dao.jdbc.SubjectDAO;
 import org.example.dao.interfaces.IGradeDAO;
 import org.example.dao.interfaces.ISubjectDAO;
+import org.example.dao.jdbc.GradeDAO;
+import org.example.dao.jdbc.SubjectDAO;
 import org.example.enums.EntityType;
 import org.example.model.Grade;
 import org.example.model.Subject;
-import org.example.model.Teacher;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.NoEntityCreatedException;
 import org.example.service.interfaces.ISubjectService;
@@ -44,74 +43,70 @@ public class SubjectService implements ISubjectService {
     }
 
     @Override
-    public boolean assignSubjectToTeacher(Subject subject, Teacher teacher) {
-        if (subject != null && teacher != null) {
-            int result = subjectDAO.bindSubjectToTeacherId(subject.getId(), teacher.getId());
+    public boolean assignSubjectToTeacher(long subjectId, long teacherId) {
+        if (subjectId > 0 && teacherId > 0) {
+            int result = subjectDAO.bindSubjectToTeacherId(subjectId, teacherId);
             if (result == 1) {
-                logger.debug(String.format("Subject (%s) assigned to teacher (%s) in the service",
-                        subject, teacher));
+                logger.debug(String.format("Subject (%d) assigned to teacher (%d) in the service",
+                        subjectId, teacherId));
                 return true;
             } else {
-                logger.error(String.format("Subject (%s) couldn't be assigned to teacher (%s) in the service",
-                        subject, teacher));
+                logger.error(String.format("Subject (%d) couldn't be assigned to teacher (%d) in the service",
+                        subjectId, teacherId));
                 return false;
             }
         } else {
-            logger.error("Subject couldn't be assigned to teacher in the service as one of them is NULL");
+            logger.error("Subject couldn't be assigned to teacher in the service as one of its id is invalid");
             return false;
         }
     }
 
     @Override
-    public boolean removeSubjectFromTeacher(Subject subject) {
-        if (subject != null) {
-            int result = subjectDAO.removedTeacherFromSubject(subject.getId());
+    public boolean removeSubjectFromTeacher(long subjectId) {
+        if (subjectId > 0) {
+            int result = subjectDAO.removedTeacherFromSubject(subjectId);
             if (result == 1) {
-                logger.debug(String.format("Removed teacher from subject (%s) in the service. Subject doesn't have any " +
-                        "teacher assigned", subject));
+                logger.debug(String.format("Removed teacher from subject (%d) in the service. Subject doesn't have any " +
+                        "teacher assigned", subjectId));
                 return true;
             } else {
-                logger.error(String.format("Subject (%s) couldn't be removed from teacher in the service", subject));
+                logger.error(String.format("Subject (%d) couldn't be removed from teacher in the service", subjectId));
                 return false;
             }
         } else {
-            logger.error("Subject couldn't be removed from teacher in the service as subject is NULL");
+            logger.error("Subject couldn't be removed from teacher in the service as subject's id is invalid");
             return false;
         }
     }
 
     @Override
-    public boolean removeSubject(Subject subject) {
-        if (subject != null) {
-            int result = subjectDAO.removeEntity(subject.getId());
+    public boolean removeSubject(long id) {
+        if (id > 0) {
+            int result = subjectDAO.removeEntity(id);
             if (result == 1) {
-                logger.debug(String.format("Subject (%s) removed from the service", subject));
+                logger.debug(String.format("Subject (%d) removed from the service", id));
                 return true;
             } else {
-                logger.error(String.format("Subject (%s) couldn't be removed from the service", subject));
+                logger.error(String.format("Subject (%d) couldn't be removed from the service", id));
                 return false;
             }
         } else {
-            logger.error("Subject couldn't be removed from the service as it is NULL");
+            logger.error("Subject couldn't be removed from the service as its id is invalid");
             return false;
         }
     }
 
     @Override
-    public List<Grade> getGradesBySubject(Subject subject) throws EntityNotFoundException {
+    public List<Grade> getGradesBySubject(long subjectId) throws EntityNotFoundException {
         List<Grade> allGradesBySubjectId = new ArrayList<>();
-        if (subject != null) {
-            allGradesBySubjectId = gradeDAO.getAllGradesBySubjectId(subject.getId());
+        if (subjectId > 0) {
+            allGradesBySubjectId = gradeDAO.getAllGradesBySubjectId(subjectId);
             for (Grade grade : allGradesBySubjectId) {
-                long subjectId = grade.getSubject().getId();
-                Subject tempSubject = subjectDAO
-                        .getEntityById(subjectId)
-                        .orElseThrow(() -> new EntityNotFoundException(EntityType.SUBJECT, subjectId));
-                grade.setSubject(tempSubject);
+                grade.setSubject(getSubjectById(subjectId));
             }
-            logger.debug(String.format("Grades by subject (%s) retrieved from service", subject));
+            logger.debug(String.format("Grades by subject (%d) retrieved from service", subjectId));
         } else {
-            logger.error("Grades by subject couldn't be retrieved from the service as subject is NULL");
+            logger.error("Grades by subject couldn't be retrieved from the service as subject's id is invalid");
         }
         return allGradesBySubjectId;
     }

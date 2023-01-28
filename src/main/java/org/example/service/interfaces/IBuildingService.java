@@ -14,11 +14,9 @@ public interface IBuildingService {
 
     Building addNewBuilding(String name, String address) throws NoEntityCreatedException;
 
-    Building getBasicBuildingById(long id) throws EntityNotFoundException;
-
     boolean updateBuildingInfo(Building building);
 
-    boolean removeBuilding(Building building);
+    boolean removeBuilding(long buildingId);
 
     Room getRoomById(long id) throws EntityNotFoundException;
 
@@ -26,16 +24,16 @@ public interface IBuildingService {
 
     boolean updateRoom(Room room);
 
-    boolean removeRoom(Room room);
+    boolean removeRoom(long id);
 
-    List<Room> getRoomsInBuilding(Building building);
+    List<Room> getRoomsInBuilding(long buildingId) throws EntityNotFoundException;
 
-    boolean removeAllRoomsFromBuilding(Building building);
+    boolean removeAllRoomsFromBuilding(long buildingId);
 
-    boolean assignDeptToBuilding(Department dept, Building building);
+    boolean assignDeptToBuilding(long deptId, long buildingId);
 
-    boolean removeDeptFromBuilding(Department dept, Building building);
+    boolean removeDeptFromBuilding(long deptId, long buildingId);
 
-    List<Department> getDeptsInBuilding(Building building);
+    List<Department> getDeptsInBuilding(long buildingId);
 
 }

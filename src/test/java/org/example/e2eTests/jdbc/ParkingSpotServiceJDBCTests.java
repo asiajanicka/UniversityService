@@ -35,26 +35,26 @@ public class ParkingSpotServiceJDBCTests {
         assertThat(actualSpot.getName()).isEqualTo(expectedSpotName);
         assertThat(actualSpot.getAddress()).isEqualTo(expectedSpotAddress);
 
-        assertThat(spotService.assignSpotToTeacher(actualSpot, actualTeacher)).isTrue();
+        assertThat(spotService.assignSpotToTeacher(actualSpot.getId(), actualTeacher.getId())).isTrue();
         actualTeacher = deptService.getTeacherById(actualTeacher.getId());
         assertThat(actualTeacher.getParkingSpot()).isEqualTo(actualSpot);
 
-        assertThat(spotService.setSpotFree(actualSpot)).isTrue();
+        assertThat(spotService.setSpotFree(actualSpot.getId())).isTrue();
         assertThat(spotService.getFreeSpots()).contains(actualSpot);
 
         actualTeacher = deptService.getTeacherById(actualTeacher.getId());
         assertThat(actualTeacher.getParkingSpot()).isNull();
 
-        spotService.assignSpotToTeacher(actualSpot, actualTeacher);
+        spotService.assignSpotToTeacher(actualSpot.getId(), actualTeacher.getId());
 
-        deptService.removeTeacher(actualTeacher);
+        deptService.removeTeacher(actualTeacher.getId());
         assertThat(spotService.getFreeSpots()).contains(actualSpot);
 
-        assertThat(spotService.removeSpot(actualSpot)).isTrue();
+        assertThat(spotService.removeSpot(actualSpot.getId())).isTrue();
         assertThatThrownBy(() -> spotService.getSpotById(actualSpot.getId()))
                 .isInstanceOf(EntityNotFoundException.class);
 
-        deptService.removeTeacher(actualTeacher);
+        deptService.removeTeacher(actualTeacher.getId());
         logger.info("End of Parking Spot Service JDBC Tests - test case 1");
     }
 

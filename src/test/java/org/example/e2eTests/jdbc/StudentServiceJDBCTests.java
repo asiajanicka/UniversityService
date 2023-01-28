@@ -42,7 +42,7 @@ public class StudentServiceJDBCTests {
         TimetableEntry ttEntry = new TimetableEntry(LocalTime.of(8, 0, 0), WeekDay.THURSDAY,
                 existingSubject, existingRoom);
         TimetableEntry actualTTEntry = ttService.addNewTimetableEntry(ttEntry);
-        ttService.assignTimetableEntryToGroup(actualTTEntry, actualGroup);
+        ttService.assignTimetableEntryToGroup(actualTTEntry.getId(), actualGroup.getId());
 
         actualGroup = studentService.getStudentGroupById(actualGroup.getId());
         assertThat(actualGroup.getTimetable()).contains(actualTTEntry);
@@ -58,33 +58,33 @@ public class StudentServiceJDBCTests {
 
         assertThat(studentService.getStudentById(actualStudent.getId())).isEqualTo(actualStudent);
 
-        assertThat(studentService.assignStudentToGroup(actualStudent, actualGroup)).isTrue();
+        assertThat(studentService.assignStudentToGroup(actualStudent.getId(), actualGroup.getId())).isTrue();
         assertThat(studentService.getStudentGroupById(actualGroup.getId()).getStudents()).contains(actualStudent);
 
         Grade grade = new Grade(5, subjectService.getSubjectById(1));
-        Grade actualGrade = studentService.addGradeToStudent(actualStudent, grade);
+        Grade actualGrade = studentService.addGradeToStudent(actualStudent.getId(), grade);
         assertThat(actualGrade.getValue()).isEqualTo(grade.getValue());
         assertThat(actualGrade.getSubject()).isEqualTo(grade.getSubject());
-        assertThat(studentService.getGradesByStudent(actualStudent)).contains(actualGrade);
+        assertThat(studentService.getGradesByStudent(actualStudent.getId())).contains(actualGrade);
 
-        assertThat(studentService.removeStudentFromGroup(actualStudent, actualGroup)).isTrue();
+        assertThat(studentService.removeStudentFromGroup(actualStudent.getId(), actualGroup.getId())).isTrue();
         assertThat(studentService.getStudentGroupById(actualGroup.getId()).getStudents()).doesNotContain(actualStudent);
 
-        assertThat(studentService.removeStudent(actualStudent)).isTrue();
+        assertThat(studentService.removeStudent(actualStudent.getId())).isTrue();
         assertThatThrownBy(() -> studentService.getStudentById(actualStudent.getId())).isInstanceOf(EntityNotFoundException.class);
         long accountId = actualStudent.getPortalAccount().getId();
         assertThatThrownBy(() -> accountService.getAccountById(accountId)).isInstanceOf(EntityNotFoundException.class);
-        assertThat(studentService.getGradesByStudent(actualStudent)).isEmpty();
+        assertThat(studentService.getGradesByStudent(actualStudent.getId())).isEmpty();
 
-        assertThat(studentService.removeStudentGroup(actualGroup)).isTrue();
+        assertThat(studentService.removeStudentGroup(actualGroup.getId())).isTrue();
         StudentGroup finalActualGroup = actualGroup;
         assertThatThrownBy(() -> studentService.getStudentGroupById(finalActualGroup.getId())).isInstanceOf(EntityNotFoundException.class);
 
-        assertThat(ttService.getTimetableForStudentGroup(actualGroup)).isEmpty();
-        assertThat(studentService.getGroupsAssignedToTimetableEntry(actualTTEntry)).doesNotContain(actualGroup);
+        assertThat(ttService.getTimetableForStudentGroup(actualGroup.getId())).isEmpty();
+        assertThat(studentService.getGroupsAssignedToTimetableEntry(actualTTEntry.getId())).doesNotContain(actualGroup);
         assertThat(ttService.getTimetableEntryById(actualTTEntry.getId())).isEqualTo(actualTTEntry);
 
-        ttService.removeTimetableEntry(actualTTEntry);
+        ttService.removeTimetableEntry(actualTTEntry.getId());
         logger.info("End of Student Service JDBC Tests - test case 1");
     }
 
@@ -97,7 +97,7 @@ public class StudentServiceJDBCTests {
 
         Student actualStudent = studentService.addNewStudent(testStudent);
         StudentGroup existingGroup = studentService.getStudentGroupById(2);
-        assertThat(studentService.assignStudentToGroup(actualStudent, existingGroup)).isTrue();
+        assertThat(studentService.assignStudentToGroup(actualStudent.getId(), existingGroup.getId())).isTrue();
 
         String newFirstName = "Tom";
         String newLastName = "Johnson";
@@ -113,7 +113,7 @@ public class StudentServiceJDBCTests {
         assertThat(updatedStudent.getLastName()).isEqualTo(newLastName);
         assertThat(updatedStudent.getDateOfBirth()).isEqualTo(newDateOfBirth);
 
-        studentService.removeStudent(updatedStudent);
+        studentService.removeStudent(updatedStudent.getId());
         assertThat(studentService.getStudentGroupById(existingGroup.getId()).getStudents()).doesNotContain(updatedStudent);
         logger.info("End of Student Service JDBC Tests - test case 1");
     }

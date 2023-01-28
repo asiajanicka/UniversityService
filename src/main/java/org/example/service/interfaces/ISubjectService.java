@@ -14,13 +14,13 @@ public interface ISubjectService {
 
     Subject addNewSubject(String subjectName) throws NoEntityCreatedException;
 
-    boolean assignSubjectToTeacher(Subject subject, Teacher teacher);
+    boolean assignSubjectToTeacher(long subjectId, long teacherId);
 
-    boolean removeSubjectFromTeacher(Subject subject);
+    boolean removeSubjectFromTeacher(long subjectId);
 
-    boolean removeSubject(Subject subject);
+    boolean removeSubject(long id);
 
-    List<Grade> getGradesBySubject(Subject subject) throws EntityNotFoundException;
+    List<Grade> getGradesBySubject(long subjectId) throws EntityNotFoundException;
 
     List<Subject> getSubjectsWithoutTeacher();
 

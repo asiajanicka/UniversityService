@@ -32,7 +32,7 @@ public class BuildingService implements IBuildingService {
     @Override
     public Building getBuildingById(long id) throws EntityNotFoundException {
         Building tempBuilding = getBasicBuildingById(id);
-        tempBuilding.setDepartments(getDeptsInBuilding(tempBuilding));
+        tempBuilding.setDepartments(getDeptsInBuilding(tempBuilding.getId()));
         return tempBuilding;
     }
 
@@ -46,8 +46,7 @@ public class BuildingService implements IBuildingService {
         return tempBuilding;
     }
 
-    @Override
-    public Building getBasicBuildingById(long id) throws EntityNotFoundException {
+    private Building getBasicBuildingById(long id) throws EntityNotFoundException {
         Building tempBuilding = buildingDAO
                 .getEntityById(id)
                 .orElseThrow(() -> new EntityNotFoundException(EntityType.BUILDING, id));
@@ -73,18 +72,18 @@ public class BuildingService implements IBuildingService {
     }
 
     @Override
-    public boolean removeBuilding(Building building) {
-        if (building != null) {
-            int result = buildingDAO.removeEntity(building.getId());
+    public boolean removeBuilding(long buildingId) {
+        if (buildingId > 0) {
+            int result = buildingDAO.removeEntity(buildingId);
             if (result == 1) {
-                logger.debug(String.format("Building (%s) removed from the service", building));
+                logger.debug(String.format("Building (%d) removed from the service", buildingId));
                 return true;
             } else {
-                logger.error(String.format("Building (%s) couldn't be removed from the service", building));
+                logger.error(String.format("Building (%d) couldn't be removed from the service", buildingId));
                 return false;
             }
         } else {
-            logger.error("Building couldn't be removed from the service as it is NULL");
+            logger.error("Building couldn't be removed from the service as its id is invalid");
             return false;
         }
     }
@@ -133,91 +132,91 @@ public class BuildingService implements IBuildingService {
     }
 
     @Override
-    public boolean removeRoom(Room room) {
-        if (room != null) {
-            int result = roomDAO.removeEntity(room.getId());
+    public boolean removeRoom(long id) {
+        if (id > 0) {
+            int result = roomDAO.removeEntity(id);
             if (result == 1) {
-                logger.debug(String.format("Room (%s) removed from the service", room));
+                logger.debug(String.format("Room (%d) removed from the service", id));
                 return true;
             } else {
-                logger.error(String.format("Room (%s) couldn't be removed from the service", room));
+                logger.error(String.format("Room (%d) couldn't be removed from the service", id));
                 return false;
             }
         } else {
-            logger.error("Room couldn't be removed from the service as it is NULL");
+            logger.error("Room couldn't be removed from the service as its id is invalid");
             return false;
         }
     }
 
     @Override
-    public List<Room> getRoomsInBuilding(Building building) {
+    public List<Room> getRoomsInBuilding(long buildingId) throws EntityNotFoundException {
         List<Room> allRoomsByBuildingId = new ArrayList<>();
-        if (building != null) {
-            allRoomsByBuildingId = roomDAO.getRoomsByBuildingId(building.getId());
+        if (buildingId > 0) {
+            allRoomsByBuildingId = roomDAO.getRoomsByBuildingId(buildingId);
             for (Room room : allRoomsByBuildingId) {
-                room.setBuilding(building);
+                room.setBuilding(getBuildingById(buildingId));
             }
-            logger.debug(String.format("Rooms in building (%s) retrieved from service", building));
+            logger.debug(String.format("Rooms in building (%d) retrieved from service", buildingId));
         } else {
-            logger.error("Rooms from building couldn't be retrieved from the service as building is NULL");
+            logger.error("Rooms from building couldn't be retrieved from the service as its id is invalid");
         }
         return allRoomsByBuildingId;
     }
 
     @Override
-    public boolean removeAllRoomsFromBuilding(Building building) {
-        if (building != null) {
-            return roomDAO.removeRoomsByBuildingId(building.getId()) > 0;
+    public boolean removeAllRoomsFromBuilding(long buildingId) {
+        if (buildingId > 0) {
+            return roomDAO.removeRoomsByBuildingId(buildingId) > 0;
         } else {
-            logger.error("Rooms couldn't be removed from building in the service as building is NULL");
+            logger.error("Rooms couldn't be removed from building in the service as its id is invalid");
             return false;
         }
     }
 
     @Override
-    public boolean assignDeptToBuilding(Department dept, Building building) {
-        if (dept != null && building != null) {
-            int result = deptDAO.bindDepartmentToBuildingId(dept.getId(), building.getId());
+    public boolean assignDeptToBuilding(long deptId, long buildingId) {
+        if (deptId > 0 && buildingId > 0) {
+            int result = deptDAO.bindDepartmentToBuildingId(deptId, buildingId);
             if (result == 1) {
-                logger.debug(String.format("Department (%s) assigned to building (%s) in the service", dept, building));
+                logger.debug(String.format("Department (%d) assigned to building (%d) in the service", deptId, buildingId));
                 return true;
             } else {
-                logger.error(String.format("Department (%s) couldn't be assigned to building (%s) in the service", dept, building));
+                logger.error(String.format("Department (%d) couldn't be assigned to building (%d) in the service", deptId, buildingId));
                 return false;
             }
         } else {
-            logger.error("Department couldn't be assigned to building in the service as one of them is NULL");
+            logger.error("Department couldn't be assigned to building in the service as one of has invalid id");
             return false;
         }
     }
 
     @Override
-    public boolean removeDeptFromBuilding(Department dept, Building building) {
-        if (dept != null && building != null) {
-            int result = deptDAO.removeDepartmentFromBuildingById(dept.getId(), dept.getId());
+    public boolean removeDeptFromBuilding(long deptId, long buildingId) {
+        if (deptId > 0 && buildingId > 0) {
+            int result = deptDAO.removeDepartmentFromBuildingById(deptId, buildingId);
             if (result == 1) {
-                logger.debug(String.format("Department (%s) removed from building (%s) in the service", dept, building));
+                logger.debug(String.format("Department (%d) removed from building (%d) in the service", deptId, buildingId));
                 return true;
             } else {
-                logger.error(String.format("Department (%s) couldn't be removed from building (%s) in the service", dept, building));
+                logger.error(String.format("Department (%d) couldn't be removed from building (%d) in the service", deptId, buildingId));
                 return false;
             }
         } else {
-            logger.error("Department couldn't be removed from building in the service as one of them is NULL");
+            logger.error("Department couldn't be removed from building in the service as one of them has invalid id");
             return false;
         }
     }
 
     @Override
-    public List<Department> getDeptsInBuilding(Building building) {
+    public List<Department> getDeptsInBuilding(long buildingId) {
         List<Department> deptsByBuildingId = new ArrayList<>();
-        if (building != null) {
-            deptsByBuildingId.addAll(deptDAO.getDepartmentsByBuildingId(building.getId()));
+        if (buildingId > 0) {
+            deptsByBuildingId.addAll(deptDAO.getDepartmentsByBuildingId(buildingId));
             for (Department dept : deptsByBuildingId) {
                 dept.setTeachers(departmentService.getTeachersByDeptId(dept.getId()));
             }
         } else {
-            logger.error("Departments in building couldn't be retrieved in the service as building is NULL");
+            logger.error("Departments in building couldn't be retrieved in the service as its id is invalid");
         }
         return deptsByBuildingId;
     }

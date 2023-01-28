@@ -12,27 +12,24 @@ public interface IDepartmentService {
 
     Teacher getTeacherById(long id) throws EntityNotFoundException;
 
-    Teacher getBasicTeacherById(long id) throws EntityNotFoundException;
 
     Teacher addTeacherWithoutSubjects(Teacher teacher) throws NoEntityCreatedException;
 
     boolean updateTeacherInfo(Teacher teacher);
 
-    boolean removeTeacher(Teacher teacher);
+    boolean removeTeacher(long id);
 
-    List<Subject> getAllSubjectsByTeacher(Teacher teacher);
+    List<Subject> getAllSubjectsByTeacher(long teacherId);
 
     Department getDeptById(long id) throws EntityNotFoundException;
 
-    Department getBasicDeptById(long id) throws EntityNotFoundException;
-
     Department addEmptyDept(String name) throws NoEntityCreatedException;
 
-    boolean removeDept(Department dept);
+    boolean removeDept(long id);
 
-    boolean assignTeacherToDept(Teacher teacher, Department dept);
+    boolean assignTeacherToDept(long teacherId, long deptId);
 
-    boolean removeTeacherFromDept(Teacher student, Department dept);
+    boolean removeTeacherFromDept(long teacherId, long deptId);
 
     List<Teacher> getTeachersByDeptId(long id);
 

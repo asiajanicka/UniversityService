@@ -49,22 +49,22 @@ public class TimetableServiceJDBCTests {
         assertThat(actualTTEntry.getSubject()).isEqualTo(existingSubject);
         assertThat(actualTTEntry.getRoom()).isEqualTo(existingRoom);
 
-        timetableService.assignTimetableEntryToGroup(actualTTEntry, existingGroupOne);
-        timetableService.assignTimetableEntryToGroup(actualTTEntry, existingGroupTwo);
+        timetableService.assignTimetableEntryToGroup(actualTTEntry.getId(), existingGroupOne.getId());
+        timetableService.assignTimetableEntryToGroup(actualTTEntry.getId(), existingGroupTwo.getId());
         existingGroupOne = studentService.getStudentGroupById(existingGroupOne.getId());
         existingGroupTwo = studentService.getStudentGroupById(existingGroupTwo.getId());
-        assertThat(studentService.getGroupsAssignedToTimetableEntry(actualTTEntry))
+        assertThat(studentService.getGroupsAssignedToTimetableEntry(actualTTEntry.getId()))
                 .contains(existingGroupOne)
                 .contains(existingGroupTwo);
 
         Subject newSubject = subjectService.addNewSubject("Biology");
         Room newRoom = buildingService.addRoom(new Room("123", buildingService.getBuildingById(2)));
-        assertThat(timetableService.updateSubjectForTimetableEntry(newSubject, actualTTEntry)).isTrue();
-        assertThat(timetableService.updateRoomForTimetableEntry(newRoom, actualTTEntry)).isTrue();
+        assertThat(timetableService.updateSubjectForTimetableEntry(newSubject, actualTTEntry.getId())).isTrue();
+        assertThat(timetableService.updateRoomForTimetableEntry(newRoom, actualTTEntry.getId())).isTrue();
 
         LocalTime updatedTime = LocalTime.of(8, 15);
         WeekDay updatedDay = WeekDay.FRIDAY;
-        assertThat(timetableService.updateTimeslotForTimetableEntry(updatedTime, updatedDay, actualTTEntry)).isTrue();
+        assertThat(timetableService.updateTimeslotForTimetableEntry(updatedTime, updatedDay, actualTTEntry.getId())).isTrue();
 
         actualTTEntry = timetableService.getTimetableEntryById(actualTTEntry.getId());
         assertThat(actualTTEntry.getTime()).isEqualTo(updatedTime);
@@ -72,19 +72,19 @@ public class TimetableServiceJDBCTests {
         assertThat(actualTTEntry.getSubject()).isEqualTo(newSubject);
         assertThat(actualTTEntry.getRoom()).isEqualTo(newRoom);
 
-        assertThat(timetableService.removeTimetableEntryFromGroup(actualTTEntry, existingGroupOne)).isTrue();
-        assertThat(studentService.getGroupsAssignedToTimetableEntry(actualTTEntry))
+        assertThat(timetableService.removeTimetableEntryFromGroup(actualTTEntry.getId(), existingGroupOne.getId())).isTrue();
+        assertThat(studentService.getGroupsAssignedToTimetableEntry(actualTTEntry.getId()))
                 .doesNotContain(existingGroupOne);
 
-        assertThat(subjectService.removeSubject(newSubject)).isFalse();
-        assertThat(buildingService.removeRoom(newRoom)).isFalse();
+        assertThat(subjectService.removeSubject(newSubject.getId())).isFalse();
+        assertThat(buildingService.removeRoom(newRoom.getId())).isFalse();
 
-        assertThat(timetableService.removeTimetableEntry(actualTTEntry)).isTrue();
-        assertThat(timetableService.getTimetableForStudentGroup(existingGroupTwo))
+        assertThat(timetableService.removeTimetableEntry(actualTTEntry.getId())).isTrue();
+        assertThat(timetableService.getTimetableForStudentGroup(existingGroupTwo.getId()))
                 .doesNotContain(actualTTEntry);
 
-        assertThat(subjectService.removeSubject(newSubject)).isTrue();
-        assertThat(buildingService.removeRoom(newRoom)).isTrue();
+        assertThat(subjectService.removeSubject(newSubject.getId())).isTrue();
+        assertThat(buildingService.removeRoom(newRoom.getId())).isTrue();
         logger.info("End of Timetable Service JDBC Tests - test case 1");
     }
 

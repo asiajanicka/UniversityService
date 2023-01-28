@@ -1,7 +1,6 @@
 package org.example.service.interfaces;
 
 import org.example.model.ParkingSpot;
-import org.example.model.Teacher;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.NoEntityCreatedException;
 
@@ -13,11 +12,11 @@ public interface IParkingSpotService {
 
     ParkingSpot addNewSpot(String name, String address) throws NoEntityCreatedException;
 
-    boolean assignSpotToTeacher(ParkingSpot spot, Teacher teacher);
+    boolean assignSpotToTeacher(long spotId, long teacherId);
 
-    boolean setSpotFree(ParkingSpot spot);
+    boolean setSpotFree(long id);
 
-    boolean removeSpot(ParkingSpot spot);
+    boolean removeSpot(long id);
 
     List<ParkingSpot> getFreeSpots();
 

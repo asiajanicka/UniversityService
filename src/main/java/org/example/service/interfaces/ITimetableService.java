@@ -14,18 +14,18 @@ public interface ITimetableService {
 
     TimetableEntry addNewTimetableEntry(TimetableEntry ttEntry) throws NoEntityCreatedException;
 
-    boolean updateTimeslotForTimetableEntry(LocalTime time, WeekDay day, TimetableEntry ttEntry);
+    boolean updateTimeslotForTimetableEntry(LocalTime time, WeekDay day, long ttEntryId) throws EntityNotFoundException;
 
-    boolean updateRoomForTimetableEntry(Room room, TimetableEntry ttEntry);
+    boolean updateRoomForTimetableEntry(Room room, long ttEntryId) throws EntityNotFoundException;
 
-    boolean updateSubjectForTimetableEntry(Subject subject, TimetableEntry ttEntry);
+    boolean updateSubjectForTimetableEntry(Subject subject, long ttEntryId) throws EntityNotFoundException;
 
-    public boolean removeTimetableEntry(TimetableEntry ttEntry);
+    boolean removeTimetableEntry(long id);
 
-    GroupsHasTimetableEntry assignTimetableEntryToGroup(TimetableEntry ttEntry, StudentGroup group) throws NoEntityCreatedException;
+    GroupsHasTimetableEntry assignTimetableEntryToGroup(long ttEntryId, long groupId) throws NoEntityCreatedException;
 
-    boolean removeTimetableEntryFromGroup(TimetableEntry ttEntry, StudentGroup group);
+    boolean removeTimetableEntryFromGroup(long ttEntryId, long groupId);
 
-    List<TimetableEntry> getTimetableForStudentGroup(StudentGroup group) throws EntityNotFoundException;
+    List<TimetableEntry> getTimetableForStudentGroup(long groupId) throws EntityNotFoundException;
 
 }

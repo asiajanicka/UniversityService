@@ -40,29 +40,29 @@ public class SubjectServiceJDBCTests {
         Subject actualSubject = subjectService.addNewSubject(expectedSubjectName);
         assertThat(actualSubject.getName()).isEqualTo(expectedSubjectName);
 
-        assertThat(subjectService.assignSubjectToTeacher(actualSubject, teacherOne)).isTrue();
-        assertThat(teacherService.getAllSubjectsByTeacher(teacherOne)).contains(actualSubject);
+        assertThat(subjectService.assignSubjectToTeacher(actualSubject.getId(), teacherOne.getId())).isTrue();
+        assertThat(teacherService.getAllSubjectsByTeacher(teacherOne.getId())).contains(actualSubject);
 
-        assertThat(subjectService.removeSubjectFromTeacher(actualSubject)).isTrue();
-        assertThat(teacherService.getAllSubjectsByTeacher(teacherOne)).doesNotContain(actualSubject);
+        assertThat(subjectService.removeSubjectFromTeacher(actualSubject.getId())).isTrue();
+        assertThat(teacherService.getAllSubjectsByTeacher(teacherOne.getId())).doesNotContain(actualSubject);
 
-        subjectService.assignSubjectToTeacher(actualSubject, teacherTwo);
+        subjectService.assignSubjectToTeacher(actualSubject.getId(), teacherTwo.getId());
         Grade grade = new Grade(5, actualSubject);
         Student actualStudent = studentService.getStudentById(1);
-        Grade actualGrade = studentService.addGradeToStudent(actualStudent, grade);
+        Grade actualGrade = studentService.addGradeToStudent(actualStudent.getId(), grade);
 
-        assertThat(subjectService.getGradesBySubject(actualSubject)).contains(actualGrade);
+        assertThat(subjectService.getGradesBySubject(actualSubject.getId())).contains(actualGrade);
 
-        assertThat(subjectService.removeSubject(actualSubject)).isTrue();
+        assertThat(subjectService.removeSubject(actualSubject.getId())).isTrue();
         assertThatThrownBy(() -> subjectService.getSubjectById(actualSubject.getId()))
                 .isInstanceOf(EntityNotFoundException.class);
         assertThat(studentService
-                .getGradesByStudent(actualStudent)
+                .getGradesByStudent(actualStudent.getId())
                 .stream()
                 .filter(p -> p.getId() == actualGrade.getId())
                 .collect(Collectors.toList())).isEmpty();
 
-        assertThat(teacherService.getAllSubjectsByTeacher(teacherTwo)).doesNotContain(actualSubject);
+        assertThat(teacherService.getAllSubjectsByTeacher(teacherTwo.getId())).doesNotContain(actualSubject);
         logger.info("End of Subject Service JDBC Tests - test case 1");
     }
 

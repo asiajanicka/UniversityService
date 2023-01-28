@@ -39,12 +39,12 @@ public class DepartmentServiceJDBCTests {
         assertThat(actualTeacher.getLastName()).isEqualTo(testTeacher.getLastName());
 
         Department existingDept = deptService.getDeptById(1);
-        assertThat(deptService.assignTeacherToDept(actualTeacher, existingDept)).isTrue();
+        assertThat(deptService.assignTeacherToDept(actualTeacher.getId(), existingDept.getId())).isTrue();
         Department dept = deptService.getDeptById(1);
         assertThat(dept.getTeachers()).contains(actualTeacher);
 
         Subject subject = subjectService.addNewSubject("Organic Chemistry");
-        subjectService.assignSubjectToTeacher(subject, actualTeacher);
+        subjectService.assignSubjectToTeacher(subject.getId(), actualTeacher.getId());
 
         String newFName = "Mary";
         String newLName = "Violet";
@@ -57,14 +57,14 @@ public class DepartmentServiceJDBCTests {
         assertThat(updatedTeacher.getLastName()).isEqualTo(newLName);
         assertThat(updatedTeacher.getSubjects()).contains(subject);
 
-        assertThat(deptService.removeTeacherFromDept(updatedTeacher, dept)).isTrue();
+        assertThat(deptService.removeTeacherFromDept(updatedTeacher.getId(), dept.getId())).isTrue();
         assertThat(deptService.getDeptById(1).getTeachers()).doesNotContain(updatedTeacher);
 
-        assertThat(deptService.removeTeacher(updatedTeacher)).isTrue();
+        assertThat(deptService.removeTeacher(updatedTeacher.getId())).isTrue();
         assertThatThrownBy(() -> deptService.getTeacherById(updatedTeacher.getId())).isInstanceOf(EntityNotFoundException.class);
         assertThat(subjectService.getSubjectsWithoutTeacher()).contains(subject);
 
-        subjectService.removeSubject(subject);
+        subjectService.removeSubject(subject.getId());
         logger.info("End of Department Service JDBC Tests - test case 1");
     }
 
@@ -79,25 +79,25 @@ public class DepartmentServiceJDBCTests {
 
         Department actualDept = deptService.addEmptyDept(expectedDeptName);
         assertThat(actualDept.getName()).isEqualTo(expectedDeptName);
-        Building basicBuilding = buildingService.getBasicBuildingById(1);
+        Building basicBuilding = buildingService.getBuildingById(1);
 
-        buildingService.assignDeptToBuilding(actualDept, basicBuilding);
-        assertThat(buildingService.getDeptsInBuilding(basicBuilding)).contains(actualDept);
+        buildingService.assignDeptToBuilding(actualDept.getId(), basicBuilding.getId());
+        assertThat(buildingService.getDeptsInBuilding(basicBuilding.getId())).contains(actualDept);
 
         Teacher teacherOne = deptService.addTeacherWithoutSubjects(new Teacher("John", "One"));
         Teacher teacherTwo = deptService.addTeacherWithoutSubjects(new Teacher("Tom", "Two"));
-        assertThat(deptService.assignTeacherToDept(teacherOne, actualDept)).isTrue();
-        assertThat(deptService.assignTeacherToDept(teacherTwo, actualDept)).isTrue();
+        assertThat(deptService.assignTeacherToDept(teacherOne.getId(), actualDept.getId())).isTrue();
+        assertThat(deptService.assignTeacherToDept(teacherTwo.getId(), actualDept.getId())).isTrue();
 
-        assertThat(deptService.removeTeacher(teacherOne)).isTrue();
+        assertThat(deptService.removeTeacher(teacherOne.getId())).isTrue();
         List<Teacher> teachersByDeptId = deptService.getTeachersByDeptId(actualDept.getId());
         assertThat(teachersByDeptId).doesNotContain(teacherOne);
         assertThat(teachersByDeptId).contains(teacherTwo);
 
-        assertThat(deptService.removeDept(actualDept)).isTrue();
-        assertThatThrownBy(() -> deptService.getBasicDeptById(actualDept.getId())).isInstanceOf(EntityNotFoundException.class);
-        assertThatThrownBy(() -> deptService.getBasicTeacherById(teacherTwo.getId())).isInstanceOf(EntityNotFoundException.class);
-        assertThat(buildingService.getDeptsInBuilding(basicBuilding)).doesNotContain(actualDept);
+        assertThat(deptService.removeDept(actualDept.getId())).isTrue();
+        assertThatThrownBy(() -> deptService.getDeptById(actualDept.getId())).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> deptService.getTeacherById(teacherTwo.getId())).isInstanceOf(EntityNotFoundException.class);
+        assertThat(buildingService.getDeptsInBuilding(basicBuilding.getId())).doesNotContain(actualDept);
         logger.info("End of Department Service JDBC Tests - test case 2");
     }
 

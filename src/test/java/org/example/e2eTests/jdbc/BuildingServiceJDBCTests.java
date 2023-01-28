@@ -21,7 +21,7 @@ public class BuildingServiceJDBCTests {
     private static final Logger logger = LogManager.getLogger(BuildingServiceJDBCTests.class);
 
     @Test
-    public void usecase1Test() throws NoEntityCreatedException {
+    public void usecase1Test() throws NoEntityCreatedException, EntityNotFoundException {
 
         logger.info("Start of Building Service JDBC Tests - test case 1");
         IBuildingService buildingService = new BuildingService();
@@ -50,18 +50,18 @@ public class BuildingServiceJDBCTests {
         actualRoomOne.setNumber(roomOneUpdatedNumber);
 
         assertThat(buildingService.updateRoom(actualRoomOne)).isTrue();
-        assertThat(buildingService.getRoomsInBuilding(actualBuilding))
+        assertThat(buildingService.getRoomsInBuilding(actualBuilding.getId()))
                 .contains(actualRoomOne)
                 .contains(actualRoomTwo);
 
-        assertThat(buildingService.removeBuilding(actualBuilding)).isFalse();
-        assertThat(buildingService.removeAllRoomsFromBuilding(actualBuilding)).isTrue();
+        assertThat(buildingService.removeBuilding(actualBuilding.getId())).isFalse();
+        assertThat(buildingService.removeAllRoomsFromBuilding(actualBuilding.getId())).isTrue();
         assertThatThrownBy(() -> buildingService.getRoomById(actualRoomOne.getId()))
                 .isInstanceOf(EntityNotFoundException.class);
         assertThatThrownBy(() -> buildingService.getRoomById(actualRoomTwo.getId()))
                 .isInstanceOf(EntityNotFoundException.class);
 
-        assertThat(buildingService.removeBuilding(actualBuilding)).isTrue();
+        assertThat(buildingService.removeBuilding(actualBuilding.getId())).isTrue();
         assertThatThrownBy(() -> buildingService.getBuildingById(actualBuilding.getId()))
                 .isInstanceOf(EntityNotFoundException.class);
         logger.info("End of Building Service JDBC Tests - test case 1");
@@ -77,22 +77,22 @@ public class BuildingServiceJDBCTests {
 
         Department actualDeptOne = deptService.addEmptyDept("Statistics");
         Department actualDeptTwo = deptService.addEmptyDept("Data Analytics");
-        assertThat(buildingService.assignDeptToBuilding(actualDeptOne, actualBuilding)).isTrue();
-        assertThat(buildingService.assignDeptToBuilding(actualDeptTwo, actualBuilding)).isTrue();
-        assertThat(buildingService.getDeptsInBuilding(actualBuilding))
+        assertThat(buildingService.assignDeptToBuilding(actualDeptOne.getId(), actualBuilding.getId())).isTrue();
+        assertThat(buildingService.assignDeptToBuilding(actualDeptTwo.getId(), actualBuilding.getId())).isTrue();
+        assertThat(buildingService.getDeptsInBuilding(actualBuilding.getId()))
                 .contains(actualDeptOne)
                 .contains((actualDeptTwo));
 
-        assertThat(buildingService.removeDeptFromBuilding(actualDeptOne, actualBuilding)).isTrue();
-        assertThat(buildingService.getDeptsInBuilding(actualBuilding)).doesNotContain(actualDeptOne);
+        assertThat(buildingService.removeDeptFromBuilding(actualDeptOne.getId(), actualBuilding.getId())).isTrue();
+        assertThat(buildingService.getDeptsInBuilding(actualBuilding.getId())).doesNotContain(actualDeptOne);
 
-        assertThat(buildingService.removeBuilding(actualBuilding)).isTrue();
+        assertThat(buildingService.removeBuilding(actualBuilding.getId())).isTrue();
         assertThatThrownBy(() -> buildingService.getBuildingById(actualBuilding.getId()))
                 .isInstanceOf(EntityNotFoundException.class);
         assertThat(deptService.getDepartmentsWithoutBuilding()).contains(actualDeptTwo);
 
-        deptService.removeDept(actualDeptOne);
-        deptService.removeDept(actualDeptTwo);
+        deptService.removeDept(actualDeptOne.getId());
+        deptService.removeDept(actualDeptTwo.getId());
         logger.info("End of Building Service JDBC Tests - test case 2");
     }
 
