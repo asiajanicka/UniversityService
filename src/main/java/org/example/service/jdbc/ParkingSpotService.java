@@ -1,24 +1,26 @@
-package org.example.service;
+package org.example.service.jdbc;
 
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.dao.ParkingSpotDAO;
 import org.example.dao.interfaces.IParkingSpotDAO;
+import org.example.dao.jdbc.ParkingSpotDAO;
 import org.example.enums.EntityType;
 import org.example.model.ParkingSpot;
 import org.example.model.Teacher;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.NoEntityCreatedException;
+import org.example.service.interfaces.IParkingSpotService;
 
 import java.util.List;
 
 @NoArgsConstructor
-public class ParkingSpotService {
+public class ParkingSpotService implements IParkingSpotService {
 
     private final IParkingSpotDAO spotDAO = new ParkingSpotDAO();
     private static final Logger logger = LogManager.getLogger(ParkingSpotService.class);
 
+    @Override
     public ParkingSpot getSpotById(long id) throws EntityNotFoundException {
         ParkingSpot tempSpot = spotDAO
                 .getEntityById(id)
@@ -27,6 +29,7 @@ public class ParkingSpotService {
         return tempSpot;
     }
 
+    @Override
     public ParkingSpot addNewSpot(String name, String address) throws NoEntityCreatedException {
         ParkingSpot spotToAdd = new ParkingSpot(name, address);
         ParkingSpot tempSpot = spotDAO
@@ -36,6 +39,7 @@ public class ParkingSpotService {
         return tempSpot;
     }
 
+    @Override
     public boolean assignSpotToTeacher(ParkingSpot spot, Teacher teacher) {
         if (spot != null && teacher != null) {
             int result = spotDAO.bindSpotToTeacherId(spot.getId(), teacher.getId());
@@ -54,6 +58,7 @@ public class ParkingSpotService {
         }
     }
 
+    @Override
     public boolean setSpotFree(ParkingSpot spot) {
         if (spot != null) {
             int result = spotDAO.setSpotFree(spot.getId());
@@ -71,6 +76,7 @@ public class ParkingSpotService {
         }
     }
 
+    @Override
     public boolean removeSpot(ParkingSpot spot) {
         if (spot != null) {
             int result = spotDAO.removeEntity(spot.getId());
@@ -87,6 +93,7 @@ public class ParkingSpotService {
         }
     }
 
+    @Override
     public List<ParkingSpot> getFreeSpots() {
         return spotDAO.getFreeSpots();
     }

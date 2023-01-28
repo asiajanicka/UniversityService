@@ -1,24 +1,26 @@
-package org.example.service;
+package org.example.service.jdbc;
 
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.dao.PortalAccountDAO;
 import org.example.dao.interfaces.IPortalAccountDAO;
+import org.example.dao.jdbc.PortalAccountDAO;
 import org.example.enums.EntityType;
 import org.example.model.PortalAccount;
 import org.example.model.Student;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.NoEntityCreatedException;
+import org.example.service.interfaces.IPortalAccountService;
 
 import java.time.LocalDate;
 
 @NoArgsConstructor
-public class PortalAccountService {
+public class PortalAccountService implements IPortalAccountService {
 
     private final IPortalAccountDAO accountDAO = new PortalAccountDAO();
     private static final Logger logger = LogManager.getLogger(StudentService.class);
 
+    @Override
     public PortalAccount addNewAccount(PortalAccount account) throws NoEntityCreatedException {
         if (account != null) {
             PortalAccount tempAccount = accountDAO
@@ -32,6 +34,7 @@ public class PortalAccountService {
         }
     }
 
+    @Override
     public boolean bindAccountToStudent(PortalAccount account, Student student) {
         if (account != null && student != null) {
             int result = accountDAO.bindAccountToStudentId(account.getId(), student.getId());
@@ -50,6 +53,7 @@ public class PortalAccountService {
         }
     }
 
+    @Override
     public PortalAccount getAccountById(long id) throws EntityNotFoundException {
         PortalAccount tempAccount = accountDAO.getEntityById(id)
                 .orElseThrow(() -> new EntityNotFoundException(EntityType.PORTAL_ACCOUNT, id));
@@ -57,6 +61,7 @@ public class PortalAccountService {
         return tempAccount;
     }
 
+    @Override
     public boolean removeAccount(PortalAccount account) {
         if (account != null) {
             int result = accountDAO.removeEntity(account.getId());
@@ -73,6 +78,7 @@ public class PortalAccountService {
         }
     }
 
+    @Override
     public boolean changePasswordForStudent(Student student, String newPassword) throws EntityNotFoundException {
         if (student != null) {
             PortalAccount account = accountDAO
@@ -95,6 +101,7 @@ public class PortalAccountService {
         }
     }
 
+    @Override
     public boolean changeExpDateForStudent(Student student, LocalDate date) throws EntityNotFoundException {
         if (student != null && date != null) {
             if (date.isAfter(LocalDate.now())) {

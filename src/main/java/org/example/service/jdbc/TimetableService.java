@@ -1,24 +1,25 @@
-package org.example.service;
+package org.example.service.jdbc;
 
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.dao.GroupsHasTimetableEntriesDAO;
-import org.example.dao.TimetableEntryDAO;
 import org.example.dao.interfaces.IGroupsHasTimetableEntriesDAO;
 import org.example.dao.interfaces.ITimetableEntryDAO;
+import org.example.dao.jdbc.GroupsHasTimetableEntriesDAO;
+import org.example.dao.jdbc.TimetableEntryDAO;
 import org.example.enums.EntityType;
 import org.example.enums.WeekDay;
 import org.example.model.*;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.NoEntityCreatedException;
+import org.example.service.interfaces.ITimetableService;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-public class TimetableService {
+public class TimetableService implements ITimetableService {
 
     private final ITimetableEntryDAO timetableDAO = new TimetableEntryDAO();
     private final IGroupsHasTimetableEntriesDAO groupsHasTTEntriesDAO = new GroupsHasTimetableEntriesDAO();
@@ -26,6 +27,7 @@ public class TimetableService {
     private final BuildingService buildingService = new BuildingService();
     private static final Logger logger = LogManager.getLogger(TimetableService.class);
 
+    @Override
     public TimetableEntry getTimetableEntryById(long id) throws EntityNotFoundException {
         TimetableEntry tempTTEntry = timetableDAO
                 .getEntityById(id)
@@ -36,6 +38,7 @@ public class TimetableService {
         return tempTTEntry;
     }
 
+    @Override
     public TimetableEntry addNewTimetableEntry(TimetableEntry ttEntry) throws NoEntityCreatedException {
         if (ttEntry != null) {
             TimetableEntry tempTTEntry = timetableDAO
@@ -51,6 +54,7 @@ public class TimetableService {
         }
     }
 
+    @Override
     public boolean updateTimeslotForTimetableEntry(LocalTime time, WeekDay day, TimetableEntry ttEntry) {
         if (ttEntry != null) {
             ttEntry.setTime(time);
@@ -62,6 +66,7 @@ public class TimetableService {
         }
     }
 
+    @Override
     public boolean updateRoomForTimetableEntry(Room room, TimetableEntry ttEntry) {
         if (room != null && ttEntry != null) {
             ttEntry.setRoom(room);
@@ -72,6 +77,7 @@ public class TimetableService {
         }
     }
 
+    @Override
     public boolean updateSubjectForTimetableEntry(Subject subject, TimetableEntry ttEntry) {
         if (subject != null && ttEntry != null) {
             ttEntry.setSubject(subject);
@@ -93,6 +99,7 @@ public class TimetableService {
         }
     }
 
+    @Override
     public boolean removeTimetableEntry(TimetableEntry ttEntry) {
         if (ttEntry != null) {
             int result = timetableDAO.removeEntity(ttEntry.getId());
@@ -109,6 +116,7 @@ public class TimetableService {
         }
     }
 
+    @Override
     public GroupsHasTimetableEntry assignTimetableEntryToGroup(TimetableEntry ttEntry, StudentGroup group) throws NoEntityCreatedException {
         if (ttEntry != null && group != null) {
             GroupsHasTimetableEntry groupsHasTimetableEntryToAdd = new GroupsHasTimetableEntry(group.getId(), ttEntry.getId());
@@ -124,6 +132,7 @@ public class TimetableService {
         }
     }
 
+    @Override
     public boolean removeTimetableEntryFromGroup(TimetableEntry ttEntry, StudentGroup group) {
         if (ttEntry != null && group != null) {
             int result = groupsHasTTEntriesDAO.removeEntityById(group.getId(), ttEntry.getId());
@@ -141,6 +150,7 @@ public class TimetableService {
         }
     }
 
+    @Override
     public List<TimetableEntry> getTimetableForStudentGroup(StudentGroup group) throws EntityNotFoundException {
         List<TimetableEntry> timetableByGroupId = new ArrayList<>();
         if (group != null) {

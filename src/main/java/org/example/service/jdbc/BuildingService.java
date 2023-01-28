@@ -1,26 +1,27 @@
-package org.example.service;
+package org.example.service.jdbc;
 
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.dao.BuildingDAO;
-import org.example.dao.DeptDAO;
-import org.example.dao.RoomDAO;
 import org.example.dao.interfaces.IBuildingDAO;
 import org.example.dao.interfaces.IDeptDAO;
 import org.example.dao.interfaces.IRoomDAO;
+import org.example.dao.jdbc.BuildingDAO;
+import org.example.dao.jdbc.DeptDAO;
+import org.example.dao.jdbc.RoomDAO;
 import org.example.enums.EntityType;
 import org.example.model.Building;
 import org.example.model.Department;
 import org.example.model.Room;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.NoEntityCreatedException;
+import org.example.service.interfaces.IBuildingService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-public class BuildingService {
+public class BuildingService implements IBuildingService {
 
     private final IBuildingDAO buildingDAO = new BuildingDAO();
     private final IDeptDAO deptDAO = new DeptDAO();
@@ -28,12 +29,14 @@ public class BuildingService {
     private final DepartmentService departmentService = new DepartmentService();
     private static final Logger logger = LogManager.getLogger(BuildingService.class);
 
+    @Override
     public Building getBuildingById(long id) throws EntityNotFoundException {
         Building tempBuilding = getBasicBuildingById(id);
         tempBuilding.setDepartments(getDeptsInBuilding(tempBuilding));
         return tempBuilding;
     }
 
+    @Override
     public Building addNewBuilding(String name, String address) throws NoEntityCreatedException {
         Building buildingToAdd = new Building(name, address);
         Building tempBuilding = buildingDAO
@@ -43,6 +46,7 @@ public class BuildingService {
         return tempBuilding;
     }
 
+    @Override
     public Building getBasicBuildingById(long id) throws EntityNotFoundException {
         Building tempBuilding = buildingDAO
                 .getEntityById(id)
@@ -51,6 +55,7 @@ public class BuildingService {
         return tempBuilding;
     }
 
+    @Override
     public boolean updateBuildingInfo(Building building) {
         if (building != null) {
             int result = buildingDAO.updateEntity(building);
@@ -67,6 +72,7 @@ public class BuildingService {
         }
     }
 
+    @Override
     public boolean removeBuilding(Building building) {
         if (building != null) {
             int result = buildingDAO.removeEntity(building.getId());
@@ -83,6 +89,7 @@ public class BuildingService {
         }
     }
 
+    @Override
     public Room getRoomById(long id) throws EntityNotFoundException {
         Room tempRoom = roomDAO
                 .getEntityById(id)
@@ -92,6 +99,7 @@ public class BuildingService {
         return tempRoom;
     }
 
+    @Override
     public Room addRoom(Room room) throws NoEntityCreatedException {
         if (room != null && room.getBuilding() != null && room.getBuilding().getId() > 0) {
             Room tempRoom = roomDAO
@@ -107,6 +115,7 @@ public class BuildingService {
         }
     }
 
+    @Override
     public boolean updateRoom(Room room) {
         if (room != null) {
             int result = roomDAO.updateEntity(room);
@@ -123,6 +132,7 @@ public class BuildingService {
         }
     }
 
+    @Override
     public boolean removeRoom(Room room) {
         if (room != null) {
             int result = roomDAO.removeEntity(room.getId());
@@ -139,6 +149,7 @@ public class BuildingService {
         }
     }
 
+    @Override
     public List<Room> getRoomsInBuilding(Building building) {
         List<Room> allRoomsByBuildingId = new ArrayList<>();
         if (building != null) {
@@ -153,6 +164,7 @@ public class BuildingService {
         return allRoomsByBuildingId;
     }
 
+    @Override
     public boolean removeAllRoomsFromBuilding(Building building) {
         if (building != null) {
             return roomDAO.removeRoomsByBuildingId(building.getId()) > 0;
@@ -162,6 +174,7 @@ public class BuildingService {
         }
     }
 
+    @Override
     public boolean assignDeptToBuilding(Department dept, Building building) {
         if (dept != null && building != null) {
             int result = deptDAO.bindDepartmentToBuildingId(dept.getId(), building.getId());
@@ -178,6 +191,7 @@ public class BuildingService {
         }
     }
 
+    @Override
     public boolean removeDeptFromBuilding(Department dept, Building building) {
         if (dept != null && building != null) {
             int result = deptDAO.removeDepartmentFromBuildingById(dept.getId(), dept.getId());
@@ -194,6 +208,7 @@ public class BuildingService {
         }
     }
 
+    @Override
     public List<Department> getDeptsInBuilding(Building building) {
         List<Department> deptsByBuildingId = new ArrayList<>();
         if (building != null) {
@@ -208,4 +223,3 @@ public class BuildingService {
     }
 
 }
-

@@ -1,28 +1,30 @@
-package org.example.e2eTests;
+package org.example.e2eTests.jdbc;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.model.Building;
 import org.example.model.Department;
 import org.example.model.Room;
-import org.example.service.BuildingService;
-import org.example.service.DepartmentService;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.NoEntityCreatedException;
+import org.example.service.interfaces.IBuildingService;
+import org.example.service.interfaces.IDepartmentService;
+import org.example.service.jdbc.BuildingService;
+import org.example.service.jdbc.DepartmentService;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class BuildingServiceTests {
+public class BuildingServiceJDBCTests {
 
-    private static final Logger logger = LogManager.getLogger(BuildingServiceTests.class);
+    private static final Logger logger = LogManager.getLogger(BuildingServiceJDBCTests.class);
 
     @Test
     public void usecase1Test() throws NoEntityCreatedException {
 
-        logger.info("Start of Building Service Tests - test case 1");
-        BuildingService buildingService = new BuildingService();
+        logger.info("Start of Building Service JDBC Tests - test case 1");
+        IBuildingService buildingService = new BuildingService();
         String expectedBuildingName = "Big Data Institute";
         String expectedBuildingAddress = "Old Road Campus OX3 7LF";
         Building actualBuilding = buildingService.addNewBuilding(expectedBuildingName, expectedBuildingAddress);
@@ -62,15 +64,15 @@ public class BuildingServiceTests {
         assertThat(buildingService.removeBuilding(actualBuilding)).isTrue();
         assertThatThrownBy(() -> buildingService.getBuildingById(actualBuilding.getId()))
                 .isInstanceOf(EntityNotFoundException.class);
-        logger.info("End of Building Service Tests - test case 1");
+        logger.info("End of Building Service JDBC Tests - test case 1");
     }
 
     @Test
     public void usecase2Test() throws NoEntityCreatedException {
 
-        logger.info("Start of Building Service Tests - test case 2");
-        BuildingService buildingService = new BuildingService();
-        DepartmentService deptService = new DepartmentService();
+        logger.info("Start of Building Service JDBC Tests - test case 2");
+        IBuildingService buildingService = new BuildingService();
+        IDepartmentService deptService = new DepartmentService();
         Building actualBuilding = buildingService.addNewBuilding("Big Data Institute", "Old Road Campus OX3 7LF");
 
         Department actualDeptOne = deptService.addEmptyDept("Statistics");
@@ -91,7 +93,7 @@ public class BuildingServiceTests {
 
         deptService.removeDept(actualDeptOne);
         deptService.removeDept(actualDeptTwo);
-        logger.info("End of Building Service Tests - test case 2");
+        logger.info("End of Building Service JDBC Tests - test case 2");
     }
 
 }

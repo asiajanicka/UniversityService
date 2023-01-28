@@ -1,4 +1,4 @@
-package org.example.dao;
+package org.example.dao.jdbc;
 
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;

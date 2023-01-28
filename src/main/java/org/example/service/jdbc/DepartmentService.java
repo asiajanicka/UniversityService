@@ -1,12 +1,12 @@
-package org.example.service;
+package org.example.service.jdbc;
 
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.dao.DeptDAO;
-import org.example.dao.ParkingSpotDAO;
-import org.example.dao.SubjectDAO;
-import org.example.dao.TeacherDAO;
+import org.example.dao.jdbc.DeptDAO;
+import org.example.dao.jdbc.ParkingSpotDAO;
+import org.example.dao.jdbc.SubjectDAO;
+import org.example.dao.jdbc.TeacherDAO;
 import org.example.dao.interfaces.IDeptDAO;
 import org.example.dao.interfaces.IParkingSpotDAO;
 import org.example.dao.interfaces.ISubjectDAO;
@@ -17,12 +17,13 @@ import org.example.model.Subject;
 import org.example.model.Teacher;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.NoEntityCreatedException;
+import org.example.service.interfaces.IDepartmentService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-public class DepartmentService {
+public class DepartmentService implements IDepartmentService {
 
     private final ITeacherDAO teacherDAO = new TeacherDAO();
     private final ISubjectDAO subjectDAO = new SubjectDAO();
@@ -30,6 +31,7 @@ public class DepartmentService {
     private final IParkingSpotDAO spotDAO = new ParkingSpotDAO();
     private static final Logger logger = LogManager.getLogger(DepartmentService.class);
 
+    @Override
     public Teacher getTeacherById(long id) throws EntityNotFoundException {
         Teacher tempTeacher = getBasicTeacherById(id);
         tempTeacher.setSubjects(subjectDAO.getSubjectsByTeacherId(id));
@@ -37,6 +39,7 @@ public class DepartmentService {
         return tempTeacher;
     }
 
+    @Override
     public Teacher getBasicTeacherById(long id) throws EntityNotFoundException {
         Teacher tempTeacher = teacherDAO
                 .getEntityById(id)
@@ -45,6 +48,7 @@ public class DepartmentService {
         return tempTeacher;
     }
 
+    @Override
     public Teacher addTeacherWithoutSubjects(Teacher teacher) throws NoEntityCreatedException {
         if (teacher != null) {
             Teacher tempTeacher = teacherDAO
@@ -58,6 +62,7 @@ public class DepartmentService {
         }
     }
 
+    @Override
     public boolean updateTeacherInfo(Teacher teacher) {
         if (teacher != null) {
             int result = teacherDAO.updateEntity(teacher);
@@ -74,6 +79,7 @@ public class DepartmentService {
         }
     }
 
+    @Override
     public boolean removeTeacher(Teacher teacher) {
         if (teacher != null) {
             int result = teacherDAO.removeEntity(teacher.getId());
@@ -90,6 +96,7 @@ public class DepartmentService {
         }
     }
 
+    @Override
     public List<Subject> getAllSubjectsByTeacher(Teacher teacher) {
         List<Subject> allSubjectsByTeacherId = new ArrayList<>();
         if (teacher != null) {
@@ -101,12 +108,14 @@ public class DepartmentService {
         return allSubjectsByTeacherId;
     }
 
+    @Override
     public Department getDeptById(long id) throws EntityNotFoundException {
         Department dept = getBasicDeptById(id);
         dept.setTeachers(getTeachersByDeptId(id));
         return dept;
     }
 
+    @Override
     public Department getBasicDeptById(long id) throws EntityNotFoundException {
         Department tempDept = deptDAO
                 .getEntityById(id)
@@ -115,6 +124,7 @@ public class DepartmentService {
         return tempDept;
     }
 
+    @Override
     public Department addEmptyDept(String name) throws NoEntityCreatedException {
         Department tempDept = deptDAO
                 .createEntity(new Department(name))
@@ -123,6 +133,7 @@ public class DepartmentService {
         return tempDept;
     }
 
+    @Override
     public boolean removeDept(Department dept) {
         if (dept != null) {
             int result = deptDAO.removeEntity(dept.getId());
@@ -139,6 +150,7 @@ public class DepartmentService {
         }
     }
 
+    @Override
     public boolean assignTeacherToDept(Teacher teacher, Department dept) {
         if (teacher != null && dept != null) {
             int result = teacherDAO.bindTeacherToDeptId(teacher.getId(), dept.getId());
@@ -155,6 +167,7 @@ public class DepartmentService {
         }
     }
 
+    @Override
     public boolean removeTeacherFromDept(Teacher student, Department dept) {
         if (student != null && dept != null) {
             int result = teacherDAO.removeTeacherFromDeptById(student.getId(), student.getId());
@@ -171,6 +184,7 @@ public class DepartmentService {
         }
     }
 
+    @Override
     public List<Teacher> getTeachersByDeptId(long id) {
         List<Teacher> allTeachersByDeptId = teacherDAO.getTeachersByDeptId(id);
         for (Teacher teacher : allTeachersByDeptId) {
@@ -180,6 +194,7 @@ public class DepartmentService {
         return allTeachersByDeptId;
     }
 
+    @Override
     public List<Department> getDepartmentsWithoutBuilding() {
         List<Department> departmentsWithoutBuilding = deptDAO.getDepartmentsWithoutBuilding();
         for (Department dept : departmentsWithoutBuilding) {

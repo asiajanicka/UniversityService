@@ -1,13 +1,14 @@
-package org.example.e2eTests;
+package org.example.e2eTests.jdbc;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.enums.WeekDay;
 import org.example.model.*;
-import org.example.service.*;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.GradeNotAssignedException;
 import org.example.service.exception.NoEntityCreatedException;
+import org.example.service.interfaces.*;
+import org.example.service.jdbc.*;
 import org.junit.jupiter.api.Test;
 import utils.TestData;
 
@@ -17,21 +18,21 @@ import java.time.LocalTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class StudentServiceTests {
+public class StudentServiceJDBCTests {
 
-    private static final Logger logger = LogManager.getLogger(StudentServiceTests.class);
+    private static final Logger logger = LogManager.getLogger(StudentServiceJDBCTests.class);
 
     @Test
     public void usecase1Test() throws NoEntityCreatedException, EntityNotFoundException, GradeNotAssignedException {
 
-        logger.info("Start of Student Service Tests - test case 1");
-        StudentService studentService = new StudentService();
-        PortalAccountService accountService = new PortalAccountService();
-        SubjectService subjectService = new SubjectService();
-        BuildingService buildingService = new BuildingService();
+        logger.info("Start of Student Service JDBC Tests - test case 1");
+        IStudentService studentService = new StudentService();
+        IPortalAccountService accountService = new PortalAccountService();
+        ISubjectService subjectService = new SubjectService();
+        IBuildingService buildingService = new BuildingService();
+        ITimetableService ttService = new TimetableService();
         Subject existingSubject = subjectService.getSubjectById(1);
         Room existingRoom = buildingService.getRoomById(1);
-        TimetableService ttService = new TimetableService();
         Student testStudent = TestData.getFullStudent();
         String expectedGroupName = "group89";
 
@@ -84,14 +85,14 @@ public class StudentServiceTests {
         assertThat(ttService.getTimetableEntryById(actualTTEntry.getId())).isEqualTo(actualTTEntry);
 
         ttService.removeTimetableEntry(actualTTEntry);
-        logger.info("End of Student Service Tests - test case 1");
+        logger.info("End of Student Service JDBC Tests - test case 1");
     }
 
     @Test
     public void usecase2Test() throws NoEntityCreatedException, EntityNotFoundException {
 
-        logger.info("Start of Student Service Tests - test case 2");
-        StudentService studentService = new StudentService();
+        logger.info("Start of Student Service JDBC Tests - test case 2");
+        IStudentService studentService = new StudentService();
         Student testStudent = TestData.getBasicStudent();
 
         Student actualStudent = studentService.addNewStudent(testStudent);
@@ -114,7 +115,7 @@ public class StudentServiceTests {
 
         studentService.removeStudent(updatedStudent);
         assertThat(studentService.getStudentGroupById(existingGroup.getId()).getStudents()).doesNotContain(updatedStudent);
-        logger.info("End of Student Service Tests - test case 1");
+        logger.info("End of Student Service JDBC Tests - test case 1");
     }
 
 }

@@ -1,21 +1,22 @@
-package org.example.service;
+package org.example.service.jdbc;
 
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.dao.*;
 import org.example.dao.interfaces.*;
+import org.example.dao.jdbc.*;
 import org.example.enums.EntityType;
 import org.example.model.*;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.GradeNotAssignedException;
 import org.example.service.exception.NoEntityCreatedException;
+import org.example.service.interfaces.IStudentService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-public class StudentService {
+public class StudentService implements IStudentService {
 
     private final IStudentGroupDAO groupDAO = new StudentGroupDAO();
     private final IStudentDAO studentDAO = new StudentDAO();
@@ -26,6 +27,7 @@ public class StudentService {
     private final TimetableService timetableService = new TimetableService();
     private static final Logger logger = LogManager.getLogger(StudentService.class);
 
+    @Override
     public Student getStudentById(long id) throws EntityNotFoundException {
         Student tempStudent = getBasicStudentById(id);
         tempStudent.setPortalAccount(getAccountByStudent(tempStudent));
@@ -33,6 +35,7 @@ public class StudentService {
         return tempStudent;
     }
 
+    @Override
     public Student addNewStudent(Student student) throws NoEntityCreatedException {
         if (student != null) {
             Student tempStudent = addBasicStudent(student);
@@ -60,6 +63,7 @@ public class StudentService {
         }
     }
 
+    @Override
     public boolean removeStudent(Student student) {
         if (student != null) {
             int result = studentDAO.removeEntity(student.getId());
@@ -76,6 +80,7 @@ public class StudentService {
         }
     }
 
+    @Override
     public boolean updateStudentInfo(Student student) {
         if (student != null) {
             int result = studentDAO.updateEntity(student);
@@ -92,6 +97,7 @@ public class StudentService {
         }
     }
 
+    @Override
     public Grade addGradeToStudent(Student student, Grade grade) throws NoEntityCreatedException, GradeNotAssignedException {
         if (student != null && grade != null) {
             Grade tempGrade = addGrade(grade);
@@ -110,6 +116,7 @@ public class StudentService {
         }
     }
 
+    @Override
     public List<Grade> addGradesToStudent(Student student, List<Grade> grades) throws NoEntityCreatedException, GradeNotAssignedException {
         List<Grade> tempGrades = new ArrayList<>();
         if (student != null && grades != null) {
@@ -122,6 +129,7 @@ public class StudentService {
         return tempGrades;
     }
 
+    @Override
     public List<Grade> getGradesByStudent(Student student) throws EntityNotFoundException {
         List<Grade> allGradesByStudentId = new ArrayList<>();
         if (student != null) {
@@ -138,6 +146,7 @@ public class StudentService {
         return allGradesByStudentId;
     }
 
+    @Override
     public boolean removeGrade(Grade grade) {
         if (grade != null) {
             int result = gradeDAO.removeEntity(grade.getId());
@@ -154,6 +163,7 @@ public class StudentService {
         }
     }
 
+    @Override
     public boolean assignStudentToGroup(Student student, StudentGroup group) {
         if (student != null && group != null) {
             int result = studentDAO.bindStudentToGroupById(student.getId(), group.getId());
@@ -170,6 +180,7 @@ public class StudentService {
         }
     }
 
+    @Override
     public boolean removeStudentFromGroup(Student student, StudentGroup group) {
         if (student != null && group != null) {
             int result = studentDAO.removeStudentFromGroupById(student.getId(), student.getId());
@@ -186,6 +197,7 @@ public class StudentService {
         }
     }
 
+    @Override
     public StudentGroup getStudentGroupById(long id) throws EntityNotFoundException {
         StudentGroup tempGroup = getBasicStudentGroupById(id);
         List<Student> allStudentByGroupId = studentDAO.getAllStudentsByGroupId(tempGroup.getId());
@@ -200,6 +212,7 @@ public class StudentService {
         return tempGroup;
     }
 
+    @Override
     public StudentGroup addEmptyStudentGroup(String name) throws NoEntityCreatedException {
         StudentGroup tempGroup = groupDAO
                 .createEntity(new StudentGroup(name))
@@ -208,6 +221,7 @@ public class StudentService {
         return tempGroup;
     }
 
+    @Override
     public boolean removeStudentGroup(StudentGroup group) {
         if (group != null) {
             int result = groupDAO.removeEntity(group.getId());
@@ -224,6 +238,7 @@ public class StudentService {
         }
     }
 
+    @Override
     public List<StudentGroup> getGroupsAssignedToTimetableEntry(TimetableEntry ttEntry) throws EntityNotFoundException {
         List<StudentGroup> groupsByTimetableEntryId = new ArrayList<>();
         if (ttEntry != null) {
@@ -285,6 +300,7 @@ public class StudentService {
         }
     }
 
+    @Override
     public PortalAccount getAccountByStudent(Student student) {
         PortalAccount tempAccount = accountDAO
                 .getAccountByStudentId(student.getId())

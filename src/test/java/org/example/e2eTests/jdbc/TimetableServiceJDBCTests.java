@@ -1,4 +1,4 @@
-package org.example.e2eTests;
+package org.example.e2eTests.jdbc;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,30 +7,34 @@ import org.example.model.Room;
 import org.example.model.StudentGroup;
 import org.example.model.Subject;
 import org.example.model.TimetableEntry;
-import org.example.service.BuildingService;
-import org.example.service.StudentService;
-import org.example.service.SubjectService;
-import org.example.service.TimetableService;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.NoEntityCreatedException;
+import org.example.service.interfaces.IBuildingService;
+import org.example.service.interfaces.IStudentService;
+import org.example.service.interfaces.ISubjectService;
+import org.example.service.interfaces.ITimetableService;
+import org.example.service.jdbc.BuildingService;
+import org.example.service.jdbc.StudentService;
+import org.example.service.jdbc.SubjectService;
+import org.example.service.jdbc.TimetableService;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TimetableServiceTests {
+public class TimetableServiceJDBCTests {
 
-    private static final Logger logger = LogManager.getLogger(TimetableServiceTests.class);
+    private static final Logger logger = LogManager.getLogger(TimetableServiceJDBCTests.class);
 
     @Test
     public void usecase1Test() throws EntityNotFoundException, NoEntityCreatedException {
 
-        logger.info("Start of Timetable Service Tests - test case 1");
-        SubjectService subjectService = new SubjectService();
-        BuildingService buildingService = new BuildingService();
-        TimetableService timetableService = new TimetableService();
-        StudentService studentService = new StudentService();
+        logger.info("Start of Timetable Service JDBC Tests - test case 1");
+        ISubjectService subjectService = new SubjectService();
+        IBuildingService buildingService = new BuildingService();
+        ITimetableService timetableService = new TimetableService();
+        IStudentService studentService = new StudentService();
         StudentGroup existingGroupOne = studentService.getStudentGroupById(1);
         StudentGroup existingGroupTwo = studentService.getStudentGroupById(2);
         Subject existingSubject = subjectService.getSubjectById(1);
@@ -81,7 +85,7 @@ public class TimetableServiceTests {
 
         assertThat(subjectService.removeSubject(newSubject)).isTrue();
         assertThat(buildingService.removeRoom(newRoom)).isTrue();
-        logger.info("End of Timetable Service Tests - test case 1");
+        logger.info("End of Timetable Service JDBC Tests - test case 1");
     }
 
 }

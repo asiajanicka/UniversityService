@@ -1,4 +1,4 @@
-package org.example.e2eTests;
+package org.example.e2eTests.jdbc;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -6,11 +6,14 @@ import org.example.model.Building;
 import org.example.model.Department;
 import org.example.model.Subject;
 import org.example.model.Teacher;
-import org.example.service.BuildingService;
-import org.example.service.DepartmentService;
-import org.example.service.SubjectService;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.NoEntityCreatedException;
+import org.example.service.interfaces.IBuildingService;
+import org.example.service.interfaces.IDepartmentService;
+import org.example.service.interfaces.ISubjectService;
+import org.example.service.jdbc.BuildingService;
+import org.example.service.jdbc.DepartmentService;
+import org.example.service.jdbc.SubjectService;
 import org.junit.jupiter.api.Test;
 import utils.TestData;
 
@@ -19,16 +22,16 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class DepartmentServiceTests {
+public class DepartmentServiceJDBCTests {
 
-    private static final Logger logger = LogManager.getLogger(DepartmentServiceTests.class);
+    private static final Logger logger = LogManager.getLogger(DepartmentServiceJDBCTests.class);
 
     @Test
     public void usecase1Test() throws NoEntityCreatedException, EntityNotFoundException {
 
-        logger.info("Start of Department Service Tests - test case 1");
-        DepartmentService deptService = new DepartmentService();
-        SubjectService subjectService = new SubjectService();
+        logger.info("Start of Department Service JDBC Tests - test case 1");
+        IDepartmentService deptService = new DepartmentService();
+        ISubjectService subjectService = new SubjectService();
         Teacher testTeacher = TestData.getBasicTeacher();
 
         Teacher actualTeacher = deptService.addTeacherWithoutSubjects(testTeacher);
@@ -62,27 +65,15 @@ public class DepartmentServiceTests {
         assertThat(subjectService.getSubjectsWithoutTeacher()).contains(subject);
 
         subjectService.removeSubject(subject);
-        logger.info("End of Department Service Tests - test case 1");
+        logger.info("End of Department Service JDBC Tests - test case 1");
     }
 
     @Test
     public void usecase2Test() throws NoEntityCreatedException, EntityNotFoundException {
 
-//        Add an empty dept
-//        Assign dept to existing building
-//          - check if dept is assigned to building
-//        Add two new teachers (One, Two)
-//        Assign teachers to the dept
-//        Remove teacher One from uni
-//          - check if teacher is removed from dept too
-//        Remove dept (with remaining teacher Two) from uni
-//          - check if dept is removed
-//          - check if teacher Two is removed too
-//          - check if dept is removed from the building
-
-        logger.info("Start of Department Service Tests - test case 2");
-        DepartmentService deptService = new DepartmentService();
-        BuildingService buildingService = new BuildingService();
+        logger.info("Start of Department Service JDBC Tests - test case 2");
+        IDepartmentService deptService = new DepartmentService();
+        IBuildingService buildingService = new BuildingService();
 
         String expectedDeptName = "Chemistry";
 
@@ -107,7 +98,7 @@ public class DepartmentServiceTests {
         assertThatThrownBy(() -> deptService.getBasicDeptById(actualDept.getId())).isInstanceOf(EntityNotFoundException.class);
         assertThatThrownBy(() -> deptService.getBasicTeacherById(teacherTwo.getId())).isInstanceOf(EntityNotFoundException.class);
         assertThat(buildingService.getDeptsInBuilding(basicBuilding)).doesNotContain(actualDept);
-        logger.info("End of Department Service Tests - test case 2");
+        logger.info("End of Department Service JDBC Tests - test case 2");
     }
 
 }

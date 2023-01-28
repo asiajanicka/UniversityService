@@ -1,10 +1,10 @@
-package org.example.service;
+package org.example.service.jdbc;
 
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.dao.GradeDAO;
-import org.example.dao.SubjectDAO;
+import org.example.dao.jdbc.GradeDAO;
+import org.example.dao.jdbc.SubjectDAO;
 import org.example.dao.interfaces.IGradeDAO;
 import org.example.dao.interfaces.ISubjectDAO;
 import org.example.enums.EntityType;
@@ -13,17 +13,19 @@ import org.example.model.Subject;
 import org.example.model.Teacher;
 import org.example.service.exception.EntityNotFoundException;
 import org.example.service.exception.NoEntityCreatedException;
+import org.example.service.interfaces.ISubjectService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-public class SubjectService {
+public class SubjectService implements ISubjectService {
 
     private final ISubjectDAO subjectDAO = new SubjectDAO();
     private final IGradeDAO gradeDAO = new GradeDAO();
     private static final Logger logger = LogManager.getLogger(SubjectService.class);
 
+    @Override
     public Subject getSubjectById(long id) throws EntityNotFoundException {
         Subject tempSubject = subjectDAO
                 .getEntityById(id)
@@ -32,6 +34,7 @@ public class SubjectService {
         return tempSubject;
     }
 
+    @Override
     public Subject addNewSubject(String subjectName) throws NoEntityCreatedException {
         Subject tempSubject = subjectDAO
                 .createEntity(new Subject(subjectName))
@@ -40,7 +43,7 @@ public class SubjectService {
         return tempSubject;
     }
 
-
+    @Override
     public boolean assignSubjectToTeacher(Subject subject, Teacher teacher) {
         if (subject != null && teacher != null) {
             int result = subjectDAO.bindSubjectToTeacherId(subject.getId(), teacher.getId());
@@ -59,6 +62,7 @@ public class SubjectService {
         }
     }
 
+    @Override
     public boolean removeSubjectFromTeacher(Subject subject) {
         if (subject != null) {
             int result = subjectDAO.removedTeacherFromSubject(subject.getId());
@@ -76,6 +80,7 @@ public class SubjectService {
         }
     }
 
+    @Override
     public boolean removeSubject(Subject subject) {
         if (subject != null) {
             int result = subjectDAO.removeEntity(subject.getId());
@@ -92,6 +97,7 @@ public class SubjectService {
         }
     }
 
+    @Override
     public List<Grade> getGradesBySubject(Subject subject) throws EntityNotFoundException {
         List<Grade> allGradesBySubjectId = new ArrayList<>();
         if (subject != null) {
@@ -110,6 +116,7 @@ public class SubjectService {
         return allGradesBySubjectId;
     }
 
+    @Override
     public List<Subject> getSubjectsWithoutTeacher() {
         return subjectDAO.getSubjectsWithoutTeacher();
     }
