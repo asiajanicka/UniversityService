@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.dao.interfaces.IRoomDAO">
+
+    <sql id="roomBody">
+        r.id as room_id,
+        r.room_number as room_number,
+        r.building_id as room_building_id
+    </sql>
+
+    <insert id="createEntity" parameterType="org.example.model.Room" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO rooms (room_number, building_id)
+        VALUES (#{number}, #{building.id})
+    </insert>
+
+    <select id="getEntityById" parameterType="org.example.model.Room" resultMap="roomResultMap">
+        SELECT
+        <include refid="roomBody"/>,
+        <include refid="org.example.dao.interfaces.IBuildingDAO.buildingBody"/>,
+        <include refid="org.example.dao.interfaces.IDeptDAO.deptBody"/>,
+        <include refid="org.example.dao.interfaces.ITeacherDAO.teacherBody"/>,
+        <include refid="org.example.dao.interfaces.ISubjectDAO.subjectBody"/>,
+        <include refid="org.example.dao.interfaces.IParkingSpotDAO.parkingSpotBody"/>
+        FROM
+        rooms as r
+        LEFT JOIN buildings as b
+        ON r.building_id = b.id
+        LEFT JOIN departments as d
+        ON d.building_id = b.id
+        LEFT JOIN teachers as t
+        ON d.id = t.department_id
+        LEFT JOIN subjects s
+        ON t.id = s.teacher_id
+        LEFT JOIN parking_spots as ps
+        ON t.id=ps.teacher_id
+        WHERE t.id = #{id}
+    </select>
+
+    <resultMap id="roomResultMap" type="org.example.model.Room" autoMapping="false">
+        <id column="room_id" property="id"/>
+        <result column="room_number" property="number"/>
+        <association property="building" resultMap="org.example.dao.interfaces.IBuildingDAO.buildingResultMap"/>
+    </resultMap>
+
+    <update id="updateEntity">
+        UPDATE rooms
+        SET room_number = #{number}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="removeEntity">
+        DELETE FROM rooms
+        WHERE id = #{id}
+    </delete>
+
+    <select id="getRoomsByBuildingId" resultMap="roomResultMap">
+        SELECT
+        <include refid="roomBody"/>,
+        <include refid="org.example.dao.interfaces.IBuildingDAO.buildingBody"/>,
+        <include refid="org.example.dao.interfaces.IDeptDAO.deptBody"/>,
+        <include refid="org.example.dao.interfaces.ITeacherDAO.teacherBody"/>,
+        <include refid="org.example.dao.interfaces.ISubjectDAO.subjectBody"/>,
+        <include refid="org.example.dao.interfaces.IParkingSpotDAO.parkingSpotBody"/>
+        FROM
+        rooms as r
+        LEFT JOIN buildings as b
+        ON r.building_id = b.id
+        LEFT JOIN departments as d
+        ON d.building_id = b.id
+        LEFT JOIN teachers as t
+        ON d.id = t.department_id
+        LEFT JOIN subjects s
+        ON t.id = s.teacher_id
+        LEFT JOIN parking_spots as ps
+        ON t.id=ps.teacher_id
+        WHERE r.building_id = #{teacherId}
+    </select>
+
+    <delete id="removeRoomsByBuildingId">
+        DELETE FROM rooms
+        WHERE building_id = #{buildingId}
+    </delete>
+</mapper>
