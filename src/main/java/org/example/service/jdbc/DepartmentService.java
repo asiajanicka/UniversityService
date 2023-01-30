@@ -16,6 +16,7 @@ import org.example.model.Department;
 import org.example.model.Subject;
 import org.example.model.Teacher;
 import org.example.service.exception.EntityNotFoundException;
+import org.example.service.exception.NoEntityCreatedException;
 import org.example.service.interfaces.IDepartmentService;
 
 import java.util.ArrayList;
@@ -47,11 +48,15 @@ public class DepartmentService implements IDepartmentService {
     }
 
     @Override
-    public Teacher addTeacherWithoutSubjects(Teacher teacher) {
+    public Teacher addTeacherWithoutSubjects(Teacher teacher) throws NoEntityCreatedException {
         if (teacher != null) {
-            teacherDAO.createEntity(teacher);
-            logger.debug(String.format("Teacher (%s) added to the service", teacher));
-            return teacher;
+            if (teacher.getFirstName() != null && teacher.getLastName() != null) {
+                teacherDAO.createEntity(teacher);
+                logger.debug(String.format("Teacher (%s) added to the service", teacher));
+                return teacher;
+            } else {
+                throw new NoEntityCreatedException(EntityType.TEACHER, teacher);
+            }
         } else {
             logger.error("Teacher couldn't be added to service as it is NULL");
             throw new NullPointerException("Teacher is NULL - can't add it to service");
@@ -61,10 +66,15 @@ public class DepartmentService implements IDepartmentService {
     @Override
     public boolean updateTeacherInfo(Teacher teacher) {
         if (teacher != null) {
-            int result = teacherDAO.updateEntity(teacher);
-            if (result == 1) {
-                logger.debug(String.format("Teacher (%s) updated in the service", teacher));
-                return true;
+            if (teacher.getFirstName() != null && teacher.getLastName() != null && teacher.getId() > 0) {
+                int result = teacherDAO.updateEntity(teacher);
+                if (result == 1) {
+                    logger.debug(String.format("Teacher (%s) updated in the service", teacher));
+                    return true;
+                } else {
+                    logger.error(String.format("Teacher (%s) couldn't be updated in the service", teacher));
+                    return false;
+                }
             } else {
                 logger.error(String.format("Teacher (%s) couldn't be updated in the service", teacher));
                 return false;
@@ -120,11 +130,15 @@ public class DepartmentService implements IDepartmentService {
     }
 
     @Override
-    public Department addEmptyDept(String name) {
-        Department departmentToAdd = new Department(name);
-        deptDAO.createEntity(departmentToAdd);
-        logger.debug(String.format("Department (%s) added to the service", departmentToAdd));
-        return departmentToAdd;
+    public Department addEmptyDept(String name) throws NoEntityCreatedException {
+        if (name != null) {
+            Department departmentToAdd = new Department(name);
+            deptDAO.createEntity(departmentToAdd);
+            logger.debug(String.format("Department (%s) added to the service", departmentToAdd));
+            return departmentToAdd;
+        } else {
+            throw new NoEntityCreatedException(EntityType.DEPARTMENT);
+        }
     }
 
     @Override

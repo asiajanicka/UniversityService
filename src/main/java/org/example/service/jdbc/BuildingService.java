@@ -14,6 +14,7 @@ import org.example.model.Building;
 import org.example.model.Department;
 import org.example.model.Room;
 import org.example.service.exception.EntityNotFoundException;
+import org.example.service.exception.NoEntityCreatedException;
 import org.example.service.interfaces.IBuildingService;
 
 import java.util.ArrayList;
@@ -36,11 +37,15 @@ public class BuildingService implements IBuildingService {
     }
 
     @Override
-    public Building addNewBuilding(String name, String address) {
+    public Building addNewBuilding(String name, String address) throws NoEntityCreatedException {
         Building buildingToAdd = new Building(name, address);
-        buildingDAO.createEntity(buildingToAdd);
-        logger.debug(String.format("Building %s added to the service", buildingToAdd));
-        return buildingToAdd;
+        if (name != null && address != null) {
+            buildingDAO.createEntity(buildingToAdd);
+            logger.debug(String.format("Building %s added to the service", buildingToAdd));
+            return buildingToAdd;
+        } else {
+            throw new NoEntityCreatedException(EntityType.BUILDING, buildingToAdd);
+        }
     }
 
     private Building getBasicBuildingById(long id) throws EntityNotFoundException {
@@ -53,17 +58,22 @@ public class BuildingService implements IBuildingService {
 
     @Override
     public boolean updateBuildingInfo(Building building) {
-        if (building != null) {
-            int result = buildingDAO.updateEntity(building);
-            if (result == 1) {
-                logger.debug(String.format("Building (%s) updated in the service", building));
-                return true;
+        if (building != null && building.getId() > 0) {
+            if (building.getName() != null && building.getAddress() != null) {
+                int result = buildingDAO.updateEntity(building);
+                if (result == 1) {
+                    logger.debug(String.format("Building (%s) updated in the service", building));
+                    return true;
+                } else {
+                    logger.error(String.format("Building (%s) couldn't be updated in the service", building));
+                    return false;
+                }
             } else {
-                logger.error(String.format("Building (%s) couldn't be updated in the service", building));
+                logger.error("Building couldn't be updated in the service as some of fields have either incorrect value or are null");
                 return false;
             }
         } else {
-            logger.error("Building couldn't be updated in the service as it is NULL");
+            logger.error("Building couldn't be updated in the service as it is NULL or has invalid id");
             return false;
         }
     }
@@ -96,12 +106,16 @@ public class BuildingService implements IBuildingService {
     }
 
     @Override
-    public Room addRoom(Room room) {
+    public Room addRoom(Room room) throws NoEntityCreatedException {
         if (room != null && room.getBuilding() != null && room.getBuilding().getId() > 0) {
-            roomDAO.createEntity(room);
-            logger.debug(String.format("Room %s added to the service", room));
-            room.setBuilding(room.getBuilding());
-            return room;
+            if (room.getNumber() != null) {
+                roomDAO.createEntity(room);
+                logger.debug(String.format("Room %s added to the service", room));
+                room.setBuilding(room.getBuilding());
+                return room;
+            } else {
+                throw new NoEntityCreatedException(EntityType.ROOM, room);
+            }
         } else {
             logger.error("Room couldn't be added to the service as room or building in which it's supposed to be located" +
                     " is NULL");
@@ -111,17 +125,22 @@ public class BuildingService implements IBuildingService {
 
     @Override
     public boolean updateRoom(Room room) {
-        if (room != null) {
-            int result = roomDAO.updateEntity(room);
-            if (result == 1) {
-                logger.debug(String.format("Room (%s) updated in the service", room));
-                return true;
+        if (room != null && room.getId() > 0) {
+            if (room.getNumber() != null && room.getBuilding().getId() > 0) {
+                int result = roomDAO.updateEntity(room);
+                if (result == 1) {
+                    logger.debug(String.format("Room (%s) updated in the service", room));
+                    return true;
+                } else {
+                    logger.error(String.format("Room (%s) couldn't be updated in the service", room));
+                    return false;
+                }
             } else {
-                logger.error(String.format("Room (%s) couldn't be updated in the service", room));
+                logger.error("Room couldn't be updated in the service as its number is invalid or building id is incorrect");
                 return false;
             }
         } else {
-            logger.error("Room couldn't be updated in the service as it is NULL");
+            logger.error("Room couldn't be updated in the service as it is NULL or has invalid id");
             return false;
         }
     }

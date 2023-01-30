@@ -39,27 +39,31 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public Student addNewStudent(Student student) {
+    public Student addNewStudent(Student student) throws NoEntityCreatedException {
         if (student != null) {
-            Student tempStudent = addBasicStudent(student);
-            if (student.getPortalAccount() != null) {
-                PortalAccount tempAccount = addPortalAccount(student.getPortalAccount());
-                accountDAO.bindAccountToStudentId(tempAccount.getId(), tempStudent.getId());
-                tempStudent.setPortalAccount(tempAccount);
-                logger.debug(String.format("Portal account assigned to student (%s) in the service", tempStudent));
-            }
-            List<Grade> tempGrades = new ArrayList<>();
-            if (student.getGrades() != null && student.getGrades().size() > 0) {
-                for (Grade grade : student.getGrades()) {
-                    grade.setId(addGrade(grade).getId());
-                    logger.debug(String.format("Grade (%s) added to the service", grade));
-                    gradeDAO.bindGradeToStudentId(student.getId(), grade.getId());
-                    logger.debug(String.format("Grade (%s) assigned to student (%s) in the service", grade, student));
-                    tempGrades.add(grade);
+            if (student.getFirstName() != null && student.getLastName() != null) {
+                Student tempStudent = addBasicStudent(student);
+                if (student.getPortalAccount() != null) {
+                    PortalAccount tempAccount = addPortalAccount(student.getPortalAccount());
+                    accountDAO.bindAccountToStudentId(tempAccount.getId(), tempStudent.getId());
+                    tempStudent.setPortalAccount(tempAccount);
+                    logger.debug(String.format("Portal account assigned to student (%s) in the service", tempStudent));
                 }
+                List<Grade> tempGrades = new ArrayList<>();
+                if (student.getGrades() != null && student.getGrades().size() > 0) {
+                    for (Grade grade : student.getGrades()) {
+                        grade.setId(addGrade(grade).getId());
+                        logger.debug(String.format("Grade (%s) added to the service", grade));
+                        gradeDAO.bindGradeToStudentId(student.getId(), grade.getId());
+                        logger.debug(String.format("Grade (%s) assigned to student (%s) in the service", grade, student));
+                        tempGrades.add(grade);
+                    }
+                }
+                tempStudent.setGrades(tempGrades);
+                return tempStudent;
+            } else {
+                throw new NoEntityCreatedException(EntityType.STUDENT, student);
             }
-            tempStudent.setGrades(tempGrades);
-            return tempStudent;
         } else {
             logger.error("Student couldn't be added to the service as it is NULL");
             throw new NullPointerException("Student is NULL - can't add student to the service");
@@ -202,11 +206,15 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public StudentGroup addEmptyStudentGroup(String name) {
-        StudentGroup tempGroup = new StudentGroup(name);
-        groupDAO.createEntity(tempGroup);
-        logger.debug(String.format("Group (%s) added to the service", tempGroup));
-        return tempGroup;
+    public StudentGroup addEmptyStudentGroup(String name) throws NoEntityCreatedException {
+        if (name != null) {
+            StudentGroup tempGroup = new StudentGroup(name);
+            groupDAO.createEntity(tempGroup);
+            logger.debug(String.format("Group (%s) added to the service", tempGroup));
+            return tempGroup;
+        } else {
+            throw new NoEntityCreatedException(EntityType.BUILDING);
+        }
     }
 
     @Override
@@ -260,11 +268,16 @@ public class StudentService implements IStudentService {
         }
     }
 
-    private PortalAccount addPortalAccount(PortalAccount account) {
+    private PortalAccount addPortalAccount(PortalAccount account) throws NoEntityCreatedException {
         if (account != null) {
-            accountDAO.createEntity(account);
-            logger.debug(String.format("Portal account %s added to the service", account));
-            return account;
+            if (account.getLogin() != null && account.getPassword() != null
+                    && account.getExpiryDate() != null && account.getIssueDate() != null) {
+                accountDAO.createEntity(account);
+                logger.debug(String.format("Portal account %s added to the service", account));
+                return account;
+            } else {
+                throw new NoEntityCreatedException(EntityType.PORTAL_ACCOUNT, account);
+            }
         } else {
             logger.error("Portal account couldn't be added to service as it is NULL");
             throw new NullPointerException("Portal account is NULL - can't add it to service");

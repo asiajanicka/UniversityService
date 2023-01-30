@@ -11,6 +11,7 @@ import org.example.enums.EntityType;
 import org.example.model.Grade;
 import org.example.model.Subject;
 import org.example.service.exception.EntityNotFoundException;
+import org.example.service.exception.NoEntityCreatedException;
 import org.example.service.interfaces.ISubjectService;
 
 import java.util.ArrayList;
@@ -33,11 +34,15 @@ public class SubjectService implements ISubjectService {
     }
 
     @Override
-    public Subject addNewSubject(String subjectName) {
-        Subject tempSubject = new Subject(subjectName);
-        subjectDAO.createEntity(tempSubject);
-        logger.debug(String.format("Portal account %s added to the service", tempSubject));
-        return tempSubject;
+    public Subject addNewSubject(String subjectName) throws NoEntityCreatedException {
+        if (subjectName != null) {
+            Subject tempSubject = new Subject(subjectName);
+            subjectDAO.createEntity(tempSubject);
+            logger.debug(String.format("Portal account %s added to the service", tempSubject));
+            return tempSubject;
+        } else {
+            throw new NoEntityCreatedException(EntityType.STUDENT);
+        }
     }
 
     @Override

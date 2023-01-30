@@ -8,6 +8,7 @@ import org.example.dao.jdbc.PortalAccountDAO;
 import org.example.enums.EntityType;
 import org.example.model.PortalAccount;
 import org.example.service.exception.EntityNotFoundException;
+import org.example.service.exception.NoEntityCreatedException;
 import org.example.service.interfaces.IPortalAccountService;
 
 import java.time.LocalDate;
@@ -19,11 +20,16 @@ public class PortalAccountService implements IPortalAccountService {
     private static final Logger logger = LogManager.getLogger(StudentService.class);
 
     @Override
-    public PortalAccount addNewAccount(PortalAccount account) {
+    public PortalAccount addNewAccount(PortalAccount account) throws NoEntityCreatedException {
         if (account != null) {
-            accountDAO.createEntity(account);
-            logger.debug(String.format("Portal account %s added to the service", account));
-            return account;
+            if (account.getLogin() != null && account.getPassword() != null
+                    && account.getExpiryDate() != null && account.getIssueDate() != null) {
+                accountDAO.createEntity(account);
+                logger.debug(String.format("Portal account %s added to the service", account));
+                return account;
+            } else {
+                throw new NoEntityCreatedException(EntityType.PORTAL_ACCOUNT, account);
+            }
         } else {
             logger.error("Portal account couldn't be added to the service as it is NULL");
             throw new NullPointerException("Portal account is NULL - can't add account to the service");
@@ -77,18 +83,23 @@ public class PortalAccountService implements IPortalAccountService {
     @Override
     public boolean changePasswordForStudent(long studentId, String newPassword) throws EntityNotFoundException {
         if (studentId > 0) {
-            PortalAccount account = accountDAO
-                    .getAccountByStudentId(studentId)
-                    .orElseThrow(() -> new EntityNotFoundException(EntityType.PORTAL_ACCOUNT));
-            logger.debug(String.format("Retrieved account by student id (%d) from the service", studentId));
-            account.setPassword(newPassword);
-            int result = accountDAO.updateEntity(account);
-            if (result == 1) {
-                logger.debug(String.format("Password changed for portal account of student (%d) in the service", studentId));
-                return true;
+            if (newPassword != null) {
+                PortalAccount account = accountDAO
+                        .getAccountByStudentId(studentId)
+                        .orElseThrow(() -> new EntityNotFoundException(EntityType.PORTAL_ACCOUNT));
+                logger.debug(String.format("Retrieved account by student id (%d) from the service", studentId));
+                account.setPassword(newPassword);
+                int result = accountDAO.updateEntity(account);
+                if (result == 1) {
+                    logger.debug(String.format("Password changed for portal account of student (%d) in the service", studentId));
+                    return true;
+                } else {
+                    logger.error(String.format("Password to portal account of student (%d) couldn't be be changed in the service",
+                            studentId));
+                    return false;
+                }
             } else {
-                logger.error(String.format("Password to portal account of student (%d) couldn't be be changed in the service",
-                        studentId));
+                logger.error("Portal account couldn't be updated in the service as new password is NULL");
                 return false;
             }
         } else {
@@ -117,7 +128,7 @@ public class PortalAccountService implements IPortalAccountService {
                     return false;
                 }
             } else {
-                logger.error("Expiry date of student's portal account couldn't be be changed in the service as new date is the past");
+                logger.error("Expiry date of student's portal account couldn't be be changed in the service as new date is in the past");
                 return false;
             }
         } else {

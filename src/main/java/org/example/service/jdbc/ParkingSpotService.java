@@ -8,6 +8,7 @@ import org.example.dao.jdbc.ParkingSpotDAO;
 import org.example.enums.EntityType;
 import org.example.model.ParkingSpot;
 import org.example.service.exception.EntityNotFoundException;
+import org.example.service.exception.NoEntityCreatedException;
 import org.example.service.interfaces.IParkingSpotService;
 
 import java.util.List;
@@ -28,11 +29,15 @@ public class ParkingSpotService implements IParkingSpotService {
     }
 
     @Override
-    public ParkingSpot addNewSpot(String name, String address) {
+    public ParkingSpot addNewSpot(String name, String address) throws NoEntityCreatedException {
         ParkingSpot spotToAdd = new ParkingSpot(name, address);
-        spotDAO.createEntity(spotToAdd);
-        logger.debug(String.format("Parking spot %s added to the service", spotToAdd));
-        return spotToAdd;
+        if (name != null && address != null) {
+            spotDAO.createEntity(spotToAdd);
+            logger.debug(String.format("Parking spot %s added to the service", spotToAdd));
+            return spotToAdd;
+        } else {
+            throw new NoEntityCreatedException(EntityType.BUILDING, spotToAdd);
+        }
     }
 
     @Override

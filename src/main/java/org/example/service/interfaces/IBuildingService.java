@@ -14,7 +14,7 @@ public interface IBuildingService {
 
     Building addNewBuilding(String name, String address) throws NoEntityCreatedException;
 
-    boolean updateBuildingInfo(Building building);
+    boolean updateBuildingInfo(Building building) throws NoEntityCreatedException;
 
     boolean removeBuilding(long buildingId);
 
@@ -22,7 +22,7 @@ public interface IBuildingService {
 
     Room addRoom(Room room) throws NoEntityCreatedException;
 
-    boolean updateRoom(Room room);
+    boolean updateRoom(Room room) throws NoEntityCreatedException;
 
     boolean removeRoom(long id);
 

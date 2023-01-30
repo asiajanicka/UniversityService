@@ -14,6 +14,7 @@ import org.example.model.Room;
 import org.example.model.Subject;
 import org.example.model.TimetableEntry;
 import org.example.service.exception.EntityNotFoundException;
+import org.example.service.exception.NoEntityCreatedException;
 import org.example.service.interfaces.ITimetableService;
 
 import java.time.LocalTime;
@@ -41,13 +42,17 @@ public class TimetableService implements ITimetableService {
     }
 
     @Override
-    public TimetableEntry addNewTimetableEntry(TimetableEntry ttEntry) {
+    public TimetableEntry addNewTimetableEntry(TimetableEntry ttEntry) throws NoEntityCreatedException {
         if (ttEntry != null) {
-            timetableDAO.createEntity(ttEntry);
-            ttEntry.setSubject(ttEntry.getSubject());
-            ttEntry.setRoom(ttEntry.getRoom());
-            logger.debug(String.format("Timetable entry %s added to the service", ttEntry));
-            return ttEntry;
+            if (ttEntry.getTime() != null && ttEntry.getWeekDay() != null && ttEntry.getRoom().getId() > 0) {
+                timetableDAO.createEntity(ttEntry);
+                ttEntry.setSubject(ttEntry.getSubject());
+                ttEntry.setRoom(ttEntry.getRoom());
+                logger.debug(String.format("Timetable entry %s added to the service", ttEntry));
+                return ttEntry;
+            } else {
+                throw new NoEntityCreatedException(EntityType.TIME_TABLE_ENTRY, ttEntry);
+            }
         } else {
             logger.error("Timetable entry couldn't be added to service as it is NULL");
             throw new NullPointerException("Timetable entry is NULL - can't add it to service");
@@ -57,10 +62,15 @@ public class TimetableService implements ITimetableService {
     @Override
     public boolean updateTimeslotForTimetableEntry(LocalTime time, WeekDay day, long ttEntryId) throws EntityNotFoundException {
         if (ttEntryId > 0) {
-            TimetableEntry timetableEntryById = getTimetableEntryById(ttEntryId);
-            timetableEntryById.setTime(time);
-            timetableEntryById.setWeekDay(day);
-            return updateTimetableEntity(timetableEntryById);
+            if (time != null && day != null) {
+                TimetableEntry timetableEntryById = getTimetableEntryById(ttEntryId);
+                timetableEntryById.setTime(time);
+                timetableEntryById.setWeekDay(day);
+                return updateTimetableEntity(timetableEntryById);
+            } else {
+                logger.error("Couldn't update timeslot for time table entry in the service as time or day is null");
+                return false;
+            }
         } else {
             logger.error("Couldn't update timeslot for time table entry in the service as its id is invalid");
             return false;
@@ -69,7 +79,7 @@ public class TimetableService implements ITimetableService {
 
     @Override
     public boolean updateRoomForTimetableEntry(Room room, long ttEntryId) throws EntityNotFoundException {
-        if (room != null && ttEntryId > 0) {
+        if (room != null && ttEntryId > 0 && room.getId() > 0) {
             TimetableEntry timetableEntryById = getTimetableEntryById(ttEntryId);
             timetableEntryById.setRoom(room);
             return updateTimetableEntity(timetableEntryById);
@@ -83,9 +93,14 @@ public class TimetableService implements ITimetableService {
     @Override
     public boolean updateSubjectForTimetableEntry(Subject subject, long ttEntryId) throws EntityNotFoundException {
         if (subject != null && ttEntryId > 0) {
-            TimetableEntry timetableEntryById = getTimetableEntryById(ttEntryId);
-            timetableEntryById.setSubject(subject);
-            return updateTimetableEntity(timetableEntryById);
+            if (subject.getId() > 0 && subject.getName() != null) {
+                TimetableEntry timetableEntryById = getTimetableEntryById(ttEntryId);
+                timetableEntryById.setSubject(subject);
+                return updateTimetableEntity(timetableEntryById);
+            } else {
+                logger.error("Timetable entry couldn't be assigned to subject in the service as some of fields have either incorrect value or are null");
+                return false;
+            }
         } else {
             logger.error("Timetable entry couldn't be assigned to subject in the service as one of them is NULL");
             return false;
