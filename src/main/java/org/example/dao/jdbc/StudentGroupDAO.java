@@ -56,7 +56,7 @@ public class StudentGroupDAO implements IStudentGroupDAO {
     }
 
     @Override
-    public Optional<StudentGroup> createEntity(StudentGroup entity) {
+    public void createEntity(StudentGroup entity) {
         String desc = "create student group (%s)";
         try (Connection con = ConnectionPool.getInstance().getConnection();
              PreparedStatement prepStmt = con.prepareStatement(CREATE_STUDENT_GROUP, Statement.RETURN_GENERATED_KEYS)) {
@@ -65,14 +65,13 @@ public class StudentGroupDAO implements IStudentGroupDAO {
                 logger.debug(String.format(EXECUTED_QUERY + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
-                    return getEntityById(generatedKeys.getLong(1));
+                    entity.setId(generatedKeys.getLong(1));
                 }
             }
         } catch (SQLException e) {
             logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
             e.printStackTrace();
         }
-        return Optional.empty();
     }
 
     @Override

@@ -8,7 +8,6 @@ import org.example.dao.jdbc.PortalAccountDAO;
 import org.example.enums.EntityType;
 import org.example.model.PortalAccount;
 import org.example.service.exception.EntityNotFoundException;
-import org.example.service.exception.NoEntityCreatedException;
 import org.example.service.interfaces.IPortalAccountService;
 
 import java.time.LocalDate;
@@ -20,13 +19,11 @@ public class PortalAccountService implements IPortalAccountService {
     private static final Logger logger = LogManager.getLogger(StudentService.class);
 
     @Override
-    public PortalAccount addNewAccount(PortalAccount account) throws NoEntityCreatedException {
+    public PortalAccount addNewAccount(PortalAccount account) {
         if (account != null) {
-            PortalAccount tempAccount = accountDAO
-                    .createEntity(account)
-                    .orElseThrow(() -> new NoEntityCreatedException(EntityType.PORTAL_ACCOUNT, account));
-            logger.debug(String.format("Portal account %s added to the service", tempAccount));
-            return tempAccount;
+            accountDAO.createEntity(account);
+            logger.debug(String.format("Portal account %s added to the service", account));
+            return account;
         } else {
             logger.error("Portal account couldn't be added to the service as it is NULL");
             throw new NullPointerException("Portal account is NULL - can't add account to the service");

@@ -9,9 +9,11 @@ import org.example.dao.jdbc.GroupsHasTimetableEntriesDAO;
 import org.example.dao.jdbc.TimetableEntryDAO;
 import org.example.enums.EntityType;
 import org.example.enums.WeekDay;
-import org.example.model.*;
+import org.example.model.GroupsHasTimetableEntry;
+import org.example.model.Room;
+import org.example.model.Subject;
+import org.example.model.TimetableEntry;
 import org.example.service.exception.EntityNotFoundException;
-import org.example.service.exception.NoEntityCreatedException;
 import org.example.service.interfaces.ITimetableService;
 
 import java.time.LocalTime;
@@ -39,15 +41,13 @@ public class TimetableService implements ITimetableService {
     }
 
     @Override
-    public TimetableEntry addNewTimetableEntry(TimetableEntry ttEntry) throws NoEntityCreatedException {
+    public TimetableEntry addNewTimetableEntry(TimetableEntry ttEntry) {
         if (ttEntry != null) {
-            TimetableEntry tempTTEntry = timetableDAO
-                    .createEntity(ttEntry)
-                    .orElseThrow(() -> new NoEntityCreatedException(EntityType.TIME_TABLE_ENTRY, ttEntry));
-            tempTTEntry.setSubject(ttEntry.getSubject());
-            tempTTEntry.setRoom(ttEntry.getRoom());
-            logger.debug(String.format("Timetable entry %s added to the service", tempTTEntry));
-            return tempTTEntry;
+            timetableDAO.createEntity(ttEntry);
+            ttEntry.setSubject(ttEntry.getSubject());
+            ttEntry.setRoom(ttEntry.getRoom());
+            logger.debug(String.format("Timetable entry %s added to the service", ttEntry));
+            return ttEntry;
         } else {
             logger.error("Timetable entry couldn't be added to service as it is NULL");
             throw new NullPointerException("Timetable entry is NULL - can't add it to service");
@@ -121,15 +121,12 @@ public class TimetableService implements ITimetableService {
     }
 
     @Override
-    public GroupsHasTimetableEntry assignTimetableEntryToGroup(long ttEntryId, long groupId) throws NoEntityCreatedException {
+    public GroupsHasTimetableEntry assignTimetableEntryToGroup(long ttEntryId, long groupId) {
         if (ttEntryId > 0 && groupId > 0) {
             GroupsHasTimetableEntry groupsHasTimetableEntryToAdd = new GroupsHasTimetableEntry(groupId, ttEntryId);
-            GroupsHasTimetableEntry tempGroupsHasTimetableEntry = groupsHasTTEntriesDAO
-                    .createEntity(groupsHasTimetableEntryToAdd)
-                    .orElseThrow(() -> new NoEntityCreatedException(EntityType.GROUP_HAS_TIMETABLE_ENTRY,
-                            groupsHasTimetableEntryToAdd));
+            groupsHasTTEntriesDAO.createEntity(groupsHasTimetableEntryToAdd);
             logger.debug(String.format("Timetable entry (%d) assigned to group (%d) to the service", ttEntryId, groupId));
-            return tempGroupsHasTimetableEntry;
+            return groupsHasTimetableEntryToAdd;
         } else {
             logger.error("Timetable entry couldn't be assigned to group in the service as one of its id is invalid");
             throw new NullPointerException("Timetable entry or student group id is invalid - can't assign it in service");

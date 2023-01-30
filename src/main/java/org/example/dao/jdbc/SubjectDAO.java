@@ -60,7 +60,7 @@ public class SubjectDAO implements ISubjectDAO {
     }
 
     @Override
-    public Optional<Subject> createEntity(Subject entity) {
+    public void createEntity(Subject entity) {
         String desc = "create subject (%s)";
         try (Connection con = ConnectionPool.getInstance().getConnection();
              PreparedStatement prepStmt = con.prepareStatement(CREATE_SUBJECT, Statement.RETURN_GENERATED_KEYS)) {
@@ -69,14 +69,13 @@ public class SubjectDAO implements ISubjectDAO {
                 logger.debug(String.format(EXECUTED_QUERY + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
-                    return getEntityById(generatedKeys.getLong(1));
+                    entity.setId(generatedKeys.getLong(1));
                 }
             }
         } catch (SQLException e) {
             logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
             e.printStackTrace();
         }
-        return Optional.empty();
     }
 
     @Override

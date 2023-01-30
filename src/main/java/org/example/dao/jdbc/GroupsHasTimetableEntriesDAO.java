@@ -68,7 +68,7 @@ public class GroupsHasTimetableEntriesDAO implements IGroupsHasTimetableEntriesD
     }
 
     @Override
-    public Optional<GroupsHasTimetableEntry> createEntity(GroupsHasTimetableEntry entity) {
+    public void createEntity(GroupsHasTimetableEntry entity) {
         String desc = "create 'group has timetable entity' (%s)";
         try (Connection con = ConnectionPool.getInstance().getConnection();
              PreparedStatement prepStmt = con.prepareStatement(CREATE_ENTRY, Statement.RETURN_GENERATED_KEYS)) {
@@ -78,14 +78,13 @@ public class GroupsHasTimetableEntriesDAO implements IGroupsHasTimetableEntriesD
                 logger.debug(String.format(EXECUTED_QUERY + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
-                    return getEntityById(generatedKeys.getLong(1));
+                    entity.setGroupHasTimetableEntryId(generatedKeys.getLong(1));
                 }
             }
         } catch (SQLException e) {
             logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
             e.printStackTrace();
         }
-        return Optional.empty();
     }
 
     @Override

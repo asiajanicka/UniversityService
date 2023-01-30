@@ -62,7 +62,7 @@ public class RoomDAO implements IRoomDAO {
     }
 
     @Override
-    public Optional<Room> createEntity(Room entity) {
+    public void createEntity(Room entity) {
         String desc = "create room (%s)";
         try (Connection con = ConnectionPool.getInstance().getConnection();
              PreparedStatement prepStmt = con.prepareStatement(CREATE_ROOM, Statement.RETURN_GENERATED_KEYS)) {
@@ -72,14 +72,13 @@ public class RoomDAO implements IRoomDAO {
                 logger.debug(String.format(EXECUTED_QUERY + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
-                    return getEntityById(generatedKeys.getLong(1));
+                    entity.setId(generatedKeys.getLong(1));
                 }
             }
         } catch (SQLException e) {
             logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
             e.printStackTrace();
         }
-        return Optional.empty();
     }
 
     @Override

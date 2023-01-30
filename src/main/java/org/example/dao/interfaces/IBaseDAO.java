@@ -11,7 +11,7 @@ public interface IBaseDAO<T> {
 
     int updateEntity(T entity);
 
-    Optional<T> createEntity(T entity);
+    void createEntity(T entity);
 
     int removeEntity(long id);
 

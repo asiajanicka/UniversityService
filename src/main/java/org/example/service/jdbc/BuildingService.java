@@ -14,7 +14,6 @@ import org.example.model.Building;
 import org.example.model.Department;
 import org.example.model.Room;
 import org.example.service.exception.EntityNotFoundException;
-import org.example.service.exception.NoEntityCreatedException;
 import org.example.service.interfaces.IBuildingService;
 
 import java.util.ArrayList;
@@ -37,13 +36,11 @@ public class BuildingService implements IBuildingService {
     }
 
     @Override
-    public Building addNewBuilding(String name, String address) throws NoEntityCreatedException {
+    public Building addNewBuilding(String name, String address) {
         Building buildingToAdd = new Building(name, address);
-        Building tempBuilding = buildingDAO
-                .createEntity(buildingToAdd)
-                .orElseThrow(() -> new NoEntityCreatedException(EntityType.BUILDING, buildingToAdd));
+        buildingDAO.createEntity(buildingToAdd);
         logger.debug(String.format("Building %s added to the service", buildingToAdd));
-        return tempBuilding;
+        return buildingToAdd;
     }
 
     private Building getBasicBuildingById(long id) throws EntityNotFoundException {
@@ -99,14 +96,12 @@ public class BuildingService implements IBuildingService {
     }
 
     @Override
-    public Room addRoom(Room room) throws NoEntityCreatedException {
+    public Room addRoom(Room room) {
         if (room != null && room.getBuilding() != null && room.getBuilding().getId() > 0) {
-            Room tempRoom = roomDAO
-                    .createEntity(room)
-                    .orElseThrow(() -> new NoEntityCreatedException(EntityType.ROOM, room));
-            logger.debug(String.format("Room %s added to the service", tempRoom));
-            tempRoom.setBuilding(room.getBuilding());
-            return tempRoom;
+            roomDAO.createEntity(room);
+            logger.debug(String.format("Room %s added to the service", room));
+            room.setBuilding(room.getBuilding());
+            return room;
         } else {
             logger.error("Room couldn't be added to the service as room or building in which it's supposed to be located" +
                     " is NULL");

@@ -16,7 +16,6 @@ import org.example.model.Department;
 import org.example.model.Subject;
 import org.example.model.Teacher;
 import org.example.service.exception.EntityNotFoundException;
-import org.example.service.exception.NoEntityCreatedException;
 import org.example.service.interfaces.IDepartmentService;
 
 import java.util.ArrayList;
@@ -48,13 +47,11 @@ public class DepartmentService implements IDepartmentService {
     }
 
     @Override
-    public Teacher addTeacherWithoutSubjects(Teacher teacher) throws NoEntityCreatedException {
+    public Teacher addTeacherWithoutSubjects(Teacher teacher) {
         if (teacher != null) {
-            Teacher tempTeacher = teacherDAO
-                    .createEntity(teacher)
-                    .orElseThrow(() -> new NoEntityCreatedException(EntityType.TEACHER, teacher));
-            logger.debug(String.format("Teacher (%s) added to the service", tempTeacher));
-            return tempTeacher;
+            teacherDAO.createEntity(teacher);
+            logger.debug(String.format("Teacher (%s) added to the service", teacher));
+            return teacher;
         } else {
             logger.error("Teacher couldn't be added to service as it is NULL");
             throw new NullPointerException("Teacher is NULL - can't add it to service");
@@ -123,12 +120,11 @@ public class DepartmentService implements IDepartmentService {
     }
 
     @Override
-    public Department addEmptyDept(String name) throws NoEntityCreatedException {
-        Department tempDept = deptDAO
-                .createEntity(new Department(name))
-                .orElseThrow(() -> new NoEntityCreatedException(EntityType.DEPARTMENT, name));
-        logger.debug(String.format("Department (%s) added to the service", tempDept));
-        return tempDept;
+    public Department addEmptyDept(String name) {
+        Department departmentToAdd = new Department(name);
+        deptDAO.createEntity(departmentToAdd);
+        logger.debug(String.format("Department (%s) added to the service", departmentToAdd));
+        return departmentToAdd;
     }
 
     @Override
