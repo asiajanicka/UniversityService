@@ -17,10 +17,13 @@ public class Building {
 
     @JsonProperty
     private long id;
+
     @JsonProperty
     private String name;
+
     @JsonProperty
     private String address;
+
     @JsonProperty
     private List<Department> departments;
 

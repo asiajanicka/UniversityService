@@ -24,10 +24,13 @@ public class TimetableEntry {
     @JsonSerialize(using = LocalTimeSerializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH-mm-ss")
     private LocalTime time;
+
     @JsonProperty
     private WeekDay weekDay;
+
     @JsonProperty
     private Subject subject;
+
     @JsonProperty
     private Room room;
 

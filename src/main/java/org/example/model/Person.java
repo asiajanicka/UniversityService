@@ -12,8 +12,10 @@ public abstract class Person {
 
     @JsonProperty
     private long id;
+
     @JsonProperty
     private String firstName;
+
     @JsonProperty
     private String lastName;
 

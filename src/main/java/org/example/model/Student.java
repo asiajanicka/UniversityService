@@ -21,8 +21,10 @@ public class Student extends Person {
     @JsonSerialize(using= LocalDateSerializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
+
     @JsonProperty
     private PortalAccount portalAccount;
+
     @JsonProperty
     private List<Grade> grades;
 

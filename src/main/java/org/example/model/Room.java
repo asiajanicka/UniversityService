@@ -12,8 +12,10 @@ public class Room {
 
     @JsonProperty
     private long id;
+
     @JsonProperty
     private String number;
+
     @JsonProperty
     private Building building;
 

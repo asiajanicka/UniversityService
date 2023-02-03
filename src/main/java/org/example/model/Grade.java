@@ -12,8 +12,10 @@ public class Grade {
 
     @JsonProperty
     private long id;
+
     @JsonProperty
     private int value;
+
     @JsonProperty
     private Subject subject;
 

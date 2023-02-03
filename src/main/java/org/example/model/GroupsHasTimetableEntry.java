@@ -14,8 +14,10 @@ public class GroupsHasTimetableEntry {
 
     @JsonProperty
     private long groupHasTimetableEntryId;
+
     @JsonProperty
     private long groupId;
+
     @JsonProperty
     private long timetableEntryId;
 

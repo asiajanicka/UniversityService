@@ -17,8 +17,10 @@ public class Department {
 
     @JsonProperty
     private long id;
+
     @JsonProperty
     private String name;
+
     @JsonProperty
     private List<Teacher> teachers;
 

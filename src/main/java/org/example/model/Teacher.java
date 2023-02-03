@@ -13,6 +13,7 @@ public class Teacher extends Person {
 
     @JsonProperty
     private ParkingSpot parkingSpot;
+
     @JsonProperty
     private List<Subject> subjects;
 

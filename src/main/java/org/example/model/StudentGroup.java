@@ -17,10 +17,13 @@ public class StudentGroup {
 
     @JsonProperty
     private long id;
+
     @JsonProperty
     private String name;
+
     @JsonProperty
     private List<Student> students;
+
     @JsonProperty
     private List<TimetableEntry> timetable;
 

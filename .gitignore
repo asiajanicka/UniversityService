@@ -42,5 +42,4 @@ build/
 ### Mac OS ###
 .DS_Store
 
-src/test/resources/logs
-src/test/resources/studentGroupsJackson.json
+src/test/java/org/example/testResults/*

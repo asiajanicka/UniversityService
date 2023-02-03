@@ -12,6 +12,7 @@ public class Subject {
 
     @JsonProperty
     private long id;
+
     @JsonProperty
     private String name;
 

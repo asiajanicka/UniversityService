@@ -12,8 +12,10 @@ public class ParkingSpot {
 
     @JsonProperty
     private long id;
+
     @JsonProperty
     private String name;
+
     @JsonProperty
     private String address;
 
