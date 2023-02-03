@@ -2,17 +2,23 @@ package org.example.model;
 
 import lombok.*;
 
-import java.util.Objects;
+import javax.xml.bind.annotation.*;
 
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Person {
 
+    @XmlAttribute
     private long id;
+
+    @XmlElement
     private String firstName;
+
+    @XmlElement
     private String lastName;
 
     public Person(String firstName, String lastName) {

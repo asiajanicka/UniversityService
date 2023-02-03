@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,11 +13,20 @@ import java.util.List;
 @Setter
 @ToString
 @EqualsAndHashCode
+@XmlRootElement(name = "studentGroup")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class StudentGroup {
 
+    @XmlAttribute
     private long id;
+
+    @XmlElement
     private String name;
+
+    @XmlElementWrapper(name = "students")
+    @XmlElement(name = "student")
     private List<Student> students;
+
     private List<TimetableEntry> timetable;
 
     public StudentGroup() {

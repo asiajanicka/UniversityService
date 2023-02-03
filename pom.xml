@@ -20,6 +20,8 @@
         <log4j-slf4j2-impl.version>2.19.0</log4j-slf4j2-impl.version>
         <junit-jupiter-api.version>5.9.1</junit-jupiter-api.version>
         <assertj-core.version>3.23.1</assertj-core.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+        <jaxb.runtime.version>2.3.6</jaxb.runtime.version>
     </properties>
 
     <dependencies>
@@ -76,6 +78,16 @@
             <artifactId>assertj-core</artifactId>
             <version>${assertj-core.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${jaxb.runtime.version}</version>
         </dependency>
     </dependencies>
 
