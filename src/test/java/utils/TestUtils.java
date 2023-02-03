@@ -1,8 +1,12 @@
 package utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TestUtils {
 
     private static final String TEST_RESULTS_PATH = "src/test/java/org/example/testResults/";
@@ -13,7 +17,12 @@ public class TestUtils {
         return formatter.format(timeNow);
     }
 
-    public static String getNameForXMLFile(String name) {
+    public static String getNameForJsonFile(String name) {
+        return String.format("%s%s_%s.json", TEST_RESULTS_PATH, name, getCurrentDateTime());
+    }
+        
+    public static String getNameForXMLFile (String name) {
         return String.format("%s%s_%s.xml", TEST_RESULTS_PATH, name, getCurrentDateTime());
     }
+    
 }

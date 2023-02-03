@@ -1,7 +1,12 @@
 package org.example.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import lombok.*;
 import org.example.utils.LocalDateAdapter;
 
 import javax.xml.bind.annotation.*;
@@ -17,12 +22,17 @@ import java.util.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Student extends Person {
 
+    @JsonDeserialize(using= LocalDateDeserializer.class)
+    @JsonSerialize(using= LocalDateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate dateOfBirth;
 
+    @JsonProperty
     @XmlElement
     private PortalAccount portalAccount;
 
+    @JsonProperty
     @XmlElementWrapper(name = "grades")
     @XmlElement(name = "grade")
     private List<Grade> grades;

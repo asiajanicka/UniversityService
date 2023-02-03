@@ -1,5 +1,11 @@
 package org.example.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.*;
 import org.example.utils.LocalDateAdapter;
 
@@ -16,18 +22,27 @@ import java.time.LocalDate;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PortalAccount {
 
+    @JsonProperty
     @XmlAttribute
     private long id;
 
+    @JsonProperty
     @XmlElement
     private String login;
 
+    @JsonProperty
     @XmlElement
     private String password;
 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate issueDate;
 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate expiryDate;
 
