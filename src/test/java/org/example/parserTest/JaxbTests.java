@@ -22,7 +22,7 @@ public class JaxbTests {
     @Test
     public void usecaseTest() throws EntityNotFoundException, JAXBException {
 
-        String path = "src/test/resources/studentGroupsJAXB.xml";
+        String path = "src/test/java/org/example/testResults/studentGroupsJAXB.xml";
         StudentService studentService = new StudentService();
         StudentGroup groupFromDB = studentService.getStudentGroupById(1);
         logger.info("Retrieved student group from DB");

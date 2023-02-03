@@ -42,5 +42,4 @@ build/
 ### Mac OS ###
 .DS_Store
 
-src/test/resources/logs
-src/test/resources/studentGroupsJAXB.xml
+src/test/java/org/example/testResults/*
