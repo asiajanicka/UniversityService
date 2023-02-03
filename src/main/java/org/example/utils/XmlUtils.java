@@ -41,8 +41,7 @@ public class XmlUtils {
     }
 
     public static Document parseXml(String pathToXML) throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory factory
-                = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         return builder.parse(new File(pathToXML));
     }

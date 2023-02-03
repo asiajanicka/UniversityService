@@ -22,12 +22,14 @@ public class DOMTests {
     @Test
     public void validateXMLAgainstSchema() throws ParserConfigurationException, IOException, SAXException {
 
-        logger.info("Start of DOM Parser Tests - test case 1");
         Schema schema = XmlUtils.getSchema("src/test/resources/studentGroups.xsd");
+        logger.info("Created schema from xsd file");
         Document document = XmlUtils.parseXml("src/test/resources/studentGroups.xml");
+        logger.info("Created document from xml file");
         assertThat(XmlUtils.validateXml(schema, document)).isTrue();
 
         List<StudentGroup> studentGroupsFromXML = XmlUtils.getStudentGroupsFromDocument(document);
+        logger.info("Created list of student groups from document");
 
         assertThat(studentGroupsFromXML.size()).isEqualTo(2);
 
@@ -46,7 +48,6 @@ public class DOMTests {
                 .count())
                 .isEqualTo(2);
         assertThat(studentGroupsFromXML.get(1).getStudents().get(2).getGrades()).isEmpty();
-        logger.info("End of DOM Parser Tests - test case 1");
     }
 
 }
