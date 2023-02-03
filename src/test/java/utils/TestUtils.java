@@ -19,5 +19,9 @@ public class TestUtils {
 
     public static String getNameForJsonFile(String name) {
         return String.format("%s%s_%s.json", TEST_RESULTS_PATH, name, getCurrentDateTime());
+        
+    public static String getNameForXMLFile(String name) {
+        return String.format("%s%s_%s.xml", TEST_RESULTS_PATH, name, getCurrentDateTime());
     }
+    
 }

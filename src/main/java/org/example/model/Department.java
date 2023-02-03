@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,15 +14,21 @@ import java.util.List;
 @Setter
 @ToString
 @EqualsAndHashCode
+@XmlRootElement(name = "department")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Department {
 
     @JsonProperty
+    @XmlAttribute
     private long id;
 
     @JsonProperty
+    @XmlElement
     private String name;
 
     @JsonProperty
+    @XmlElementWrapper(name = "teachers")
+    @XmlElement(name = "teacher")
     private List<Teacher> teachers;
 
     public Department() {

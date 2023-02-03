@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+import javax.xml.bind.annotation.XmlEnum;
+
+@AllArgsConstructor(access= AccessLevel.PRIVATE)
+@XmlEnum
 public enum WeekDay {
 
     @JsonProperty

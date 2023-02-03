@@ -21,6 +21,8 @@
         <junit-jupiter-api.version>5.9.1</junit-jupiter-api.version>
         <assertj-core.version>3.23.1</assertj-core.version>
         <jackson-databind.version>2.14.1</jackson-databind.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+        <jaxb.runtime.version>2.3.6</jaxb.runtime.version>
     </properties>
 
     <dependencies>
@@ -87,6 +89,14 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>2.9.7</version>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${jaxb.runtime.version}</version>
         </dependency>
     </dependencies>
 
