@@ -1,0 +1,151 @@
+<studentGroups>
+    <studentGroup id="1" name="Y1A">
+        <students>
+            <student id="1">
+                <firstName>Eric</firstName>
+                <lastName>Smith</lastName>
+                <dateOfBirth>1990-12-12</dateOfBirth>
+                <portalAccount id="1">
+                    <login>eric_smith</login>
+                    <password>smith_admin</password>
+                    <issueDate>2021-09-01</issueDate>
+                    <expiryDate>2026-09-01</expiryDate>
+                </portalAccount>
+                <grades>
+                    <grade id="1">
+                        <value>5</value>
+                        <subject id="1">
+                            <name>Jewellery &amp; Metal</name>
+                        </subject>
+                    </grade>
+                    <grade id="2">
+                        <value>3</value>
+                        <subject id="2">
+                            <name>History of Design</name>
+                        </subject>
+                    </grade>
+                    <grade id="3">
+                        <value>3</value>
+                        <subject id="3">
+                            <name>Modern English</name>
+                        </subject>
+                    </grade>
+                </grades>
+            </student>
+            <student id="2">
+                <firstName>Jane</firstName>
+                <lastName>Fox</lastName>
+                <dateOfBirth>1990-11-11</dateOfBirth>
+                <portalAccount id="2">
+                    <login>jane_fox</login>
+                    <password>fox_admin</password>
+                    <issueDate>2021-09-01</issueDate>
+                    <expiryDate>2026-09-01</expiryDate>
+                </portalAccount>
+                <grades>
+                    <grade id="4">
+                        <value>2</value>
+                        <subject id="1">
+                            <name>Jewellery &amp; Metal</name>
+                        </subject>
+                    </grade>
+                    <grade id="5">
+                        <value>3</value>
+                        <subject id="2">
+                            <name>History of Design</name>
+                        </subject>
+                    </grade>
+                    <grade id="6">
+                        <value>4</value>
+                        <subject id="4">
+                            <name>Maths</name>
+                        </subject>
+                    </grade>
+                </grades>
+            </student>
+        </students>
+    </studentGroup>
+    <studentGroup id="2" name="Y1B">
+        <students>
+            <student id="3">
+                <firstName>John</firstName>
+                <lastName>Grey</lastName>
+                <dateOfBirth>1990-10-10</dateOfBirth>
+                <portalAccount id="3">
+                    <login>john_grey</login>
+                    <password>grey_admin</password>
+                    <issueDate>2021-09-01</issueDate>
+                    <expiryDate>2026-09-06</expiryDate>
+                </portalAccount>
+                <grades>
+                    <grade id="7">
+                        <value>4</value>
+                        <subject id="5">
+                            <name>Databases</name>
+                        </subject>
+                    </grade>
+                    <grade id="8">
+                        <value>5</value>
+                        <subject id="6">
+                            <name>Java</name>
+                        </subject>
+                    </grade>
+                    <grade id="9">
+                        <value>3</value>
+                        <subject id="6">
+                            <name>Java</name>
+                        </subject>
+                    </grade>
+                </grades>
+            </student>
+            <student id="4">
+                <firstName>Jack</firstName>
+                <lastName>Yellow</lastName>
+                <dateOfBirth>1990-09-12</dateOfBirth>
+                <portalAccount id="4">
+                    <login>jack_yellow</login>
+                    <password>yellow_admin</password>
+                    <issueDate>2021-09-01</issueDate>
+                    <expiryDate>2026-09-01</expiryDate>
+                </portalAccount>
+                <grades>
+                    <grade id="10">
+                        <value>3</value>
+                        <subject id="5">
+                            <name>Databases</name>
+                        </subject>
+                    </grade>
+                    <grade id="11">
+                        <value>3</value>
+                        <subject id="6">
+                            <name>Java</name>
+                        </subject>
+                    </grade>
+                    <grade id="12">
+                        <value>4</value>
+                        <subject id="7">
+                            <name>Java Scrip</name>
+                        </subject>
+                    </grade>
+                    <grade id="13">
+                        <value>4</value>
+                        <subject id="5">
+                            <name>Databases</name>
+                        </subject>
+                    </grade>
+                </grades>
+            </student>
+            <student id="5">
+                <firstName>Jake</firstName>
+                <lastName>Edwards</lastName>
+                <dateOfBirth>1990-01-12</dateOfBirth>
+            </student>
+        </students>
+    </studentGroup>
+</studentGroups>
+
+
+
+
+
+
