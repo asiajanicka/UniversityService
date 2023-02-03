@@ -16,6 +16,7 @@ public class Teacher extends Person {
 
     @XmlElement
     private ParkingSpot parkingSpot;
+
     @XmlElementWrapper(name = "subjects")
     @XmlElement(name = "subject")
     private List<Subject> subjects;

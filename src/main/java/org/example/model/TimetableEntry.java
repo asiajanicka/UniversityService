@@ -19,12 +19,16 @@ public class TimetableEntry {
 
     @XmlAttribute
     private long id;
+
     @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     private LocalTime time;
+
     @XmlElement
     private WeekDay weekDay;
+
     @XmlElement
     private Subject subject;
+
     @XmlElement
     private Room room;
 

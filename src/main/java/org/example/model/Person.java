@@ -14,8 +14,10 @@ public abstract class Person {
 
     @XmlAttribute
     private long id;
+
     @XmlElement
     private String firstName;
+
     @XmlElement
     private String lastName;
 

@@ -15,8 +15,10 @@ public class Grade {
 
     @XmlAttribute
     private long id;
+
     @XmlElement
     private int value;
+
     @XmlElement
     private Subject subject;
 

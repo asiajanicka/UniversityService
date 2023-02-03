@@ -15,8 +15,10 @@ public class ParkingSpot {
 
     @XmlAttribute
     private long id;
+
     @XmlElement
     private String name;
+
     @XmlElement
     private String address;
 

@@ -19,8 +19,10 @@ public class Student extends Person {
 
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate dateOfBirth;
+
     @XmlElement
     private PortalAccount portalAccount;
+
     @XmlElementWrapper(name = "grades")
     @XmlElement(name = "grade")
     private List<Grade> grades;

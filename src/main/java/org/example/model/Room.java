@@ -15,8 +15,10 @@ public class Room {
 
     @XmlAttribute
     private long id;
+
     @XmlElement
     private String number;
+
     @XmlElement
     private Building building;
 

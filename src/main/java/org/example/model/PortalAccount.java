@@ -18,12 +18,16 @@ public class PortalAccount {
 
     @XmlAttribute
     private long id;
+
     @XmlElement
     private String login;
+
     @XmlElement
     private String password;
+
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate issueDate;
+
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate expiryDate;
 

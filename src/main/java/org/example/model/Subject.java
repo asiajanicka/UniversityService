@@ -15,6 +15,7 @@ public class Subject {
 
     @XmlAttribute
     private long id;
+
     @XmlElement
     private String name;
 

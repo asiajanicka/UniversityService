@@ -19,10 +19,13 @@ public class Building {
 
     @XmlAttribute
     private long id;
+
     @XmlElement
     private String name;
+
     @XmlElement
     private String address;
+
     @XmlElementWrapper(name = "departments")
     @XmlElement(name = "department")
     private List<Department> departments;

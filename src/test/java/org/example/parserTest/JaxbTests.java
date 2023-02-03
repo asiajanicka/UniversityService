@@ -22,18 +22,20 @@ public class JaxbTests {
     @Test
     public void usecaseTest() throws EntityNotFoundException, JAXBException {
 
-        logger.info("Start of Jaxb Tests - test case 1");
+        String path = "src/test/resources/studentGroupsJAXB.xml";
         StudentService studentService = new StudentService();
         StudentGroup groupFromDB = studentService.getStudentGroupById(1);
+        logger.info("Retrieved student group from DB");
         JAXBContext context = JAXBContext.newInstance(StudentGroup.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        marshaller.marshal(groupFromDB, new File("src/test/resources/studentGroupsJAXB.xml"));
+        marshaller.marshal(groupFromDB, new File(path));
+        logger.info(String.format("Marshalled student group to file '%s'", path));
 
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        StudentGroup groupFromXML = (StudentGroup) unmarshaller.unmarshal(new File("src/test/resources/studentGroupsJAXB.xml"));
+        StudentGroup groupFromXML = (StudentGroup) unmarshaller.unmarshal(new File(path));
+        logger.info(String.format("Unmarshalled student group from file '%s' to object", path));
         assertThat(groupFromXML).isEqualTo(groupFromDB);
-        logger.info("End of Jaxb Tests - test case 1");
     }
 
 }

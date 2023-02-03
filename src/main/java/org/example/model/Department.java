@@ -19,8 +19,10 @@ public class Department {
 
     @XmlAttribute
     private long id;
+
     @XmlElement
     private String name;
+
     @XmlElementWrapper(name = "teachers")
     @XmlElement(name = "teacher")
     private List<Teacher> teachers;
