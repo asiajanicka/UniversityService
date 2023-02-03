@@ -27,10 +27,6 @@ public class StudentGroup {
     private String name;
 
     @JsonProperty
-    @XmlElement
-    private List<Student> students;
-
-    @JsonProperty
     @XmlElementWrapper(name = "students")
     @XmlElement(name = "student")
     private List<Student> students;

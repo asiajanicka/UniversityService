@@ -18,7 +18,7 @@ public abstract class Person {
     private long id;
 
     @JsonProperty
-    @XmlElemen
+    @XmlElement
     private String firstName;
 
     @JsonProperty

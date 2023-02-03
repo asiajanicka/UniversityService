@@ -3,8 +3,8 @@ package org.example.parserTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.model.StudentGroup;
-import org.example.service.StudentService;
 import org.example.service.exception.EntityNotFoundException;
+import org.example.service.jdbc.StudentService;
 import org.junit.jupiter.api.Test;
 import utils.TestUtils;
 

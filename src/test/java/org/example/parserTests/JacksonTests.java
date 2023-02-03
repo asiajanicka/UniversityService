@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.example.model.StudentGroup;
-import org.example.service.StudentService;
+import org.example.service.jdbc.StudentService;
 import org.example.service.exception.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import utils.TestUtils;
