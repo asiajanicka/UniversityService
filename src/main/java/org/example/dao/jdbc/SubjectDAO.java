@@ -32,12 +32,12 @@ public class SubjectDAO implements ISubjectDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_SUBJECT)) {
             prepStmt.setLong(1, id);
             List<Subject> subjects = RowMapper.mapToSubjectEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return subjects
                     .stream()
                     .findFirst();
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -50,10 +50,10 @@ public class SubjectDAO implements ISubjectDAO {
              PreparedStatement prepStmt = con.prepareStatement(UPDATE_SUBJECT)) {
             prepStmt.setString(1, entity.getName());
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
         return 0;
@@ -66,14 +66,14 @@ public class SubjectDAO implements ISubjectDAO {
              PreparedStatement prepStmt = con.prepareStatement(CREATE_SUBJECT, Statement.RETURN_GENERATED_KEYS)) {
             prepStmt.setString(1, entity.getName());
             if (prepStmt.executeUpdate() == 1) {
-                logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+                logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     entity.setId(generatedKeys.getLong(1));
                 }
             }
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
     }
@@ -85,10 +85,10 @@ public class SubjectDAO implements ISubjectDAO {
              PreparedStatement prepStmt = con.prepareStatement(REMOVE_SUBJECT)) {
             prepStmt.setLong(1, id);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return 0;
@@ -102,10 +102,10 @@ public class SubjectDAO implements ISubjectDAO {
             prepStmt.setLong(1, teacherId);
             prepStmt.setLong(2, subjectId);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, subjectId, teacherId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, subjectId, teacherId));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, subjectId, teacherId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, subjectId, teacherId), e);
             e.printStackTrace();
         }
         return 0;
@@ -119,10 +119,10 @@ public class SubjectDAO implements ISubjectDAO {
             prepStmt.setString(1, null);
             prepStmt.setLong(2, subjectId);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, subjectId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, subjectId));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, subjectId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, subjectId), e);
             e.printStackTrace();
         }
         return 0;
@@ -136,9 +136,9 @@ public class SubjectDAO implements ISubjectDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_SUBJECTS_BY_TEACHER)) {
             prepStmt.setLong(1, teacherId);
             subjects.addAll(RowMapper.mapToSubjectEntityList(prepStmt.executeQuery()));
-            logger.debug(String.format(EXECUTED_QUERY + desc, teacherId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, teacherId));
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, teacherId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, teacherId), e);
             e.printStackTrace();
         }
         return subjects;
@@ -151,9 +151,9 @@ public class SubjectDAO implements ISubjectDAO {
         try (Connection con = ConnectionPool.getInstance().getConnection();
              PreparedStatement prepStmt = con.prepareStatement(GET_SUBJECTS_WITHOUT_TEACHER)) {
             subjects.addAll(RowMapper.mapToSubjectEntityList(prepStmt.executeQuery()));
-            logger.debug(String.format(EXECUTED_QUERY + desc));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc));
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc), e);
             e.printStackTrace();
         }
         return subjects;

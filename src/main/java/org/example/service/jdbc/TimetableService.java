@@ -120,7 +120,6 @@ public class TimetableService implements ITimetableService {
 
     @Override
     public boolean removeTimetableEntry(long id) {
-        if (id > 0) {
             int result = timetableDAO.removeEntity(id);
             if (result == 1) {
                 logger.debug(String.format("Timetable entry (%d) removed from the service", id));
@@ -129,10 +128,6 @@ public class TimetableService implements ITimetableService {
                 logger.error(String.format("Timetable entry (%d) couldn't be removed from the service", id));
                 return false;
             }
-        } else {
-            logger.error("Timetable entry couldn't be removed from the service as its id is invalid");
-            return false;
-        }
     }
 
     @Override

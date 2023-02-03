@@ -38,12 +38,12 @@ public class GroupsHasTimetableEntriesDAO implements IGroupsHasTimetableEntriesD
              PreparedStatement prepStmt = con.prepareStatement(GET_ENTRY)) {
             prepStmt.setLong(1, id);
             List<GroupsHasTimetableEntry> entries = RowMapper.mapToGroupHasTimetableEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return entries
                     .stream()
                     .findFirst();
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -58,10 +58,10 @@ public class GroupsHasTimetableEntriesDAO implements IGroupsHasTimetableEntriesD
             prepStmt.setLong(2, entity.getTimetableEntryId());
             prepStmt.setLong(3, entity.getGroupHasTimetableEntryId());
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
         return 0;
@@ -75,14 +75,14 @@ public class GroupsHasTimetableEntriesDAO implements IGroupsHasTimetableEntriesD
             prepStmt.setLong(1, entity.getGroupId());
             prepStmt.setLong(2, entity.getTimetableEntryId());
             if (prepStmt.executeUpdate() == 1) {
-                logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+                logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     entity.setGroupHasTimetableEntryId(generatedKeys.getLong(1));
                 }
             }
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
     }
@@ -94,10 +94,10 @@ public class GroupsHasTimetableEntriesDAO implements IGroupsHasTimetableEntriesD
              PreparedStatement prepStmt = con.prepareStatement(REMOVE_ENTRY)) {
             prepStmt.setLong(1, id);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return 0;
@@ -111,10 +111,10 @@ public class GroupsHasTimetableEntriesDAO implements IGroupsHasTimetableEntriesD
             prepStmt.setLong(1, groupId);
             prepStmt.setLong(2, ttEntityId);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc), e);
             e.printStackTrace();
         }
         return 0;
@@ -128,13 +128,13 @@ public class GroupsHasTimetableEntriesDAO implements IGroupsHasTimetableEntriesD
              PreparedStatement prepStmt = con.prepareStatement(GET_GROUP_IDS_BY_TIMETABLE_ENTITY_ID)) {
             prepStmt.setLong(1, ttEntryId);
             List<GroupsHasTimetableEntry> groupsHasTimetableEntries = RowMapper.mapToGroupHasTimetableEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, ttEntryId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, ttEntryId));
             return groupsHasTimetableEntries
                     .stream()
                     .map(p -> p.getGroupId())
                     .collect(Collectors.toList());
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, ttEntryId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, ttEntryId), e);
             e.printStackTrace();
         }
         return ids;
@@ -148,13 +148,13 @@ public class GroupsHasTimetableEntriesDAO implements IGroupsHasTimetableEntriesD
              PreparedStatement prepStmt = con.prepareStatement(GET_TIMETABLE_ENTITY_IDS_BY_GROUP_ID)) {
             prepStmt.setLong(1, groupId);
             List<GroupsHasTimetableEntry> groupsHasTimetableEntries = RowMapper.mapToGroupHasTimetableEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, groupId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, groupId));
             return groupsHasTimetableEntries
                     .stream()
                     .map(p -> p.getTimetableEntryId())
                     .collect(Collectors.toList());
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, groupId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, groupId), e);
             e.printStackTrace();
         }
         return ids;

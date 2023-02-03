@@ -32,12 +32,12 @@ public class RoomDAO implements IRoomDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_ROOM)) {
             prepStmt.setLong(1, id);
             List<Room> rooms = RowMapper.mapToRoomEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return rooms
                     .stream()
                     .findFirst();
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -52,10 +52,10 @@ public class RoomDAO implements IRoomDAO {
             prepStmt.setLong(2, entity.getBuilding().getId());
             prepStmt.setLong(3, entity.getId());
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
         return 0;
@@ -69,14 +69,14 @@ public class RoomDAO implements IRoomDAO {
             prepStmt.setString(1, entity.getNumber());
             prepStmt.setLong(2, entity.getBuilding().getId());
             if (prepStmt.executeUpdate() == 1) {
-                logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+                logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     entity.setId(generatedKeys.getLong(1));
                 }
             }
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
     }
@@ -88,10 +88,10 @@ public class RoomDAO implements IRoomDAO {
              PreparedStatement prepStmt = con.prepareStatement(REMOVE_ROOM)) {
             prepStmt.setLong(1, id);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return 0;
@@ -105,10 +105,10 @@ public class RoomDAO implements IRoomDAO {
             prepStmt.setLong(1, buildingId);
             prepStmt.setLong(2, roomId);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, roomId, buildingId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, roomId, buildingId));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, roomId, buildingId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, roomId, buildingId), e);
             e.printStackTrace();
         }
         return 0;
@@ -122,9 +122,9 @@ public class RoomDAO implements IRoomDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_ROOMS_BY_BUILDING_ID)) {
             prepStmt.setLong(1, buildingId);
             rooms = RowMapper.mapToRoomEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, buildingId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, buildingId));
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, buildingId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, buildingId), e);
             e.printStackTrace();
         }
         return rooms;
@@ -137,10 +137,10 @@ public class RoomDAO implements IRoomDAO {
              PreparedStatement prepStmt = con.prepareStatement(REMOVE_ROOMS_FROM_BUILDING)) {
             prepStmt.setLong(1, buildingId);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, buildingId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, buildingId));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, buildingId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, buildingId), e);
             e.printStackTrace();
         }
         return 0;

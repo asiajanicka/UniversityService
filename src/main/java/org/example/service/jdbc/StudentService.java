@@ -72,7 +72,6 @@ public class StudentService implements IStudentService {
 
     @Override
     public boolean removeStudent(long id) {
-        if (id > 0) {
             int result = studentDAO.removeEntity(id);
             if (result == 1) {
                 logger.debug(String.format("Student (%d) removed from the service", id));
@@ -81,10 +80,6 @@ public class StudentService implements IStudentService {
                 logger.error(String.format("Student (%d) couldn't be removed from the service", id));
                 return false;
             }
-        } else {
-            logger.error("Student couldn't be removed from the service as its id is invalid");
-            return false;
-        }
     }
 
     @Override
@@ -141,7 +136,6 @@ public class StudentService implements IStudentService {
 
     @Override
     public boolean removeGrade(long id) {
-        if (id > 0) {
             int result = gradeDAO.removeEntity(id);
             if (result == 1) {
                 logger.debug(String.format("Grade (%d) removed from the service", id));
@@ -150,10 +144,6 @@ public class StudentService implements IStudentService {
                 logger.error(String.format("Grade (%d) couldn't be removed from the service", id));
                 return false;
             }
-        } else {
-            logger.error("Grade couldn't be removed from the service as its id is invalid");
-            return false;
-        }
     }
 
     @Override
@@ -219,7 +209,6 @@ public class StudentService implements IStudentService {
 
     @Override
     public boolean removeStudentGroup(long id) {
-        if (id > 0) {
             int result = groupDAO.removeEntity(id);
             if (result == 1) {
                 logger.debug(String.format("Student group (%d) was removed from the service", id));
@@ -228,10 +217,6 @@ public class StudentService implements IStudentService {
                 logger.error(String.format("Student group (%d) couldn't be removed from the service", id));
                 return false;
             }
-        } else {
-            logger.error("Student group couldn't be removed from the service as its is is invalid");
-            return false;
-        }
     }
 
     @Override
@@ -287,7 +272,6 @@ public class StudentService implements IStudentService {
     private Grade addGrade(Grade grade) {
         if (grade != null) {
             gradeDAO.createEntity(grade);
-            grade.getSubject().setName(grade.getSubject().getName());
             logger.debug(String.format("Grade (%s) added to the service", grade));
             return grade;
         } else {

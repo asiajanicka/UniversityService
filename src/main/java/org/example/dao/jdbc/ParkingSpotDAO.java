@@ -33,12 +33,12 @@ public class ParkingSpotDAO implements IParkingSpotDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_SPOT)) {
             prepStmt.setLong(1, id);
             List<ParkingSpot> spots = RowMapper.mapToParkingSpotEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return spots
                     .stream()
                     .findFirst();
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -53,10 +53,10 @@ public class ParkingSpotDAO implements IParkingSpotDAO {
             prepStmt.setString(2, entity.getAddress());
             prepStmt.setLong(3, entity.getId());
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
         return 0;
@@ -70,14 +70,14 @@ public class ParkingSpotDAO implements IParkingSpotDAO {
             prepStmt.setString(1, entity.getName());
             prepStmt.setString(2, entity.getAddress());
             if (prepStmt.executeUpdate() == 1) {
-                logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+                logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     entity.setId(generatedKeys.getLong(1));
                 }
             }
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
     }
@@ -89,10 +89,10 @@ public class ParkingSpotDAO implements IParkingSpotDAO {
              PreparedStatement prepStmt = con.prepareStatement(REMOVE_SPOT)) {
             prepStmt.setLong(1, id);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return 0;
@@ -105,12 +105,12 @@ public class ParkingSpotDAO implements IParkingSpotDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_SPOT_BY_TEACHER_ID)) {
             prepStmt.setLong(1, teacherId);
             List<ParkingSpot> spots = RowMapper.mapToParkingSpotEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, teacherId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, teacherId));
             return spots
                     .stream()
                     .findFirst();
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, teacherId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, teacherId), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -124,10 +124,10 @@ public class ParkingSpotDAO implements IParkingSpotDAO {
             prepStmt.setLong(1, teacherId);
             prepStmt.setLong(2, spotId);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, spotId, teacherId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, spotId, teacherId));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, spotId, teacherId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, spotId, teacherId), e);
             e.printStackTrace();
         }
         return 0;
@@ -140,10 +140,10 @@ public class ParkingSpotDAO implements IParkingSpotDAO {
              PreparedStatement prepStmt = con.prepareStatement(SET_SPOT_FREE)) {
             prepStmt.setLong(1, spotId);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, spotId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, spotId));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, spotId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, spotId), e);
             e.printStackTrace();
         }
         return 0;
@@ -156,9 +156,9 @@ public class ParkingSpotDAO implements IParkingSpotDAO {
         try (Connection con = ConnectionPool.getInstance().getConnection();
              PreparedStatement prepStmt = con.prepareStatement(GET_FREE_SPOTS)) {
             spots.addAll(RowMapper.mapToParkingSpotEntityList(prepStmt.executeQuery()));
-            logger.debug(EXECUTED_QUERY + desc);
+            logger.debug(EXECUTED_QUERY_LOG_TEMPLATE + desc);
         } catch (SQLException e) {
-            logger.error(NOT_EXECUTE_QUERY + desc, e);
+            logger.error(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, e);
             e.printStackTrace();
         }
         return spots;

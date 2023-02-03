@@ -28,12 +28,12 @@ public class StudentGroupDAO implements IStudentGroupDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_STUDENT_GROUP)) {
             prepStmt.setLong(1, id);
             List<StudentGroup> studentGroups = RowMapper.mapToStudentGroupEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return studentGroups
                     .stream()
                     .findFirst();
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -46,10 +46,10 @@ public class StudentGroupDAO implements IStudentGroupDAO {
              PreparedStatement prepStmt = con.prepareStatement(UPDATE_STUDENT_GROUP)) {
             prepStmt.setString(1, entity.getName());
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
         return 0;
@@ -62,14 +62,14 @@ public class StudentGroupDAO implements IStudentGroupDAO {
              PreparedStatement prepStmt = con.prepareStatement(CREATE_STUDENT_GROUP, Statement.RETURN_GENERATED_KEYS)) {
             prepStmt.setString(1, entity.getName());
             if (prepStmt.executeUpdate() == 1) {
-                logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+                logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     entity.setId(generatedKeys.getLong(1));
                 }
             }
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
     }
@@ -81,10 +81,10 @@ public class StudentGroupDAO implements IStudentGroupDAO {
              PreparedStatement prepStmt = con.prepareStatement(REMOVE_STUDENT_GROUP)) {
             prepStmt.setLong(1, id);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return 0;

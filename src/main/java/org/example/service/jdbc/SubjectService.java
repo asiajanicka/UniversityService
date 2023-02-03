@@ -84,7 +84,6 @@ public class SubjectService implements ISubjectService {
 
     @Override
     public boolean removeSubject(long id) {
-        if (id > 0) {
             int result = subjectDAO.removeEntity(id);
             if (result == 1) {
                 logger.debug(String.format("Subject (%d) removed from the service", id));
@@ -93,10 +92,6 @@ public class SubjectService implements ISubjectService {
                 logger.error(String.format("Subject (%d) couldn't be removed from the service", id));
                 return false;
             }
-        } else {
-            logger.error("Subject couldn't be removed from the service as its id is invalid");
-            return false;
-        }
     }
 
     @Override

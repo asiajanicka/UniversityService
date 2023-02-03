@@ -48,7 +48,7 @@ public class DepartmentService implements IDepartmentService {
     }
 
     @Override
-    public Teacher addTeacherWithoutSubjects(Teacher teacher) throws NoEntityCreatedException {
+    public Teacher addNewTeacher(Teacher teacher) throws NoEntityCreatedException {
         if (teacher != null) {
             if (teacher.getFirstName() != null && teacher.getLastName() != null) {
                 teacherDAO.createEntity(teacher);
@@ -87,7 +87,6 @@ public class DepartmentService implements IDepartmentService {
 
     @Override
     public boolean removeTeacher(long id) {
-        if (id > 0) {
             int result = teacherDAO.removeEntity(id);
             if (result == 1) {
                 logger.debug(String.format("Teacher (%d) removed from the service", id));
@@ -96,10 +95,6 @@ public class DepartmentService implements IDepartmentService {
                 logger.error(String.format("Teacher (%d) couldn't be removed from the service", id));
                 return false;
             }
-        } else {
-            logger.error("Teacher couldn't be removed from the service as its id is invalid");
-            return false;
-        }
     }
 
     @Override
@@ -143,7 +138,6 @@ public class DepartmentService implements IDepartmentService {
 
     @Override
     public boolean removeDept(long id) {
-        if (id > 0) {
             int result = deptDAO.removeEntity(id);
             if (result == 1) {
                 logger.debug(String.format("Department (%d) removed from the service", id));
@@ -152,10 +146,6 @@ public class DepartmentService implements IDepartmentService {
                 logger.error(String.format("Department (%d) couldn't be removed from the service", id));
                 return false;
             }
-        } else {
-            logger.error("Department couldn't be removed from the service as its id is invalid");
-            return false;
-        }
     }
 
     @Override

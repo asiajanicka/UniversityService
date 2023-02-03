@@ -13,7 +13,7 @@ public interface IDepartmentService {
     Teacher getTeacherById(long id) throws EntityNotFoundException;
 
 
-    Teacher addTeacherWithoutSubjects(Teacher teacher) throws NoEntityCreatedException;
+    Teacher addNewTeacher(Teacher teacher) throws NoEntityCreatedException;
 
     boolean updateTeacherInfo(Teacher teacher);
 

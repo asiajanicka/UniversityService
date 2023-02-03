@@ -33,12 +33,12 @@ public class DeptDAO implements IDeptDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_DEPT)) {
             prepStmt.setLong(1, id);
             List<Department> depts = RowMapper.mapToDepartmentEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return depts
                     .stream()
                     .findFirst();
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -52,10 +52,10 @@ public class DeptDAO implements IDeptDAO {
             prepStmt.setString(1, entity.getName());
             prepStmt.setLong(2, entity.getId());
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
         return 0;
@@ -68,14 +68,14 @@ public class DeptDAO implements IDeptDAO {
              PreparedStatement prepStmt = con.prepareStatement(CREATE_DEPT, Statement.RETURN_GENERATED_KEYS)) {
             prepStmt.setString(1, entity.getName());
             if (prepStmt.executeUpdate() == 1) {
-                logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+                logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     entity.setId(generatedKeys.getLong(1));
                 }
             }
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
     }
@@ -87,10 +87,10 @@ public class DeptDAO implements IDeptDAO {
              PreparedStatement prepStmt = con.prepareStatement(REMOVE_DEPT)) {
             prepStmt.setLong(1, id);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return 0;
@@ -104,9 +104,9 @@ public class DeptDAO implements IDeptDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_DEPTS_BY_BUILDING_ID)) {
             prepStmt.setLong(1, buildingId);
             depts = RowMapper.mapToDepartmentEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, buildingId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, buildingId));
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, buildingId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, buildingId), e);
             e.printStackTrace();
         }
         return depts;
@@ -120,10 +120,10 @@ public class DeptDAO implements IDeptDAO {
             prepStmt.setLong(1, buildingId);
             prepStmt.setLong(2, deptId);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, deptId, buildingId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, deptId, buildingId));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, deptId, buildingId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, deptId, buildingId), e);
             e.printStackTrace();
         }
         return 0;
@@ -136,10 +136,10 @@ public class DeptDAO implements IDeptDAO {
              PreparedStatement prepStmt = con.prepareStatement(REMOVE_DEPT_FROM_BUILDING)) {
             prepStmt.setLong(1, deptId);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, deptId, buildingId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, deptId, buildingId));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, deptId, buildingId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, deptId, buildingId), e);
             e.printStackTrace();
         }
         return 0;
@@ -152,9 +152,9 @@ public class DeptDAO implements IDeptDAO {
         try (Connection con = ConnectionPool.getInstance().getConnection();
              PreparedStatement prepStmt = con.prepareStatement(GET_DEPTS_WITHOUT_BUILDING)) {
             depts = RowMapper.mapToDepartmentEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc));
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc), e);
             e.printStackTrace();
         }
         return depts;
