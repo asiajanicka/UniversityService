@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.dao.interfaces.IParkingSpotDAO">
+
+    <sql id="parkingSpotBody">
+        ps.id as spot_id,
+        ps.name as spot_name,
+        ps.address as spot_address,
+        ps.teacher_id as spot_teachers_id
+    </sql>
+
+    <insert id="createEntity" parameterType="org.example.model.ParkingSpot" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO parking_spots (name, address)
+        VALUES (#{name}, #{address})
+    </insert>
+
+    <select id="getEntityById" resultMap="parkingSpotResultMap">
+        SELECT
+        <include refid="parkingSpotBody"/>
+        FROM
+        parking_spots as ps
+        WHERE ps.id = #{id}
+    </select>
+
+    <resultMap id="parkingSpotResultMap" type="org.example.model.ParkingSpot" autoMapping="false">
+        <id column="spot_id" property="id"/>
+        <result column="spot_name" property="name"/>
+        <result column="spot_address" property="address"/>
+    </resultMap>
+
+    <update id="updateEntity">
+        UPDATE parking_spots
+        SET name = #{name}, address = #{address}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="removeEntity">
+        DELETE FROM parking_spots
+        WHERE id = #{id}
+    </delete>
+
+    <select id="getSpotByTeacherId" resultMap="parkingSpotResultMap">
+        SELECT
+        <include refid="parkingSpotBody"/>
+        FROM
+        parking_spots as ps
+        WHERE ps.teacher_id = #{teacherId}
+    </select>
+
+    <update id="bindSpotToTeacherId">
+        UPDATE parking_spots
+        SET teacher_id = #{teacherId}
+        WHERE id = #{spotId}
+    </update>
+
+    <update id="setSpotFree">
+        UPDATE parking_spots
+        SET teacher_id = NULL
+        WHERE id = #{spotId}
+    </update>
+
+    <select id="getFreeSpots" resultMap="parkingSpotResultMap">
+        SELECT
+        <include refid="parkingSpotBody"/>
+        FROM
+        parking_spots as ps
+        WHERE ps.teacher_id is NULL
+    </select>
+</mapper>

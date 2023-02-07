@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.dao.interfaces.IBuildingDAO">
+
+    <sql id="buildingBody">
+        b.id as building_id,
+        b.name as building_name,
+        b.address as building_address
+    </sql>
+
+    <insert id="createEntity" parameterType="org.example.model.Building" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO buildings (name, address)
+        VALUES (#{name}, #{address})
+    </insert>
+
+    <select id="getEntityById" resultMap="buildingResultMap">
+        SELECT
+        <include refid="buildingBody"/>,
+        <include refid="org.example.dao.interfaces.IDeptDAO.deptBody"/>,
+        <include refid="org.example.dao.interfaces.ITeacherDAO.teacherBody"/>,
+        <include refid="org.example.dao.interfaces.ISubjectDAO.subjectBody"/>,
+        <include refid="org.example.dao.interfaces.IParkingSpotDAO.parkingSpotBody"/>
+        FROM
+        buildings as b
+        LEFT JOIN departments as d
+        ON b.id = d.building_id
+        LEFT JOIN teachers as t
+        ON d.id = t.department_id
+        LEFT JOIN subjects s
+        ON t.id = s.teacher_id
+        LEFT JOIN parking_spots as ps
+        ON t.id=ps.teacher_id
+        WHERE b.id = #{id}
+    </select>
+
+    <resultMap id="buildingResultMap" type="org.example.model.Building" autoMapping="false">
+        <id column="building_id" property="id"/>
+        <result column="building_name" property="name"/>
+        <result column="building_address" property="address"/>
+        <collection property="departments" resultMap="org.example.dao.interfaces.IDeptDAO.deptResultMap"/>
+    </resultMap>
+
+    <update id="updateEntity">
+        UPDATE buildings
+        SET name = #{name}, address = #{address}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="removeEntity">
+        DELETE FROM buildings
+        WHERE id = #{id}
+    </delete>
+</mapper>
