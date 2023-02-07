@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="studentGroups" type="studentGroupsType"/>
+
+    <xs:complexType name = "studentGroupsType">
+        <xs:sequence>
+            <xs:element name="studentGroup" type="studentGroupType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name = "studentGroupType">
+        <xs:sequence>
+            <xs:element name="students" type="studentsType"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:integer" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="subjectType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:integer" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="gradesType">
+        <xs:sequence>
+        <xs:element name="grade" type="gradeType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="gradeType">
+        <xs:sequence>
+            <xs:element name="value" type="xs:integer"/>
+            <xs:element name="subject" type="subjectType"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:integer" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="portalAccountType">
+        <xs:sequence>
+            <xs:element name="login" type="xs:string"/>
+            <xs:element name="password" type="xs:string"/>
+            <xs:element name="issueDate" type="xs:date"/>
+            <xs:element name="expiryDate" type="xs:date"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:integer" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="studentsType">
+        <xs:sequence>
+        <xs:element name="student" type="studentType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="studentType">
+        <xs:sequence>
+            <xs:element name="firstName" type="xs:string"/>
+            <xs:element name="lastName" type="xs:string"/>
+            <xs:element name="dateOfBirth" type="xs:date"/>
+            <xs:element name="portalAccount" type="portalAccountType" minOccurs="0"/>
+            <xs:element name="grades" type="gradesType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:integer" use="required"/>
+    </xs:complexType>
+
+</xs:schema>

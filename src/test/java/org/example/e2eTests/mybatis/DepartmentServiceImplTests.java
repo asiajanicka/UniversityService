@@ -34,7 +34,7 @@ public class DepartmentServiceImplTests {
         ISubjectService subjectService = new SubjectServiceImpl();
         Teacher testTeacher = TestData.getBasicTeacher();
 
-        Teacher actualTeacher = deptService.addTeacherWithoutSubjects(testTeacher);
+        Teacher actualTeacher = deptService.addNewTeacher(testTeacher);
         assertThat(actualTeacher.getFirstName()).isEqualTo(testTeacher.getFirstName());
         assertThat(actualTeacher.getLastName()).isEqualTo(testTeacher.getLastName());
 
@@ -84,8 +84,8 @@ public class DepartmentServiceImplTests {
         buildingService.assignDeptToBuilding(actualDept.getId(), basicBuilding.getId());
         assertThat(buildingService.getDeptsInBuilding(basicBuilding.getId())).contains(actualDept);
 
-        Teacher teacherOne = deptService.addTeacherWithoutSubjects(new Teacher("John", "One"));
-        Teacher teacherTwo = deptService.addTeacherWithoutSubjects(new Teacher("Tom", "Two"));
+        Teacher teacherOne = deptService.addNewTeacher(new Teacher("John", "One"));
+        Teacher teacherTwo = deptService.addNewTeacher(new Teacher("Tom", "Two"));
         assertThat(deptService.assignTeacherToDept(teacherOne.getId(), actualDept.getId())).isTrue();
         assertThat(deptService.assignTeacherToDept(teacherTwo.getId(), actualDept.getId())).isTrue();
 

@@ -12,7 +12,6 @@ public interface IDepartmentService {
 
     Teacher getTeacherById(long id) throws EntityNotFoundException;
 
-
     Teacher addNewTeacher(Teacher teacher) throws NoEntityCreatedException;
 
     boolean updateTeacherInfo(Teacher teacher);

@@ -38,7 +38,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
     }
 
     @Override
-    public Teacher addTeacherWithoutSubjects(Teacher teacher) throws NoEntityCreatedException {
+    public Teacher addNewTeacher(Teacher teacher) throws NoEntityCreatedException {
         if (teacher != null) {
             if (teacher.getFirstName() != null && teacher.getLastName() != null) {
                 try (SqlSession sqlSession = SESSION_FACTORY.openSession()) {
