@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.dao.interfaces.IGradeDAO">
+
+    <sql id="gradeBody">
+        g.id as grade_id,
+        g.value as grade_value,
+        g.subject_id,
+        g.student_id
+    </sql>
+
+    <insert id="createEntity" parameterType="org.example.model.Grade" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO grades (value, subject_id)
+        VALUES (#{name}, #{subject.id})
+    </insert>
+
+    <select id="getEntityById" resultMap="gradeResultMap">
+        SELECT
+        <include refid="gradeBody"/>,
+        <include refid="org.example.dao.interfaces.ISubjectDAO.subjectBody"/>
+        FROM
+        grades as g
+        LEFT JOIN subjects as s
+        ON g.subject_id = s.id
+        WHERE g.id = #{id}
+    </select>
+
+    <resultMap id="gradeResultMap" type="org.example.model.Grade" autoMapping="false">
+        <id column="grade_id" property="id"/>
+        <result column="grade_value" property="value"/>
+        <association property="subject" resultMap="org.example.dao.interfaces.ISubjectDAO.subjectResultMap"/>
+    </resultMap>
+
+    <update id="updateEntity">
+        UPDATE grades
+        SET value = #{value}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="removeEntity">
+        DELETE FROM grades
+        WHERE id = #{id}
+    </delete>
+
+    <select id="getAllGradesByStudentId" resultMap="gradeResultMap">
+        SELECT
+        <include refid="gradeBody"/>,
+        <include refid="org.example.dao.interfaces.ISubjectDAO.subjectBody"/>
+        FROM
+        grades as g
+        LEFT JOIN subjects as s
+        ON g.subject_id = s.id
+        WHERE g.student_id = #{id}
+    </select>
+
+    <select id="getAllGradesBySubjectId" resultMap="gradeResultMap">
+        SELECT
+        <include refid="gradeBody"/>,
+        <include refid="org.example.dao.interfaces.ISubjectDAO.subjectBody"/>
+        FROM
+        grades as g
+        LEFT JOIN subjects as s
+        ON g.subject_id = s.id
+        WHERE g.subject_id = #{id}
+    </select>
+
+    <update id="bindGradeToStudentId">
+        UPDATE grades
+        SET g.student_id = #{studentId}
+        WHERE id = #{gradeId}
+    </update>
+</mapper>

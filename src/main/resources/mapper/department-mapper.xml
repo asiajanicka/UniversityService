@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.dao.interfaces.IDeptDAO">
+
+    <sql id="deptBody">
+        d.id as dept_id,
+        d.name as dept_name,
+        d.building_id
+    </sql>
+
+    <insert id="createEntity" parameterType="org.example.model.Department" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO departments (name)
+        VALUES (#{name})
+    </insert>
+
+    <select id="getEntityById" resultMap="deptResultMap">
+        SELECT
+        <include refid="deptBody"/>,
+        <include refid="org.example.dao.interfaces.ITeacherDAO.teacherBody"/>,
+        <include refid="org.example.dao.interfaces.ISubjectDAO.subjectBody"/>,
+        <include refid="org.example.dao.interfaces.IParkingSpotDAO.parkingSpotBody"/>
+        FROM
+        departments as d
+        LEFT JOIN teachers as t
+        ON d.id = t.department_id
+        LEFT JOIN subjects s
+        ON t.id = s.teacher_id
+        LEFT JOIN parking_spots as ps
+        ON t.id=ps.teacher_id
+        WHERE d.id = #{id}
+    </select>
+
+    <resultMap id="deptResultMap" type="org.example.model.Department" autoMapping="false">
+        <id column="dept_id" property="id"/>
+        <result column="dept_name" property="name"/>
+        <collection property="teachers" resultMap="org.example.dao.interfaces.ITeacherDAO.teacherResultMap"/>
+    </resultMap>
+
+    <update id="updateEntity">
+        UPDATE departments
+        SET name = #{name}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="removeEntity">
+        DELETE FROM departments
+        WHERE id = #{id}
+    </delete>
+
+    <select id="getDepartmentsByBuildingId" resultMap="deptResultMap">
+        SELECT
+        <include refid="deptBody"/>,
+        <include refid="org.example.dao.interfaces.ITeacherDAO.teacherBody"/>,
+        <include refid="org.example.dao.interfaces.ISubjectDAO.subjectBody"/>,
+        <include refid="org.example.dao.interfaces.IParkingSpotDAO.parkingSpotBody"/>
+        FROM
+        departments as d
+        LEFT JOIN teachers as t
+        ON d.id = t.department_id
+        LEFT JOIN subjects s
+        ON t.id = s.teacher_id
+        LEFT JOIN parking_spots as ps
+        ON t.id=ps.teacher_id
+        WHERE d.building_id = #{buildingId}
+    </select>
+
+    <update id="bindDepartmentToBuildingId">
+        UPDATE departments
+        SET building_id = #{buildingId}
+        WHERE id = #{deptId}
+    </update>
+
+    <update id="removeDepartmentFromBuildingById">
+        UPDATE departments
+        SET building_id = NULL
+        WHERE id = #{deptId}
+    </update>
+
+    <select id="getDepartmentsWithoutBuilding" resultMap="deptResultMap">
+        SELECT
+        <include refid="deptBody"/>,
+        <include refid="org.example.dao.interfaces.ITeacherDAO.teacherBody"/>,
+        <include refid="org.example.dao.interfaces.ISubjectDAO.subjectBody"/>,
+        <include refid="org.example.dao.interfaces.IParkingSpotDAO.parkingSpotBody"/>
+        FROM
+        departments as d
+        LEFT JOIN teachers as t
+        ON d.id = t.department_id
+        LEFT JOIN subjects s
+        ON t.id = s.teacher_id
+        LEFT JOIN parking_spots as ps
+        ON t.id=ps.teacher_id
+        WHERE d.building_id is NULL
+    </select>
+</mapper>

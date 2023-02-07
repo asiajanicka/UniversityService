@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.dao.interfaces.ISubjectDAO">
+
+    <sql id="subjectBody">
+        s.id as subject_id,
+        s.name as subject_name
+    </sql>
+
+    <insert id="createEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO subjects (name)
+        VALUES (#{name})
+    </insert>
+
+    <select id="getEntityById" resultMap="subjectResultMap">
+        SELECT
+        <include refid="subjectBody"/>
+        FROM
+        subjects as s
+        WHERE id = #{id}
+    </select>
+
+    <resultMap id="subjectResultMap" type="org.example.model.Subject" autoMapping="false">
+        <id column="subject_id" property="id"/>
+        <result column="subject_name" property="name"/>
+    </resultMap>
+
+    <update id="updateEntity">
+        UPDATE subjects
+        SET name = #{name}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="removeEntity">
+        DELETE FROM subjects
+        WHERE id = #{id}
+    </delete>
+
+    <update id="bindSubjectToTeacherId">
+        UPDATE subjects
+        SET teacher_id = #{teacherId}
+        WHERE id = #{subjectId}
+    </update>
+
+    <update id="removedTeacherFromSubject">
+        UPDATE subjects
+        SET teacher_id = NULL
+        WHERE id = #{subjectId}
+    </update>
+
+    <select id="getSubjectsByTeacherId" resultMap="subjectResultMap">
+        SELECT
+        <include refid="subjectBody"/>
+        FROM
+        subjects as s
+        WHERE teacher_id = #{teacherId}
+    </select>
+
+    <select id="getSubjectsWithoutTeacher" resultMap="subjectResultMap">
+        SELECT
+        <include refid="subjectBody"/>
+        FROM
+        subjects as s
+        WHERE teacher_id is null
+    </select>
+</mapper>

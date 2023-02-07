@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.dao.interfaces.ITeacherDAO">
+
+    <sql id="teacherBody">
+        t.id as teacher_id,
+        t.first_name as teacher_fname,
+        t.last_name as teacher_lname,
+        t.department_id
+    </sql>
+
+    <insert id="createEntity" parameterType="org.example.model.Teacher" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO teachers (first_name, last_name)
+        VALUES (#{firstName}, #{lastName})
+    </insert>
+
+    <select id="getEntityById" resultMap="teacherResultMap">
+        SELECT
+        <include refid="teacherBody"/>,
+        <include refid="org.example.dao.interfaces.ISubjectDAO.subjectBody"/>,
+        <include refid="org.example.dao.interfaces.IParkingSpotDAO.parkingSpotBody"/>
+        FROM
+        teachers as t
+        LEFT JOIN subjects s
+        ON t.id = s.teacher_id
+        LEFT JOIN parking_spots as ps
+        ON t.id=ps.teacher_id
+        WHERE t.id = #{id}
+    </select>
+
+    <resultMap id="teacherResultMap" type="org.example.model.Teacher" autoMapping="false">
+        <id column="teacher_id" property="id"/>
+        <result column="teacher_fname" property="firstName"/>
+        <result column="teacher_lname" property="lastName"/>
+        <association property="parkingSpot" resultMap="org.example.dao.interfaces.IParkingSpotDAO.parkingSpotResultMap"/>
+        <collection property="subjects" resultMap="org.example.dao.interfaces.ISubjectDAO.subjectResultMap"/>
+    </resultMap>
+
+    <update id="updateEntity">
+        UPDATE teachers
+        SET first_name = #{firstName}, last_name = #{lastName}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="removeEntity">
+        DELETE FROM teachers
+        WHERE id = #{id}
+    </delete>
+
+    <select id="getTeachersByDeptId" resultMap="teacherResultMap">
+        SELECT
+        <include refid="teacherBody"/>,
+        <include refid="org.example.dao.interfaces.ISubjectDAO.subjectBody"/>,
+        <include refid="org.example.dao.interfaces.IParkingSpotDAO.parkingSpotBody"/>
+        FROM
+        teachers as t
+        LEFT JOIN subjects s
+        ON t.id = s.teacher_id
+        LEFT JOIN parking_spots as ps
+        ON t.id=ps.teacher_id
+        WHERE t.department_id = #{deptId}
+    </select>
+
+    <update id="bindTeacherToDeptId">
+        UPDATE teachers
+        SET department_id = #{deptId}
+        WHERE id = #{teacherId}
+    </update>
+
+    <update id="removeTeacherFromDeptById">
+        UPDATE teachers
+        SET department_id = NULL
+        WHERE id = #{teacherId}
+    </update>
+</mapper>
