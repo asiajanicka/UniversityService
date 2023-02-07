@@ -32,12 +32,12 @@ public class GradeDAO implements IGradeDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_GRADE)) {
             prepStmt.setLong(1, id);
             List<Grade> grades = RowMapper.mapToGradeEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return grades
                     .stream()
                     .findFirst();
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -50,10 +50,10 @@ public class GradeDAO implements IGradeDAO {
              PreparedStatement prepStmt = con.prepareStatement(UPDATE_GRADE)) {
             prepStmt.setInt(1, entity.getValue());
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
         return 0;
@@ -67,14 +67,14 @@ public class GradeDAO implements IGradeDAO {
             prepStmt.setInt(1, entity.getValue());
             prepStmt.setLong(2, entity.getSubject().getId());
             if (prepStmt.executeUpdate() == 1) {
-                logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+                logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     entity.setId(generatedKeys.getLong(1));
                 }
             }
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
     }
@@ -86,10 +86,10 @@ public class GradeDAO implements IGradeDAO {
              PreparedStatement prepStmt = con.prepareStatement(REMOVE_GRADE)) {
             prepStmt.setLong(1, id);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return 0;
@@ -103,9 +103,9 @@ public class GradeDAO implements IGradeDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_GRADES_BY_STUDENT_ID)) {
             prepStmt.setLong(1, studentId);
             grades.addAll(RowMapper.mapToGradeEntityList(prepStmt.executeQuery()));
-            logger.debug(String.format(EXECUTED_QUERY + desc, studentId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, studentId));
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, studentId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, studentId), e);
             e.printStackTrace();
         }
         return grades;
@@ -119,9 +119,9 @@ public class GradeDAO implements IGradeDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_GRADES_BY_SUBJECT_ID)) {
             prepStmt.setLong(1, subjectId);
             grades.addAll(RowMapper.mapToGradeEntityList(prepStmt.executeQuery()));
-            logger.debug(String.format(EXECUTED_QUERY + desc, subjectId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, subjectId));
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, subjectId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, subjectId), e);
             e.printStackTrace();
         }
         return grades;
@@ -135,10 +135,10 @@ public class GradeDAO implements IGradeDAO {
             prepStmt.setLong(1, studentId);
             prepStmt.setLong(2, gradeId);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, gradeId, studentId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, gradeId, studentId));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, gradeId, studentId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, gradeId, studentId), e);
             e.printStackTrace();
         }
         return 0;

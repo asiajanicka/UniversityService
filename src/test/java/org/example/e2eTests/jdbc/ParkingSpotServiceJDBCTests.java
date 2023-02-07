@@ -30,7 +30,7 @@ public class ParkingSpotServiceJDBCTests {
         String expectedSpotName = "AB123";
         String expectedSpotAddress = "Old Road Campus OX3 7LF";
 
-        Teacher actualTeacher = deptService.addTeacherWithoutSubjects(testTeacher);
+        Teacher actualTeacher = deptService.addNewTeacher(testTeacher);
         ParkingSpot actualSpot = spotService.addNewSpot(expectedSpotName, expectedSpotAddress);
         assertThat(actualSpot.getName()).isEqualTo(expectedSpotName);
         assertThat(actualSpot.getAddress()).isEqualTo(expectedSpotAddress);

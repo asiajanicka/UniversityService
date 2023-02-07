@@ -32,12 +32,12 @@ public class TeacherDAO implements ITeacherDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_TEACHER)) {
             prepStmt.setLong(1, id);
             List<Teacher> teachers = RowMapper.mapToTeacherEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return teachers
                     .stream()
                     .findFirst();
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -52,10 +52,10 @@ public class TeacherDAO implements ITeacherDAO {
             prepStmt.setString(2, entity.getLastName());
             prepStmt.setLong(3, entity.getId());
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
         return 0;
@@ -69,14 +69,14 @@ public class TeacherDAO implements ITeacherDAO {
             prepStmt.setString(1, entity.getFirstName());
             prepStmt.setString(2, entity.getLastName());
             if (prepStmt.executeUpdate() == 1) {
-                logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+                logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     entity.setId(generatedKeys.getLong(1));
                 }
             }
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
     }
@@ -88,10 +88,10 @@ public class TeacherDAO implements ITeacherDAO {
              PreparedStatement prepStmt = con.prepareStatement(REMOVE_TEACHER)) {
             prepStmt.setLong(1, id);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return 0;
@@ -105,9 +105,9 @@ public class TeacherDAO implements ITeacherDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_TEACHERS_BY_DEPT_ID)) {
             prepStmt.setLong(1, deptId);
             teachers.addAll(RowMapper.mapToTeacherEntityList(prepStmt.executeQuery()));
-            logger.debug(String.format(EXECUTED_QUERY + desc, deptId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, deptId));
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, deptId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, deptId), e);
             e.printStackTrace();
         }
         return teachers;
@@ -121,10 +121,10 @@ public class TeacherDAO implements ITeacherDAO {
             prepStmt.setLong(1, deptId);
             prepStmt.setLong(2, teacherId);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, teacherId, deptId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, teacherId, deptId));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, teacherId, deptId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, teacherId, deptId), e);
             e.printStackTrace();
         }
         return 0;
@@ -137,10 +137,10 @@ public class TeacherDAO implements ITeacherDAO {
              PreparedStatement prepStmt = con.prepareStatement(REMOVE_TEACHER_FROM_DEPT)) {
             prepStmt.setLong(1, teacherId);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, teacherId, deptId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, teacherId, deptId));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, teacherId, deptId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, teacherId, deptId), e);
             e.printStackTrace();
         }
         return 0;

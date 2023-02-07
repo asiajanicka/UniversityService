@@ -35,12 +35,12 @@ public class TimetableEntryDAO implements ITimetableEntryDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_ENTRY)) {
             prepStmt.setLong(1, id);
             List<TimetableEntry> timetable = RowMapper.mapToTimetableEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return timetable
                     .stream()
                     .findFirst();
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return Optional.empty();
@@ -57,10 +57,10 @@ public class TimetableEntryDAO implements ITimetableEntryDAO {
             prepStmt.setLong(4, entity.getRoom().getId());
             prepStmt.setLong(5, entity.getId());
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
         return 0;
@@ -76,14 +76,14 @@ public class TimetableEntryDAO implements ITimetableEntryDAO {
             prepStmt.setLong(3, entity.getSubject().getId());
             prepStmt.setLong(4, entity.getRoom().getId());
             if (prepStmt.executeUpdate() == 1) {
-                logger.debug(String.format(EXECUTED_QUERY + desc, entity));
+                logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, entity));
                 ResultSet generatedKeys = prepStmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     entity.setId(generatedKeys.getLong(1));
                 }
             }
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, entity), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, entity), e);
             e.printStackTrace();
         }
     }
@@ -95,10 +95,10 @@ public class TimetableEntryDAO implements ITimetableEntryDAO {
              PreparedStatement prepStmt = con.prepareStatement(REMOVE_ENTRY)) {
             prepStmt.setLong(1, id);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, id));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, id));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, id), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, id), e);
             e.printStackTrace();
         }
         return 0;
@@ -112,9 +112,9 @@ public class TimetableEntryDAO implements ITimetableEntryDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_ENTRIES_BY_SUBJECT_ID)) {
             prepStmt.setLong(1, subjectId);
             timetable = RowMapper.mapToTimetableEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, subjectId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, subjectId));
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, subjectId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, subjectId), e);
             e.printStackTrace();
         }
         return timetable;
@@ -128,9 +128,9 @@ public class TimetableEntryDAO implements ITimetableEntryDAO {
              PreparedStatement prepStmt = con.prepareStatement(GET_ENTRIES_BY_ROOM_ID)) {
             prepStmt.setLong(1, roomId);
             timetable = RowMapper.mapToTimetableEntityList(prepStmt.executeQuery());
-            logger.debug(String.format(EXECUTED_QUERY + desc, roomId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, roomId));
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, roomId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, roomId), e);
             e.printStackTrace();
         }
         return timetable;
@@ -144,10 +144,10 @@ public class TimetableEntryDAO implements ITimetableEntryDAO {
             prepStmt.setLong(1, subjectId);
             prepStmt.setLong(2, timetableEntryId);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, timetableEntryId, subjectId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, timetableEntryId, subjectId));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, timetableEntryId, subjectId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, timetableEntryId, subjectId), e);
             e.printStackTrace();
         }
         return 0;
@@ -161,10 +161,10 @@ public class TimetableEntryDAO implements ITimetableEntryDAO {
             prepStmt.setLong(1, roomId);
             prepStmt.setLong(2, timetableEntryId);
             int result = prepStmt.executeUpdate();
-            logger.debug(String.format(EXECUTED_QUERY + desc, timetableEntryId, roomId));
+            logger.debug(String.format(EXECUTED_QUERY_LOG_TEMPLATE + desc, timetableEntryId, roomId));
             return result;
         } catch (SQLException e) {
-            logger.error(String.format(NOT_EXECUTE_QUERY + desc, timetableEntryId, roomId), e);
+            logger.error(String.format(NOT_EXECUTED_QUERY_LOG_TEMPLATE + desc, timetableEntryId, roomId), e);
             e.printStackTrace();
         }
         return 0;

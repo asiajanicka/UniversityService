@@ -1,18 +1,29 @@
 package org.example.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import java.util.Objects;
+import javax.xml.bind.annotation.*;
 
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor
+@XmlRootElement(name = "grade")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Grade {
 
+    @JsonProperty
+    @XmlAttribute
     private long id;
+
+    @JsonProperty
+    @XmlElement
     private int value;
+
+    @JsonProperty
+    @XmlElement
     private Subject subject;
 
     public Grade(int value) {

@@ -1,18 +1,28 @@
 package org.example.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import java.util.Objects;
+import javax.xml.bind.annotation.*;
 
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Person {
 
+    @JsonProperty
+    @XmlAttribute
     private long id;
+
+    @JsonProperty
+    @XmlElement
     private String firstName;
+
+    @JsonProperty
+    @XmlElement
     private String lastName;
 
     public Person(String firstName, String lastName) {

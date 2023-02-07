@@ -32,7 +32,7 @@ public class BuildingService implements IBuildingService {
     @Override
     public Building getBuildingById(long id) throws EntityNotFoundException {
         Building tempBuilding = getBasicBuildingById(id);
-        tempBuilding.setDepartments(getDeptsInBuilding(tempBuilding.getId()));
+        tempBuilding.setDepartments(getDeptsInBuilding(id));
         return tempBuilding;
     }
 
@@ -80,7 +80,6 @@ public class BuildingService implements IBuildingService {
 
     @Override
     public boolean removeBuilding(long buildingId) {
-        if (buildingId > 0) {
             int result = buildingDAO.removeEntity(buildingId);
             if (result == 1) {
                 logger.debug(String.format("Building (%d) removed from the service", buildingId));
@@ -89,10 +88,6 @@ public class BuildingService implements IBuildingService {
                 logger.error(String.format("Building (%d) couldn't be removed from the service", buildingId));
                 return false;
             }
-        } else {
-            logger.error("Building couldn't be removed from the service as its id is invalid");
-            return false;
-        }
     }
 
     @Override
@@ -125,7 +120,7 @@ public class BuildingService implements IBuildingService {
 
     @Override
     public boolean updateRoom(Room room) {
-        if (room != null && room.getId() > 0) {
+        if (room != null) {
             if (room.getNumber() != null && room.getBuilding().getId() > 0) {
                 int result = roomDAO.updateEntity(room);
                 if (result == 1) {
@@ -140,14 +135,13 @@ public class BuildingService implements IBuildingService {
                 return false;
             }
         } else {
-            logger.error("Room couldn't be updated in the service as it is NULL or has invalid id");
+            logger.error("Room couldn't be updated in the service as it is NULL");
             return false;
         }
     }
 
     @Override
     public boolean removeRoom(long id) {
-        if (id > 0) {
             int result = roomDAO.removeEntity(id);
             if (result == 1) {
                 logger.debug(String.format("Room (%d) removed from the service", id));
@@ -156,10 +150,6 @@ public class BuildingService implements IBuildingService {
                 logger.error(String.format("Room (%d) couldn't be removed from the service", id));
                 return false;
             }
-        } else {
-            logger.error("Room couldn't be removed from the service as its id is invalid");
-            return false;
-        }
     }
 
     @Override
@@ -179,12 +169,7 @@ public class BuildingService implements IBuildingService {
 
     @Override
     public boolean removeAllRoomsFromBuilding(long buildingId) {
-        if (buildingId > 0) {
             return roomDAO.removeRoomsByBuildingId(buildingId) > 0;
-        } else {
-            logger.error("Rooms couldn't be removed from building in the service as its id is invalid");
-            return false;
-        }
     }
 
     @Override

@@ -1,17 +1,26 @@
 package org.example.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
+@XmlRootElement(name = "teacher")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Teacher extends Person {
 
+    @JsonProperty
+    @XmlElement
     private ParkingSpot parkingSpot;
+
+    @XmlElementWrapper(name = "subjects")
+    @XmlElement(name = "subject")
+    @JsonProperty
     private List<Subject> subjects;
 
     public Teacher() {

@@ -14,6 +14,4 @@ public interface ITimetableEntryDAO extends IBaseDAO<TimetableEntry> {
 
     int bindRoomToTimetableEntry(long roomId, long timetableEntryId);
 
-    //   List<TimetableEntry> getTimetableEntriesByTimeslot(LocalTime time, WeekDay day);
-
 }

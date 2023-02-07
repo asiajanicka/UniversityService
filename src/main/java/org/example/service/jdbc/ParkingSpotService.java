@@ -78,7 +78,6 @@ public class ParkingSpotService implements IParkingSpotService {
 
     @Override
     public boolean removeSpot(long id) {
-        if (id > 0) {
             int result = spotDAO.removeEntity(id);
             if (result == 1) {
                 logger.debug(String.format("Parking spot (%d) removed from the service", id));
@@ -87,10 +86,6 @@ public class ParkingSpotService implements IParkingSpotService {
                 logger.error(String.format("Parking spot (%d) couldn't be removed from the service", id));
                 return false;
             }
-        } else {
-            logger.error("Parking spot couldn't be removed from the service as its id is invalid");
-            return false;
-        }
     }
 
     @Override

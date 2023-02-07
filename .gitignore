@@ -42,4 +42,4 @@ build/
 ### Mac OS ###
 .DS_Store
 
-src/test/resources/logs
+src/test/java/org/example/testResults/*
